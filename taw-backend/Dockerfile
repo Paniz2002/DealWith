@@ -1,18 +1,18 @@
-FROM node:18.16.0-alpine3.17
+FROM node:lts-alpine
 
 # Create app directory
-WORKDIR /home/node/app
+WORKDIR /app
 
 # Install app dependencies
-COPY --chown=node:node package*.json ./
-# COPY --chown=node:node . .
-USER node
+COPY package*.json ./
+RUN npm ci 
 
-CMD [ "npm", "install" ]
-
-# Bundle app source
-COPY --chown=node:node . .
-
+COPY . .
 EXPOSE 3000
 
-CMD [ "npm", "run", "dev" ]
+# This is supposed to run when we are done with the project.
+# CMD ["npm", "run", "build"]
+# CMD ["npm", "start"]
+
+# Instead while developing run this.
+CMD ["npm", "run", "dev"]
