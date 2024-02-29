@@ -2,7 +2,7 @@
   "name": "taw-backend",
   "version": "1.0.0",
   "description": "Backend del progetto di Tecnologie e Applicazioni Web A.A. 2023-2024",
-  "main": "index.js", 
+  "main": "out/index.js",
   "scripts": {
     "build": "npx tsc",
     "start": "node out/index.js",
