@@ -15,4 +15,5 @@ EXPOSE 3000
 # CMD ["npm", "start"]
 
 # Instead while developing run this.
+
 CMD ["npm", "run", "dev"]
