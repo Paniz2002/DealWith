@@ -27,11 +27,9 @@ export class RegisterComponent {
     });
   }
   async onSubmit() {
-    const url = enviroment.BACKEND_URL + '/api/register';
+    const url = enviroment.BACKEND_URL + '/api/auth/register';
     const res = await axios.post(url, this.registerForm.value);
-    if (res.status === 200) {
-      console.log('It worked.');
-    } else {
+    if (res.status !== 200) {
       console.log('Error: ', res.statusText);
     }
   }
