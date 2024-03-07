@@ -6,6 +6,7 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { enviroment } from '../../enviroments/enviroments';
 import axios from 'axios';
 @Component({
   selector: 'app-register',
@@ -26,6 +27,12 @@ export class RegisterComponent {
     });
   }
   async onSubmit() {
-    const res = await axios.post('', this.registerForm.value);
+    const url = enviroment.BACKEND_URL + '/api/register';
+    const res = await axios.post(url, this.registerForm.value);
+    if (res.status === 200) {
+      console.log('It worked.');
+    } else {
+      console.log('Error: ', res.statusText);
+    }
   }
 }
