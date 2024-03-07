@@ -1,1 +1,36 @@
-<p>register works!</p>
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+  <input
+    type="text"
+    name="name"
+    placeholder="Please insert a name."
+    formControlName="name"
+  />
+  <input
+    type="email"
+    name="email"
+    placeholder="Please insert your email."
+    required
+    formControlName="email"
+  />
+  <input
+    type="password"
+    name="password"
+    placeholder="Please insert a password."
+    required
+    formControlName="password"
+  />
+  <input
+    type="password"
+    name="confirmPassword"
+    placeholder="Please repeat the same password."
+    required
+    formControlName="confirmPassword"
+  />
+  <select name="role" required formControlName="role">
+    <option value="CASHIER">Cashier</option>
+    <option value="BARTENDER">Bartender</option>
+    <option value="COOK">Cook</option>
+    <option value="WAITER">Waiter</option>
+  </select>
+  <input type="submit" value="submit" />
+</form>
