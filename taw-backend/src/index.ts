@@ -20,7 +20,6 @@ const whitelistMiddleware = function (
   next: NextFunction,
 ) {
   const remoteAddr = req.socket.remoteAddress;
-  console.log(remoteAddr);
   if (whitelist.includes(remoteAddr!)) {
     next();
   }
