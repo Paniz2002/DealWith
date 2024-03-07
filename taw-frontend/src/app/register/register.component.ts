@@ -15,17 +15,8 @@ import axios from 'axios';
   styleUrl: './register.component.css',
 })
 export class RegisterComponent {
-  // Bypassing compiler error with this simple trick
-  // instead of changing tsconfig.json
-  // 99.9% of companies will hate you, but
-  // we know that this registerForm WILL get initialized
-  // from the constructor.
-  registerForm!: FormGroup;
+  registerForm: FormGroup;
   constructor(private registerFormBuilder: FormBuilder) {
-    this.createRegisterForm();
-  }
-
-  createRegisterForm() {
     this.registerForm = this.registerFormBuilder.group({
       name: [''],
       email: [''],
@@ -34,7 +25,7 @@ export class RegisterComponent {
       role: [''],
     });
   }
-  onSubmit() {
-    console.log(this.registerForm.get('name')?.value);
+  async onSubmit() {
+    const res = await axios.post('', this.registerForm.value);
   }
 }
