@@ -16,4 +16,5 @@ EXPOSE 3000
 
 # Instead while developing run this.
 
+RUN npx prisma generate
 CMD ["npm", "run", "dev"]
