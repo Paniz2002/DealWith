@@ -2,11 +2,15 @@ services:
   frontend:
     container_name: taw-frontend
     build: ./taw-frontend
+    volumes:
+      - ./taw-frontend/src:/app/src
     ports:
       - "4200:4200"
   backend:
     container_name: taw-backend
     build: ./taw-backend
+    volumes:
+      - ./taw-backend/src:/app/src
     environment:
       - MONGODB_URL=mongodb+srv://user:JLLO9MpRXiFmo9g5@taw-project.hs3paie.mongodb.net/?retryWrites=true&w=majority&appName=TAW-project
     ports:
