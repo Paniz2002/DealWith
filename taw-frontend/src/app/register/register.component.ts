@@ -33,4 +33,5 @@ export class RegisterComponent {
       console.log('Error: ', res.statusText);
     }
   }
+
 }

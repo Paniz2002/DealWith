@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../../prisma/prisma_db_connection";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { Role } from "@prisma/client";
+import  { Role } from "@prisma/client";
 const formValidator = z.object({
   email: z.string().email(),
   name: z.string().optional(),
@@ -28,7 +28,11 @@ const validateForm = (input: unknown) => {
   }
 };
 export const registerController = async (req: Request, res: Response) => {
-  const isValid =
+    console.log('test');
+    console.log(req);
+    console.log(req.body);
+    return res.status(200).send("ERROR: User already registered.");
+    const isValid =
     validateForm(req.body) && req.body.password === req.body.confirmPassword;
   if (!isValid) {
     return res.status(400).send("ERROR: Invalid form input.");
