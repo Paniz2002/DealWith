@@ -11,7 +11,7 @@ services:
     build: ./taw-backend
     volumes:
       - ./taw-backend/src:/app/src
-    environment:
-      - MONGODB_URL=${DATABASE_URL}
+    # environment:
+    #   - MONGODB_URL=${DATABASE_URL}
     ports:
       - "3000:3000"

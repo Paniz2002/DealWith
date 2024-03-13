@@ -1,50 +1,59 @@
 <div class="container mx-auto h-screen flex items-center justify-center">
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    <label for="email" class="block text-sm font-medium">Email</label>
-    <input
-      id="email"
-      name="email"
-      type="email"
-      placeholder="Enter your email"
-      required
-      pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-    />
-    <label for="email" class="block text-sm font-medium">Email</label>
-    <input
-      type="email"
-      name="email"
-      id="email"
-      placeholder="Please insert your email."
-      required
-      formControlName="email"
-    />
-    <label for="password" class="block text-sm font-medium">Password</label>
-    <input
-      type="password"
-      name="password"
-      id="password"
-      placeholder="Please insert a password."
-      required
-      formControlName="password"
-    />
-    <label for="confirmPassword" class="block text-sm font-medium"
-      >Confirm password</label
-    >
-    <input
-      type="password"
-      name="confirmPassword"
-      id="confirmPassword"
-      placeholder="Please repeat the same password."
-      required
-      formControlName="confirmPassword"
-    />
-    <label for="role" class="block text-sm font-medium">Role</label>
-    <select name="role" id="role" required formControlName="role">
-      <option value="CASHIER">Cashier</option>
-      <option value="BARTENDER">Bartender</option>
-      <option value="COOK">Cook</option>
-      <option value="WAITER">Waiter</option>
-    </select>
+    <mat-form-field>
+      <mat-label>Username</mat-label>
+      <input
+        matInput
+        id="username"
+        name="username"
+        type="text"
+        placeholder="Please write an username."
+        required
+        formControlName="username"
+      />
+      @if (registerForm.controls["username"].errors.required) {
+        <mat-error>Username required</mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        type="password"
+        name="password"
+        id="password"
+        placeholder="Please insert a password."
+        required
+        formControlName="password"
+      />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Confirm Password</mat-label>
+      <input
+        matInput
+        type="password"
+        name="confirmPassword"
+        id="confirmPassword"
+        placeholder="Please repeat the same password."
+        required
+        formControlName="confirmPassword"
+      />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Role</mat-label>
+      <select
+        matNativeControl
+        name="role"
+        id="role"
+        required
+        formControlName="role"
+      >
+        <option value="CASHIER">Cashier</option>
+        <option value="BARTENDER">Bartender</option>
+        <option value="COOK">Cook</option>
+        <option value="WAITER">Waiter</option>
+      </select>
+    </mat-form-field>
     <button class="block" type="submit" id="submit" value="submit">
       Register
     </button>
