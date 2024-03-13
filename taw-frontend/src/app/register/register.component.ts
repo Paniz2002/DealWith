@@ -33,13 +33,38 @@ export class RegisterComponent implements OnInit {
   ngOnInit() {
     this.isFormValid = false;
     this.registerForm = this.registerFormBuilder.group({
-      username: ['', Validators.required, Validators.minLength(1)],
-      password: ['', Validators.required, Validators.minLength(8)],
-      confirmPassword: ['', Validators.required, Validators.minLength(8)],
-      role: [''],
+      username: ['', [Validators.required, Validators.minLength(3)]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
+      role: ['', [Validators.required]],
     });
   }
 
+  getUsernameErrors() {
+    if (this.registerForm.controls['username'].hasError('required')) {
+      return 'Username required.';
+    }
+    if (this.registerForm.controls['username'].hasError('minlength')) {
+      return 'Minimum username length is 3 characters.';
+    }
+    return '';
+  }
+
+  getPasswordErrors() {
+    if (this.registerForm.controls['password'].hasError('required')) {
+      return 'Password required.';
+    }
+    if (this.registerForm.controls['confirmPassword'].hasError('required')) {
+      return 'Confirm password required';
+    }
+    if (
+      this.registerForm.controls['password'].hasError('minlength') ||
+      this.registerForm.controls['confirmPassword'].hasError('minlength')
+    ) {
+      return 'Password length is atleast 8 characters.';
+    }
+    return '';
+  }
   async onSubmit() {
     const url = enviroments.BACKEND_URL + '/api/auth/register';
     const res = await axios.post(url, this.registerForm.value);

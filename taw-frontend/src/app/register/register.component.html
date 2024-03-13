@@ -10,9 +10,10 @@
         placeholder="Please write an username."
         required
         formControlName="username"
+        minlength="3"
       />
-      @if (registerForm.controls["username"].errors.required) {
-        <mat-error>Username required</mat-error>
+      @if (this.registerForm.controls["username"].errors) {
+        <mat-error>{{ getUsernameErrors() }}</mat-error>
       }
     </mat-form-field>
     <mat-form-field>
@@ -24,8 +25,12 @@
         id="password"
         placeholder="Please insert a password."
         required
+        minlength="8"
         formControlName="password"
       />
+      @if (this.registerForm.controls["password"].errors) {
+        <mat-error>{{ getPasswordErrors() }}</mat-error>
+      }
     </mat-form-field>
     <mat-form-field>
       <mat-label>Confirm Password</mat-label>
@@ -36,8 +41,12 @@
         id="confirmPassword"
         placeholder="Please repeat the same password."
         required
+        minlength="8"
         formControlName="confirmPassword"
       />
+      @if (this.registerForm.controls["confirmPassword"].errors) {
+        <mat-error>{{ getPasswordErrors() }}</mat-error>
+      }
     </mat-form-field>
     <mat-form-field>
       <mat-label>Role</mat-label>
