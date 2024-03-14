@@ -9,7 +9,13 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
-const whitelist = ["localhost", "127.0.0.1", "::1", "::ffff:127.0.0.1"];
+const whitelist = [
+  "localhost",
+  "127.0.0.1",
+  "::1",
+  "::ffff:127.0.0.1",
+  "::ffff:172.18.0.1",
+];
 const corsOptions = {
   origin: ["http://localhost:4200", "http://localhost:3000"],
 };
@@ -19,9 +25,12 @@ const whitelistMiddleware = function (
   res: Response,
   next: NextFunction,
 ) {
+  // If something doesn't work, check here to see if your IP is in the whitelist
   const remoteAddr = req.socket.remoteAddress;
   if (whitelist.includes(remoteAddr!)) {
     next();
+  } else {
+    console.error("ERROR: you are not in the whitelist.");
   }
 };
 // Whitelist
