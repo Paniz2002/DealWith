@@ -63,8 +63,20 @@
         <option value="WAITER">Waiter</option>
       </select>
     </mat-form-field>
-    <button class="block" type="submit" id="submit" value="submit">
+    <a
+      mat-fab
+      extended
+      color="success"
+      type="submit"
+      id="submit"
+      value="submit"
+    >
+      <mat-icon>done</mat-icon>
       Register
+    </a>
+    <button mat-fab extended color="warn" (click)="resetForm()">
+      <mat-icon>warning</mat-icon>
+      Reset
     </button>
   </form>
 </div>
