@@ -35,7 +35,9 @@ export const registerController = async (req: Request, res: Response) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
   const alreadyRegisteredUser = await prisma.user.findFirst({
-    where: {},
+    where: {
+      username: req.body.username,
+    },
   });
   if (alreadyRegisteredUser !== null) {
     return res.status(400).send("ERROR: User already registered.");
