@@ -14,6 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -33,7 +34,10 @@ import { MatIconModule } from '@angular/material/icon';
 export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
   isFormValid!: Boolean;
-  constructor(private registerFormBuilder: FormBuilder) {}
+  constructor(
+    private registerFormBuilder: FormBuilder,
+    private responsiveHandler: BreakpointObserver,
+  ) {}
   ngOnInit() {
     this.isFormValid = false;
     this.registerForm = this.registerFormBuilder.group({
