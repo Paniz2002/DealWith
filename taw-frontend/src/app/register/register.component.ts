@@ -15,6 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -37,6 +38,7 @@ export class RegisterComponent implements OnInit {
   constructor(
     private registerFormBuilder: FormBuilder,
     private responsiveHandler: BreakpointObserver,
+    private router: Router,
   ) {}
   ngOnInit() {
     this.isFormValid = false;
@@ -77,6 +79,8 @@ export class RegisterComponent implements OnInit {
     const res = await axios.post(url, this.registerForm.value);
     if (res.status !== 200) {
       console.error('Error: ', res.statusText);
+    } else {
+      this.router.navigate(['/login']);
     }
   }
   resetForm() {
