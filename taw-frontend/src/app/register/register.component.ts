@@ -35,6 +35,7 @@ import { Router } from '@angular/router';
 export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
   isFormValid!: Boolean;
+
   constructor(
     private registerFormBuilder: FormBuilder,
     private responsiveHandler: BreakpointObserver,
@@ -48,6 +49,10 @@ export class RegisterComponent implements OnInit {
       confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
       role: ['', [Validators.required]],
     });
+
+    this.responsiveHandler
+      .observe([Breakpoints.Handset, Breakpoints.Tablet, Breakpoints.Web])
+      .subscribe((size) => {});
   }
 
   getUsernameErrors() {
@@ -74,14 +79,24 @@ export class RegisterComponent implements OnInit {
     }
     return '';
   }
+  getRoleErrors() {
+    if (this.registerForm.controls['role'].hasError('required')) {
+      return 'You must select a role.';
+    }
+    return '';
+  }
   async onSubmit() {
+    if (this.getPasswordErrors() || this.getUsernameErrors()) {
+      return false;
+    }
+
     const url = enviroments.BACKEND_URL + '/api/auth/register';
     const res = await axios.post(url, this.registerForm.value);
     if (res.status !== 200) {
       console.error('Error: ', res.statusText);
-    } else {
-      this.router.navigate(['/login']);
+      return false;
     }
+    return this.router.navigate(['/login']);
   }
   resetForm() {
     this.registerForm.reset({

@@ -50,18 +50,21 @@
     </mat-form-field>
     <mat-form-field>
       <mat-label>Role</mat-label>
-      <select
+      <mat-select
         matNativeControl
         name="role"
         id="role"
         required
         formControlName="role"
       >
-        <option value="CASHIER">Cashier</option>
-        <option value="BARTENDER">Bartender</option>
-        <option value="COOK">Cook</option>
-        <option value="WAITER">Waiter</option>
-      </select>
+        <mat-option value="CASHIER">Cashier</mat-option>
+        <mat-option value="BARTENDER">Bartender</mat-option>
+        <mat-option value="COOK">Cook</mat-option>
+        <mat-option value="WAITER">Waiter</mat-option>
+      </mat-select>
+      @if (this.registerForm.controls["role"].errors) {
+        <mat-error>{{ getRoleErrors() }}</mat-error>
+      }
     </mat-form-field>
     <button
       mat-fab
