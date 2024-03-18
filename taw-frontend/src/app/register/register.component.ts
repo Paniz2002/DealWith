@@ -8,7 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { enviroments } from '../../enviroments/enviroments';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -16,6 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Router } from '@angular/router';
+import { NotificationService } from '../popup/notification.service';
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -40,6 +41,7 @@ export class RegisterComponent implements OnInit {
     private registerFormBuilder: FormBuilder,
     private responsiveHandler: BreakpointObserver,
     private router: Router,
+    private snackBar: NotificationService,
   ) {}
   ngOnInit() {
     this.isFormValid = false;
@@ -50,9 +52,9 @@ export class RegisterComponent implements OnInit {
       role: ['', [Validators.required]],
     });
 
-    this.responsiveHandler
-      .observe([Breakpoints.Handset, Breakpoints.Tablet, Breakpoints.Web])
-      .subscribe((size) => {});
+    // this.responsiveHandler
+    //   .observe([Breakpoints.Handset, Breakpoints.Tablet, Breakpoints.Web])
+    //   .subscribe((size) => {});
   }
 
   getUsernameErrors() {
@@ -86,17 +88,23 @@ export class RegisterComponent implements OnInit {
     return '';
   }
   async onSubmit() {
-    if (this.getPasswordErrors() || this.getUsernameErrors()) {
-      return false;
+    if (
+      this.getRoleErrors() ||
+      this.getPasswordErrors() ||
+      this.getUsernameErrors()
+    ) {
+      return;
     }
 
     const url = enviroments.BACKEND_URL + '/api/auth/register';
-    const res = await axios.post(url, this.registerForm.value);
-    if (res.status !== 200) {
-      console.error('Error: ', res.statusText);
-      return false;
+    try {
+      await axios.post(url, this.registerForm.value);
+      this.router.navigate(['/login']);
+    } catch (e) {
+      if (axios.isAxiosError(e)) {
+        this.snackBar.notify(e.response?.data.message);
+      }
     }
-    return this.router.navigate(['/login']);
   }
   resetForm() {
     this.registerForm.reset({
