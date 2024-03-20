@@ -1,8 +1,13 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import prisma from "../../prisma/prisma_db_connection";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { Role } from "@prisma/client";
+import { BadRequestException } from "../exceptions/bad-request";
+import { ErrorCode } from "../exceptions/root";
+import { ServerUnavaiable } from "../exceptions/server-unavaiable";
+
+
 const formValidator = z.object({
   username: z.string().min(1),
   password: z.string().min(8),
@@ -26,13 +31,16 @@ const validateForm = (input: unknown) => {
     return false;
   }
 };
-export const registerController = async (req: Request, res: Response) => {
+export const registerController = async (req: Request, res: Response, next:NextFunction) => {
   const isValid = validateForm(req.body);
   if (!isValid) {
-    return res.status(400).send({ message: "Invalid username or password." });
+    // express usa il middleware per gestire gli errori
+    next(new BadRequestException("Invalid username or password", ErrorCode.INCORRECT_PASSWORD) );
+    // return res.status(400).send({ message: "Invalid username or password." });
   }
   if (req.body.password !== req.body.confirmPassword) {
-    return res.status(400).send({ message: "Passwords do not match." });
+    next( new BadRequestException("Passwords do not match.", ErrorCode.INCORRECT_PASSWORD) );
+    //return res.status(400).send({ message: "Passwords do not match." });
   }
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -42,7 +50,8 @@ export const registerController = async (req: Request, res: Response) => {
     },
   });
   if (alreadyRegisteredUser !== null) {
-    return res.status(400).send({ message: "User already registered." });
+    next( new BadRequestException("User already exists.", ErrorCode.USER_ALREADY_EXISTS) );
+    //return res.status(400).send({ message: "User already registered." });
   }
   try {
     await prisma.user.create({
@@ -53,9 +62,8 @@ export const registerController = async (req: Request, res: Response) => {
       },
     });
     return res.sendStatus(200);
-  } catch (e) {
-    return res
-      .status(503)
-      .send({ message: "Can't create new user. Please try later." });
+  } catch (err:any) {
+    next( new ServerUnavaiable(err?.cause?.issues, ErrorCode.SERVER_UNAVAIABLE) );
+    //return res.status(503).send({ message: "Can't create new user. Please try later." });
   }
 };
