@@ -19,7 +19,7 @@ export const loginController = async (req:Request , res:Response, next:NextFunct
         // return res.status(400).send({ message: "User does not exists" });
     }
     if(!compareSync(password,user.password)){
-        next( new BadRequestException("Invalid Password", ErrorCode.INCORRECT_PASSWORD) );
+        return next( new BadRequestException("Invalid Password", ErrorCode.INCORRECT_PASSWORD) );
         // return res.status(400).send({ message: "Invalid password" });
     }
 
