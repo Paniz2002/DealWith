@@ -1,85 +1,103 @@
-<div class="container mx-auto h-screen flex items-center justify-center">
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    <mat-form-field>
-      <mat-label>Username</mat-label>
-      <input
-        matInput
-        id="username"
-        name="username"
-        type="text"
-        placeholder="Please write an username."
-        required
-        formControlName="username"
-        minlength="3"
-      />
-      @if (this.registerForm.controls["username"].errors) {
-        <mat-error>{{ getUsernameErrors() }}</mat-error>
-      }
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Password</mat-label>
-      <input
-        matInput
-        type="password"
-        name="password"
-        id="password"
-        placeholder="Please insert a password."
-        required
-        minlength="8"
-        formControlName="password"
-      />
-      @if (this.registerForm.controls["password"].errors) {
-        <mat-error>{{ getPasswordErrors() }}</mat-error>
-      }
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Confirm Password</mat-label>
-      <input
-        matInput
-        type="password"
-        name="confirmPassword"
-        id="confirmPassword"
-        placeholder="Please repeat the same password."
-        required
-        minlength="8"
-        formControlName="confirmPassword"
-      />
-      @if (this.registerForm.controls["confirmPassword"].errors) {
-        <mat-error>{{ getPasswordErrors() }}</mat-error>
-      }
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Role</mat-label>
-      <mat-select
-        matNativeControl
-        name="role"
-        id="role"
-        required
-        formControlName="role"
-      >
-        <mat-option value="CASHIER">Cashier</mat-option>
-        <mat-option value="BARTENDER">Bartender</mat-option>
-        <mat-option value="COOK">Cook</mat-option>
-        <mat-option value="WAITER">Waiter</mat-option>
-      </mat-select>
-      @if (this.registerForm.controls["role"].errors) {
-        <mat-error>{{ getRoleErrors() }}</mat-error>
-      }
-    </mat-form-field>
-    <button
-      mat-fab
-      extended
-      color="success"
-      type="submit"
-      id="submit"
-      value="submit"
-    >
-      <mat-icon>done</mat-icon>
-      Register
-    </button>
-    <button mat-fab extended type="button" color="warn" (click)="resetForm()">
-      <mat-icon>warning</mat-icon>
-      Reset
-    </button>
-  </form>
+<div class="container h-100">
+  <div class="row h-100 justify-content-center align-items-center">
+    <form class="col-2" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <mat-form-field>
+          <mat-label>Username</mat-label>
+          <input
+            matInput
+            id="username"
+            name="username"
+            type="text"
+            placeholder="Please write an username."
+            required
+            formControlName="username"
+            minlength="3"
+          />
+          @if (this.registerForm.controls["username"].errors) {
+            <mat-error>{{ getUsernameErrors() }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+      <div class="form-group">
+        <mat-form-field>
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            type="password"
+            name="password"
+            id="password"
+            placeholder="Please insert a password."
+            required
+            minlength="8"
+            formControlName="password"
+          />
+          @if (this.registerForm.controls["password"].errors) {
+            <mat-error>{{ getPasswordErrors() }}</mat-error>
+          }
+        </mat-form-field>
+        <div class="form-group">
+          <mat-form-field>
+            <mat-label>Confirm Password</mat-label>
+            <input
+              matInput
+              type="password"
+              name="confirmPassword"
+              id="confirmPassword"
+              placeholder="Please repeat the same password."
+              required
+              minlength="8"
+              formControlName="confirmPassword"
+            />
+            @if (this.registerForm.controls["confirmPassword"].errors) {
+              <mat-error>{{ getPasswordErrors() }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="form-group">
+          <mat-form-field>
+            <mat-label>Role</mat-label>
+            <mat-select
+              matNativeControl
+              name="role"
+              id="role"
+              required
+              formControlName="role"
+            >
+              <mat-option value="CASHIER">Cashier</mat-option>
+              <mat-option value="BARTENDER">Bartender</mat-option>
+              <mat-option value="COOK">Cook</mat-option>
+              <mat-option value="WAITER">Waiter</mat-option>
+            </mat-select>
+            @if (this.registerForm.controls["role"].errors) {
+              <mat-error>{{ getRoleErrors() }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="form-group">
+          <button
+            mat-fab
+            extended
+            color="success"
+            type="submit"
+            id="submit"
+            value="submit"
+          >
+            <mat-icon>done</mat-icon>
+            Register
+          </button>
+          <button
+            mat-fab
+            extended
+            type="button"
+            color="warn"
+            (click)="resetForm()"
+          >
+            <mat-icon>warning</mat-icon>
+            Reset
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
