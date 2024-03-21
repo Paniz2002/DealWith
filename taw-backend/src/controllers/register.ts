@@ -5,8 +5,6 @@ import bcrypt from "bcryptjs";
 import { Role } from "@prisma/client";
 import { BadRequestException } from "../exceptions/bad-request";
 import { ErrorCode } from "../exceptions/root";
-import { InternalException } from "../exceptions/internal-exception";
-
 
 const formValidator = z.object({
   username: z.string().min(1),
