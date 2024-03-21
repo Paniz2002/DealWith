@@ -6,9 +6,9 @@ import * as jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../schema/secret';
 import { BadRequestException } from '../exceptions/bad-request';
 import { ErrorCode } from '../exceptions/root';
-import { NotFoundException } from 'src/exceptions/not-found';
+import { NotFoundException } from '../exceptions/not-found';
 
-export const loginController = async (req:Request , res:Response, next:NextFunction) => {
+export const loginController = async (req:Request , res:Response) => {
     // await SelectAllFromDB();
 
     const {username,password} = req.body;
