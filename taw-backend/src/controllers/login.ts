@@ -6,6 +6,7 @@ import * as jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../schema/secret';
 import { BadRequestException } from '../exceptions/bad-request';
 import { ErrorCode } from '../exceptions/root';
+import { NotFoundException } from 'src/exceptions/not-found';
 
 export const loginController = async (req:Request , res:Response, next:NextFunction) => {
     // await SelectAllFromDB();
@@ -15,11 +16,11 @@ export const loginController = async (req:Request , res:Response, next:NextFunct
     
     let user = await prisma.user.findFirst({where:{username}});
     if (!user){
-        return next( new BadRequestException("User does not exists", ErrorCode.USER_NOT_EXISTS) );        
+        throw new NotFoundException("User does not exists", ErrorCode.USER_NOT_FOUND);        
         // return res.status(400).send({ message: "User does not exists" });
     }
     if(!compareSync(password,user.password)){
-        return next( new BadRequestException("Invalid Password", ErrorCode.INCORRECT_PASSWORD) );
+        throw new BadRequestException("Invalid Password", ErrorCode.INCORRECT_PASSWORD);
         // return res.status(400).send({ message: "Invalid password" });
     }
 
