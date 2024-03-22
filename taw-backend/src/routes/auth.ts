@@ -1,9 +1,14 @@
 import { Router } from "express";
-import { login as loginController } from "../controllers/auth";
+import { loginController } from "../controllers/login";
 import { registerController } from "../controllers/register";
+import { errorHandler } from "../error-handler";
+import authMiddleware from "../middlewares/auth";
+import { loggedUserController } from "../controllers/logged-user";
 const authRoutes: Router = Router();
 
 
-authRoutes.get("/login", loginController);
-authRoutes.post("/register", registerController);
+authRoutes.post("/login", errorHandler(loginController) );
+authRoutes.post("/register", errorHandler(registerController) );
+authRoutes.get('/me', [authMiddleware], errorHandler(loggedUserController))
+
 export default authRoutes;
