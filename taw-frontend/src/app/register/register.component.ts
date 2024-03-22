@@ -51,12 +51,7 @@ export class RegisterComponent implements OnInit {
       confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
       role: ['', [Validators.required]],
     });
-
-    // this.responsiveHandler
-    //   .observe([Breakpoints.Handset, Breakpoints.Tablet, Breakpoints.Web])
-    //   .subscribe((size) => {});
   }
-
   getUsernameErrors() {
     if (this.registerForm.controls['username'].hasError('required')) {
       return 'Username required.';
@@ -78,15 +73,14 @@ export class RegisterComponent implements OnInit {
       this.registerForm.controls['confirmPassword'].hasError('minlength')
     ) {
       return 'Password length is atleast 8 characters.';
-    }
-    return '';
-  }
+
   getRoleErrors() {
     if (this.registerForm.controls['role'].hasError('required')) {
       return 'You must select a role.';
     }
     return '';
   }
+      
   async onSubmit() {
     if (
       this.getRoleErrors() ||
