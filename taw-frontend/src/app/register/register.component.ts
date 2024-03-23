@@ -8,13 +8,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { enviroments } from '../../enviroments/enviroments';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Router } from '@angular/router';
 import { NotificationService } from '../popup/notification.service';
 @Component({
@@ -39,7 +38,6 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private registerFormBuilder: FormBuilder,
-    private responsiveHandler: BreakpointObserver,
     private router: Router,
     private snackBar: NotificationService,
   ) {}
@@ -73,6 +71,9 @@ export class RegisterComponent implements OnInit {
       this.registerForm.controls['confirmPassword'].hasError('minlength')
     ) {
       return 'Password length is atleast 8 characters.';
+    }
+    return '';
+  }
 
   getRoleErrors() {
     if (this.registerForm.controls['role'].hasError('required')) {
@@ -80,7 +81,7 @@ export class RegisterComponent implements OnInit {
     }
     return '';
   }
-      
+
   async onSubmit() {
     if (
       this.getRoleErrors() ||
