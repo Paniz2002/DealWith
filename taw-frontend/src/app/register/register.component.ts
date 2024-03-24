@@ -16,6 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { NotificationService } from '../popup/notification.service';
+
 @Component({
   selector: 'app-register',
   standalone: true,
