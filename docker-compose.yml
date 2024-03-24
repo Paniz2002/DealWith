@@ -1,17 +1,33 @@
 services:
   frontend:
     container_name: taw-frontend
+    hostname: taw-frontend
     build: ./taw-frontend
     volumes:
       - ./taw-frontend/src:/app/src
     ports:
       - "4200:4200"
+    networks:
+      taw-network:
+         ipv4_address: 172.77.0.7
   backend:
     container_name: taw-backend
+    hostname: taw-backend
     build: ./taw-backend
     volumes:
       - ./taw-backend/src:/app/src
-    # environment:
-    #   - MONGODB_URL=${DATABASE_URL}
+    env_file:
+      - .env
     ports:
       - "3000:3000"
+    networks:
+      taw-network:
+        ipv4_address: 172.77.0.17
+
+networks:
+  taw-network:
+    ipam:
+      config:
+        - subnet: 172.77.0.0/24
+          gateway: 172.77.0.1
+
