@@ -12,3 +12,6 @@ form {
 .h-100 {
   min-height: 100vh;
 }
+.margin_btn{
+  margin-right: 10pt;
+}

@@ -39,11 +39,11 @@ export const registerController = async (req: Request, res: Response, next:NextF
     if (!isValid) {
         // express usa il middleware per gestire gli errori
         next(new BadRequestException("Invalid username or password", ErrorCode.INCORRECT_PASSWORD) );
-        // return res.status(400).send({ message: "Invalid username or password." });
+        return; //fundamental to block execution
     }
     if (req.body.password !== req.body.confirmPassword) {
         next( new BadRequestException("Passwords do not match.", ErrorCode.INCORRECT_PASSWORD) );
-        //return res.status(400).send({ message: "Passwords do not match." });
+        return; //fundamental to block execution
     }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -54,7 +54,7 @@ export const registerController = async (req: Request, res: Response, next:NextF
     });
     if (alreadyRegisteredUser !== null) {
         next( new BadRequestException("User already exists.", ErrorCode.USER_ALREADY_EXISTS) );
-        //return res.status(400).send({ message: "User already registered." });
+        return; //fundamental to block execution
     }
 
     await prisma.user.create({
