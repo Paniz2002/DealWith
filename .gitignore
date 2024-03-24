@@ -1,4 +1,7 @@
 .idea/
 out/
+.env
+Session.vim
 *.env*
 taw-frontend/src/enviroments/
+
