@@ -27,9 +27,10 @@ export const loginController = async (req: Request, res: Response) => {
   const token = jwt.sign(
     {
       id: user.id,
+      role: user.role,
     },
     JWT_SECRET,
   );
 
-  res.json({ user, token });
+  return res.json({ token });
 };

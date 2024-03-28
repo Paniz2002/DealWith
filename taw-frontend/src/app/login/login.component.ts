@@ -17,6 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { NotificationService } from '../services/popup/notification.service';
 import { RegisterComponent } from '../register/register.component';
+import { LocalStorageService } from '../services/localStorage/localStorage.service';
 
 @Component({
   selector: 'app-register',
@@ -42,6 +43,7 @@ export class LoginComponent implements OnInit {
     private loginFormBuilder: FormBuilder,
     private router: Router,
     private snackBar: NotificationService,
+    private localStorage: LocalStorageService,
   ) {}
 
   ngOnInit() {
@@ -69,13 +71,15 @@ export class LoginComponent implements OnInit {
     }
     const url = enviroments.BACKEND_URL + '/api/auth/login';
     try {
-      await axios.post(url, this.form.value);
-      this.router.navigate(['/']);
+      const res = await axios.post(url, this.form.value);
+      this.localStorage.set('jwt', res.data.token);
+      return this.router.navigate(['/']);
     } catch (e) {
       if (axios.isAxiosError(e)) {
         this.snackBar.notify(e.response?.data.message);
       }
     }
+    return;
   }
 
   resetForm() {

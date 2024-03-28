@@ -20,7 +20,9 @@ const authMiddleware = async (req: any, res: Response, next: NextFunction) => {
     //  3.   if token is present, decode the token and extract the payload
     const payload = jwt.verify(token, JWT_SECRET) as any;
     //          a. to get the user from the payload
-    const user = await prisma.user.findFirst({ where: { id: payload.id } });
+    const user = await prisma.user.findFirst({
+      where: { id: payload.id, role: payload.role },
+    });
     if (!user) {
       throw new UnautorizedException(
         "Unauthorized: Invalid JWT",
@@ -41,4 +43,3 @@ const authMiddleware = async (req: any, res: Response, next: NextFunction) => {
 };
 
 export default authMiddleware;
-
