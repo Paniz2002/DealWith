@@ -8,6 +8,6 @@ const authRoutes: Router = Router();
 
 authRoutes.post("/login", errorHandler(loginController));
 authRoutes.post("/register", errorHandler(registerController));
-authRoutes.get("/me", authMiddleware, errorHandler(loggedUserController));
+authRoutes.get("/me", [authMiddleware], errorHandler(loggedUserController));
 
 export default authRoutes;
