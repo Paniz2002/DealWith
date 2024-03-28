@@ -17,7 +17,7 @@ services:
     volumes:
       - ./taw-backend/src:/app/src
     env_file:
-      - .env
+      - ./taw-backend/.env
     ports:
       - "3000:3000"
     networks:

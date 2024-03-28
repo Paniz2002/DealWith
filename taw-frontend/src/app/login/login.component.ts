@@ -1,5 +1,5 @@
-import {CommonModule} from '@angular/common';
-import {Component, OnInit} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,16 +7,16 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import {enviroments} from '../../enviroments/enviroments';
+import { enviroments } from '../../enviroments/enviroments';
 import axios from 'axios';
-import {MatSelectModule} from '@angular/material/select';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatButtonModule} from '@angular/material/button';
-import {MatIconModule} from '@angular/material/icon';
-import {Router} from '@angular/router';
-import {NotificationService} from '../popup/notification.service';
-import {RegisterComponent} from "../register/register.component";
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { Router } from '@angular/router';
+import { NotificationService } from '../popup/notification.service';
+import { RegisterComponent } from '../register/register.component';
 
 @Component({
   selector: 'app-register',
@@ -32,7 +32,7 @@ import {RegisterComponent} from "../register/register.component";
     MatIconModule,
   ],
   templateUrl: './login.component.html',
-   styleUrl: '../register/register.component.css'
+  styleUrl: '../register/register.component.css',
 })
 export class LoginComponent implements OnInit {
   form!: FormGroup;
@@ -42,8 +42,7 @@ export class LoginComponent implements OnInit {
     private loginFormBuilder: FormBuilder,
     private router: Router,
     private snackBar: NotificationService,
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.isFormValid = false;
@@ -61,7 +60,6 @@ export class LoginComponent implements OnInit {
     return RegisterComponent.getPasswordErrors;
   }
 
-
   async onSubmit() {
     if (
       RegisterComponent.getPasswordErrors(this.form) ||
@@ -72,7 +70,7 @@ export class LoginComponent implements OnInit {
     const url = enviroments.BACKEND_URL + '/api/auth/login';
     try {
       await axios.post(url, this.form.value);
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/']);
     } catch (e) {
       if (axios.isAxiosError(e)) {
         this.snackBar.notify(e.response?.data.message);
@@ -86,5 +84,4 @@ export class LoginComponent implements OnInit {
       password: '',
     });
   }
-
 }
