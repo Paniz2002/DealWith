@@ -15,7 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
-import { NotificationService } from '../popup/notification.service';
+import { NotificationService } from '../services/popup/notification.service';
 
 @Component({
   selector: 'app-register',
@@ -65,16 +65,14 @@ export class RegisterComponent implements OnInit {
     return '';
   }
 
-  get getPasswordErrors(){
+  get getPasswordErrors() {
     return RegisterComponent.getPasswordErrors;
   }
   static getPasswordErrors(form: FormGroup<any>) {
     if (form.controls['password'].hasError('required')) {
       return 'Password required.';
     }
-    if (
-      form.controls['password'].hasError('minlength')
-    ) {
+    if (form.controls['password'].hasError('minlength')) {
       return 'Password length is atleast 8 characters.';
     }
     return '';
@@ -83,12 +81,10 @@ export class RegisterComponent implements OnInit {
     if (this.form.controls['confirmPassword'].hasError('required')) {
       return 'Confirm password required';
     }
-    if (
-      this.form.controls['confirmPassword'].hasError('minlength')
-    ) {
+    if (this.form.controls['confirmPassword'].hasError('minlength')) {
       return 'Confirm password length is atleast 8 characters.';
     }
-    return ''
+    return '';
   }
 
   getRoleErrors() {

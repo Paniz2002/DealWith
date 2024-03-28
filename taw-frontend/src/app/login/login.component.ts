@@ -15,7 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
-import { NotificationService } from '../popup/notification.service';
+import { NotificationService } from '../services/popup/notification.service';
 import { RegisterComponent } from '../register/register.component';
 
 @Component({
