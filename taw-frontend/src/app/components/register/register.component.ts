@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { enviroments } from '../../enviroments/enviroments';
+import { enviroments } from '../../../enviroments/enviroments';
 import axios from 'axios';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
@@ -15,7 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
-import { NotificationService } from '../services/popup/notification.service';
+import { NotificationService } from '../../services/popup/notification.service';
 
 @Component({
   selector: 'app-register',
