@@ -74,6 +74,7 @@ export class LoginComponent implements OnInit {
       const res = await axios.post(url, this.form.value);
       if (res.status == 200) {
         this.localStorage.set('jwt', res.data.token);
+        axios.defaults.headers.common['Authorization'] = res.data.token;
         return this.router.navigate(['/']);
       }
     } catch (e) {
