@@ -6,8 +6,6 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import { errorMiddleware } from "./middlewares/errors";
 import { whitelistMiddleware } from "./middlewares/whitelist";
-import authMiddleware from "./middlewares/auth";
-import homepageRouter from "./routes/homepage";
 dotenv.config();
 
 const app: Express = express();
@@ -24,9 +22,7 @@ app.use(bodyParser.json());
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use("/api", whitelistMiddleware, apiRouter);
-
-app.use(errorMiddleware);
+app.use("/api", [whitelistMiddleware, errorMiddleware], apiRouter);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
