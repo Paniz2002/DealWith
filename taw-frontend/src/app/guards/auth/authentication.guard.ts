@@ -7,7 +7,6 @@ import {
 import { inject } from '@angular/core';
 import axios from 'axios';
 import { enviroments } from '../../../enviroments/enviroments';
-import { LocalStorageService } from '../../services/localStorage/localStorage.service';
 const isAuthenticated = async () => {
   try {
     const res = await axios.get(enviroments.BACKEND_URL + '/api/auth/me');
@@ -15,7 +14,6 @@ const isAuthenticated = async () => {
   } catch (e) {}
   return false;
 };
-
 export const authenticationGuard: CanActivateFn = async (
   route: ActivatedRouteSnapshot,
   state: RouterStateSnapshot,
@@ -26,5 +24,6 @@ export const authenticationGuard: CanActivateFn = async (
   // a new one.
   const router = inject(Router);
   const isAuth = await isAuthenticated();
-  return isAuth ? true : router.navigateByUrl('/login');
+  if (!isAuth) return router.createUrlTree(['/login']);
+  return true;
 };

@@ -4,12 +4,13 @@ import { RegisterComponent } from './components/register/register.component';
 import { HomepageComponent } from './components/homepage/homepage.component';
 import { authenticationGuard } from './guards/auth/authentication.guard';
 import { logoutGuard } from './guards/logout/logout.guard';
+import { roleGuard } from './guards/role/role.guard';
 export const routes: Routes = [
   {
     path: '',
     component: HomepageComponent,
     pathMatch: 'full',
-    canActivate: [authenticationGuard],
+    canActivate: [authenticationGuard, roleGuard],
   },
   {
     path: 'register',

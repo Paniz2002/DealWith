@@ -7,5 +7,5 @@ export const logoutGuard: CanActivateFn = (route, state) => {
   const router: Router = inject(Router);
   localStorage.set('jwt', '');
   delete axios.defaults.headers.common['Authorization'];
-  return router.navigateByUrl('/login');
+  return router.createUrlTree(['/login']);
 };
