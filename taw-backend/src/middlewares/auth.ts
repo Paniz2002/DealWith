@@ -19,8 +19,6 @@ const authMiddleware = async (req: any, res: Response, next: NextFunction) => {
   try {
     //  3.   if token is present, decode the token and extract the payload
     const payload = jwt.verify(token, JWT_SECRET) as any;
-    console.log(payload);
-    //          a. to get the user from the payload
     const user = await prisma.user.findFirst({
       where: { id: payload.id, role: payload.role },
     });
