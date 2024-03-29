@@ -5,7 +5,23 @@ import {
   Router,
 } from '@angular/router';
 import { inject } from '@angular/core';
-export const authenticationGuard: CanActivateFn = (
+import axios from 'axios';
+import { enviroments } from '../../../enviroments/enviroments';
+import { LocalStorageService } from '../../services/localStorage/localStorage.service';
+const isAuthenticated = async () => {
+  const localStorage = inject(LocalStorageService);
+  try {
+    const res = await axios.get(enviroments.BACKEND_URL + '/api/auth/me', {
+      headers: {
+        Authorization: localStorage.get('jwt'),
+      },
+    });
+    if (res.status == 200) return true;
+  } catch (e) {}
+  return false;
+};
+
+export const authenticationGuard: CanActivateFn = async (
   route: ActivatedRouteSnapshot,
   state: RouterStateSnapshot,
 ) => {
@@ -13,8 +29,7 @@ export const authenticationGuard: CanActivateFn = (
   // constructor(param: ...) when you are not using a class.
   // This means that it injects the object if it exists, else it creates
   // a new one.
-  const routes = inject(Router);
-  let cond = false;
-  if (cond) return true;
-  return routes.navigateByUrl('/login');
+  const router = inject(Router);
+  const isAuth = await isAuthenticated();
+  return isAuth ? true : router.navigateByUrl('/login');
 };

@@ -30,7 +30,7 @@ const authMiddleware = async (req: any, res: Response, next: NextFunction) => {
       );
     }
     //  b. to attach the user to the current request object
-    req.user = user;
+    // req.user = user;
     next();
   } catch (error) {
     next(
