@@ -1,7 +1,9 @@
-import { HttpException } from './root';
+import { Request, Response } from "express";
+const InternalException = (req: Request, res: Response, message: string) => {
+  return res.status(401).json({
+    message: message,
+  });
+};
 
-export class InternalException extends HttpException {
-    constructor(message: string, errors:any, errorCode: any) {
-        super(message,errorCode, 500, errors);
-    }
-}
+export default InternalException;
+

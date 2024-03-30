@@ -1,19 +1,22 @@
 import { Request, Response, NextFunction } from "express";
-import { UnautorizedException } from "../exceptions/unauthorized";
-import { ErrorCode } from "../exceptions/root";
+import UnautorizedException from "../exceptions/unauthorized";
 import * as jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../secret";
 import prisma from "../../prisma/prisma_db_connection";
+import BadRequestException from "../exceptions/bad-request";
 
-const authMiddleware = async (req: any, res: Response, next: NextFunction) => {
+const authMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   //  1.   extract the token from header
   const token = req.headers.authorization;
-  //  2.   if token is not present, throw an error of unauthorized
+  //  2.   if token is not present, throw a bad request exception.
   if (!token) {
-    throw new UnautorizedException(
-      "Unauthorized: Missing JWT",
-      ErrorCode.UNAUTHORIZED,
-    );
+    // Next prints to console ... because reasons.
+    // So i modified it accordingly
+    return BadRequestException(req, res, "Bad Request: Missing JWT");
   }
 
   try {
@@ -23,19 +26,11 @@ const authMiddleware = async (req: any, res: Response, next: NextFunction) => {
       where: { id: payload.id, role: payload.role },
     });
     if (!user) {
-      throw new UnautorizedException(
-        "Unauthorized: Invalid JWT",
-        ErrorCode.UNAUTHORIZED,
-      );
+      return UnautorizedException(req, res, "Unauthorized: Invalid JWT");
     }
     next();
   } catch (error) {
-    next(
-      new UnautorizedException(
-        "Unauthorized: Unknown error.",
-        ErrorCode.UNAUTHORIZED,
-      ),
-    );
+    return UnautorizedException(req, res, "Unauthorized: Unknown error.");
   }
 };
 

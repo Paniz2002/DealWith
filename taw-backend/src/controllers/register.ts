@@ -3,8 +3,7 @@ import prisma from "../../prisma/prisma_db_connection";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { Role } from "@prisma/client";
-import { BadRequestException } from "../exceptions/bad-request";
-import { ErrorCode } from "../exceptions/root";
+import BadRequestException from "../exceptions/bad-request";
 
 const formValidator = z.object({
   username: z.string().min(1),
@@ -34,35 +33,37 @@ const validateForm = (input: unknown) => {
 Non abbiamo bisogno di gestire le eccezioni in questo controller, perché il errorHandler si occuperà di fare try-catch.
 */
 
-export const registerController = async (req: Request, res: Response, next:NextFunction) => {
-    const isValid = validateForm(req.body);
-    if (!isValid) {
-        // express usa il middleware per gestire gli errori
-        next(new BadRequestException("Invalid username or password", ErrorCode.INCORRECT_PASSWORD) );
-        return; //fundamental to block execution
-    }
-    if (req.body.password !== req.body.confirmPassword) {
-        next( new BadRequestException("Passwords do not match.", ErrorCode.INCORRECT_PASSWORD) );
-        return; //fundamental to block execution
-    }
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
-    const alreadyRegisteredUser = await prisma.user.findFirst({
-        where: {
-            username: req.body.username,
-        },
-    });
-    if (alreadyRegisteredUser !== null) {
-        next( new BadRequestException("User already exists.", ErrorCode.USER_ALREADY_EXISTS) );
-        return; //fundamental to block execution
-    }
+export const registerController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const isValid = validateForm(req.body);
+  if (!isValid) {
+    // express usa il middleware per gestire gli errori
+    return BadRequestException(req, res, "Invalid username or password");
+  }
+  if (req.body.password !== req.body.confirmPassword) {
+    return BadRequestException(req, res, "Passwords do not match.");
+  }
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  const alreadyRegisteredUser = await prisma.user.findFirst({
+    where: {
+      username: req.body.username,
+    },
+  });
+  if (alreadyRegisteredUser) {
+    return BadRequestException(req, res, "User already exists.");
+  }
 
-    await prisma.user.create({
-        data: {
-            username: req.body.username,
-            password: hashedPassword,
-            role: req.body.role,
-        },
-    });
-    return res.sendStatus(200);
+  await prisma.user.create({
+    data: {
+      username: req.body.username,
+      password: hashedPassword,
+      role: req.body.role,
+    },
+  });
+  return res.sendStatus(200);
 };
+
