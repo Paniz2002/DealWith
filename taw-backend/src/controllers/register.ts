@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import prisma from "../../prisma/prisma_db_connection";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
@@ -29,18 +29,9 @@ const validateForm = (input: unknown) => {
   }
 };
 
-/*
-Non abbiamo bisogno di gestire le eccezioni in questo controller, perché il errorHandler si occuperà di fare try-catch.
-*/
-
-export const registerController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const registerController = async (req: Request, res: Response) => {
   const isValid = validateForm(req.body);
   if (!isValid) {
-    // express usa il middleware per gestire gli errori
     return BadRequestException(req, res, "Invalid username or password");
   }
   if (req.body.password !== req.body.confirmPassword) {
