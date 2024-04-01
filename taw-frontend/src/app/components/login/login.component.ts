@@ -73,16 +73,15 @@ export class LoginComponent implements OnInit {
     try {
       const res = await axios.post(url, this.form.value);
       if (res.status == 200) {
-        this.localStorage.set('jwt', res.data.token);
-        axios.defaults.headers.common['Authorization'] = res.data.token;
-        return this.router.navigate(['/']);
+        this.localStorage.set('jwt', res.data.token as string);
+        return this.router.navigate(['/homepageRedirect']);
       }
     } catch (e) {
       if (axios.isAxiosError(e)) {
         this.snackBar.notify(e.response?.data.message);
       }
     }
-    return;
+    return true;
   }
 
   resetForm() {
