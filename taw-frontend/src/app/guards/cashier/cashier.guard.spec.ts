@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { CanActivateFn } from '@angular/router';
 
-import { LogoutGuard } from './logout.guard';
+import { cashierGuard } from './cashier.guard';
 
-describe('logoutGuard', () => {
-  const executeGuard: CanActivateFn = (...guardParameters) =>
-    TestBed.runInInjectionContext(() => LogoutGuard(...guardParameters));
+describe('cashierGuard', () => {
+  const executeGuard: CanActivateFn = (...guardParameters) => 
+      TestBed.runInInjectionContext(() => cashierGuard(...guardParameters));
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
