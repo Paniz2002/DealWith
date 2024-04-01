@@ -5,8 +5,6 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './cashier-homepage.component.html',
-  styleUrl: './cashier-homepage.component.css'
+  styleUrl: './cashier-homepage.component.css',
 })
-export class CashierHomepageComponent {
-
-}
+export class CashierHomepageComponent {}

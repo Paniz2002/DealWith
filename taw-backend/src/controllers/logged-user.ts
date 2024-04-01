@@ -11,7 +11,6 @@ export const loggedUserController = async (req: any, res: Response) => {
       role: role,
     },
     select: {
-      id: true,
       role: true,
       username: true,
     },
