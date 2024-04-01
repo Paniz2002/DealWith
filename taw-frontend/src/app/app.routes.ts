@@ -1,17 +1,12 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
-import { HomepageComponent } from './components/homepage/homepage.component';
-import { authenticationGuard } from './guards/auth/authentication.guard';
-import { logoutGuard } from './guards/logout/logout.guard';
-import { roleGuard } from './guards/role/role.guard';
+import { AuthenticationGuard } from './guards/auth/authentication.guard';
+import { LogoutGuard } from './guards/logout/logout.guard';
+import { RoleGuard } from './guards/role/role.guard';
+import { CashierHomepageComponent } from './components/cashier-homepage/cashier-homepage.component';
+import { CashierGuard } from './guards/cashier/cashier.guard';
 export const routes: Routes = [
-  {
-    path: '',
-    component: HomepageComponent,
-    pathMatch: 'full',
-    canActivate: [authenticationGuard, roleGuard],
-  },
   {
     path: 'register',
     component: RegisterComponent,
@@ -24,7 +19,20 @@ export const routes: Routes = [
   },
   {
     path: 'logout',
-    canActivate: [logoutGuard],
+    canActivate: [LogoutGuard],
+    pathMatch: 'full',
+    children: [],
+  },
+  {
+    path: 'cashier',
+    canActivate: [AuthenticationGuard, CashierGuard],
+    pathMatch: 'full',
+    component: CashierHomepageComponent,
+    children: [],
+  },
+  {
+    path: 'homepageRedirect',
+    canActivate: [RoleGuard],
     pathMatch: 'full',
     children: [],
   },
