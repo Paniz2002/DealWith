@@ -1,39 +1,26 @@
 import { TableStatus } from "@prisma/client";
 import { Request, Response } from "express";
 import prisma from "../../../prisma/prisma_db_connection";
-import BadRequestException from "src/exceptions/bad-request";
-import InternalException from "src/exceptions/internal-exception";
+import BadRequestException from "../../exceptions/bad-request";
+import InternalException from "../../exceptions/internal-exception";
 export const tableController = async (req: Request, res: Response) => {
   try {
     let result;
-    const { status } = req.query;
-    switch (status) {
-      case "free":
-        result = await prisma.table.findMany({
-          where: {
-            status: TableStatus.FREE,
-          },
-          select: {
-            id: true,
-            maxCustomers: true,
-          },
-        });
-        return res.status(200).json(result);
-      case "occupied":
-        result = await prisma.table.findMany({
-          where: {
-            status: TableStatus.OCCUPIED,
-          },
-          select: {
-            id: true,
-            maxCustomers: true,
-          },
-        });
-        return res.status(200).json(result);
-      default:
-        return BadRequestException(req, res, "Invalid parameter.");
-    }
+    let { status } = req.query;
+    status = status!.toString().toLowerCase();
+    let filters = {
+      where: {},
+      select: {
+        id: true,
+        maxCustomers: true,
+      },
+    };
+    if (!["free", "occupied"].includes(status))
+      return BadRequestException(req, res, "Invalid parameter.");
+    filters.where = status === "free" ? TableStatus.FREE : TableStatus.OCCUPIED;
+    result = await prisma.table.findMany(filters);
+    return result;
   } catch (e) {
-    return InternalException(req, res, "Unknown error.");
+    return InternalException(req, res, "Unknown error, try again later.");
   }
 };
