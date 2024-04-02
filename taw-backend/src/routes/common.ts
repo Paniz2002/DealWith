@@ -2,6 +2,6 @@ import { Router } from "express";
 import { tableController } from "../controllers/commmon/table";
 const commonRoutes: Router = Router();
 
-commonRoutes.get("/table", tableController);
+commonRoutes.get("/tables", tableController);
 
 export default commonRoutes;

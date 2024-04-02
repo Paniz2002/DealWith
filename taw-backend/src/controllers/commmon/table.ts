@@ -17,10 +17,14 @@ export const tableController = async (req: Request, res: Response) => {
     };
     if (!["free", "occupied"].includes(status))
       return BadRequestException(req, res, "Invalid parameter.");
-    filters.where = status === "free" ? TableStatus.FREE : TableStatus.OCCUPIED;
+    filters.where =
+      status === "free"
+        ? { status: TableStatus.FREE }
+        : { status: TableStatus.OCCUPIED };
     result = await prisma.table.findMany(filters);
     return result;
   } catch (e) {
+    console.error(e);
     return InternalException(req, res, "Unknown error, try again later.");
   }
 };
