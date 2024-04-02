@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { adminController } from "../controllers/admin";
+import { tableController } from "../controllers/commmon/table";
 const cashierRoutes: Router = Router();
 
 cashierRoutes.get("/admin", adminController);

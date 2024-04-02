@@ -33,6 +33,7 @@ enum Role {
 model Table {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   status  TableStatus
+  maxCustomers Int
 }
 
 enum TableStatus {
