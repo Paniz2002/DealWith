@@ -23,7 +23,21 @@ services:
     networks:
       taw-network:
         ipv4_address: 172.77.0.17
-
+  mongodb:
+    image: mongo:latest
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - ./initdb.d/:/docker-entrypoint-initdb.d/
+      - ./dbdata/mongo_data/data:/data/db/
+      - ./dbdata/mongo_data/db_config:/data/configdb/
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${MONGODB_DB_USERNAME}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGODB_DB_PASSWORD}"
+      MONGO_INITDB_DATABASE: "${MONGODB_DB_NAME}"
+    networks:
+      - taw-network
 networks:
   taw-network:
     ipam:

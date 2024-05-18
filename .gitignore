@@ -4,3 +4,6 @@ out/
 Session.vim
 *.env*
 taw-frontend/src/enviroments/
+dbdata/
+initdb.d/
+

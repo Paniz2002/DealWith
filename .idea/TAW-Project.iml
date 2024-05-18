@@ -5,6 +5,8 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/taw-frontend/dist" />
       <excludeFolder url="file://$MODULE_DIR$/taw-frontend/tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/dbdata" />
+      <excludeFolder url="file://$MODULE_DIR$/initdb.d" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
