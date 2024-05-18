@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { enviroments } from '../../enviroments/enviroments';
+import { enviroments } from '../../../enviroments/enviroments';
 import axios from 'axios';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
@@ -15,7 +15,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
-import { NotificationService } from '../popup/notification.service';
+import { NotificationService } from '../../services/popup/notification.service';
+
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -33,7 +34,7 @@ import { NotificationService } from '../popup/notification.service';
   styleUrl: './register.component.css',
 })
 export class RegisterComponent implements OnInit {
-  registerForm!: FormGroup;
+  form!: FormGroup;
   isFormValid!: Boolean;
 
   constructor(
@@ -43,40 +44,51 @@ export class RegisterComponent implements OnInit {
   ) {}
   ngOnInit() {
     this.isFormValid = false;
-    this.registerForm = this.registerFormBuilder.group({
+    this.form = this.registerFormBuilder.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
       role: ['', [Validators.required]],
     });
   }
-  getUsernameErrors() {
-    if (this.registerForm.controls['username'].hasError('required')) {
+
+  get getUsernameErrors() {
+    return RegisterComponent.getUsernameErrors;
+  }
+  static getUsernameErrors(form: FormGroup<any>) {
+    if (form.controls['username'].hasError('required')) {
       return 'Username required.';
     }
-    if (this.registerForm.controls['username'].hasError('minlength')) {
+    if (form.controls['username'].hasError('minlength')) {
       return 'Minimum username length is 3 characters.';
     }
     return '';
   }
-  getPasswordErrors() {
-    if (this.registerForm.controls['password'].hasError('required')) {
+
+  get getPasswordErrors() {
+    return RegisterComponent.getPasswordErrors;
+  }
+  static getPasswordErrors(form: FormGroup<any>) {
+    if (form.controls['password'].hasError('required')) {
       return 'Password required.';
     }
-    if (this.registerForm.controls['confirmPassword'].hasError('required')) {
+    if (form.controls['password'].hasError('minlength')) {
+      return 'Password length is atleast 8 characters.';
+    }
+    return '';
+  }
+  getPasswordConfirmErrors() {
+    if (this.form.controls['confirmPassword'].hasError('required')) {
       return 'Confirm password required';
     }
-    if (
-      this.registerForm.controls['password'].hasError('minlength') ||
-      this.registerForm.controls['confirmPassword'].hasError('minlength')
-    ) {
-      return 'Password length is atleast 8 characters.';
+    if (this.form.controls['confirmPassword'].hasError('minlength')) {
+      return 'Confirm password length is atleast 8 characters.';
     }
     return '';
   }
 
   getRoleErrors() {
-    if (this.registerForm.controls['role'].hasError('required')) {
+    if (this.form.controls['role'].hasError('required')) {
       return 'You must select a role.';
     }
     return '';
@@ -85,15 +97,16 @@ export class RegisterComponent implements OnInit {
   async onSubmit() {
     if (
       this.getRoleErrors() ||
-      this.getPasswordErrors() ||
-      this.getUsernameErrors()
+      RegisterComponent.getPasswordErrors(this.form) ||
+      this.getPasswordConfirmErrors() ||
+      RegisterComponent.getUsernameErrors(this.form)
     ) {
       return;
     }
 
     const url = enviroments.BACKEND_URL + '/api/auth/register';
     try {
-      await axios.post(url, this.registerForm.value);
+      await axios.post(url, this.form.value);
       this.router.navigate(['/login']);
     } catch (e) {
       if (axios.isAxiosError(e)) {
@@ -102,7 +115,7 @@ export class RegisterComponent implements OnInit {
     }
   }
   resetForm() {
-    this.registerForm.reset({
+    this.form.reset({
       username: '',
       password: '',
       confirmPassword: '',

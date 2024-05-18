@@ -1,7 +1,9 @@
-import { HttpException } from './root';
+import { Request, Response } from "express";
+const BadRequestException = (req: Request, res: Response, message: string) => {
+  return res.status(400).json({
+    message: message,
+  });
+};
 
-export class BadRequestException extends HttpException {
-    constructor(message: string, errorCode: any) {
-        super(message,errorCode, 400, null);
-    }
-}
+export default BadRequestException;
+

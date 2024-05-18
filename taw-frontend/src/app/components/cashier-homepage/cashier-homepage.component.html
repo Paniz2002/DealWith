@@ -1,0 +1,33 @@
+<div class="container-fluid">
+  <div class="d-flex align-items-center justify-content-center">
+    <div class="row w-100 h-100">
+      <div class="col-10">
+        <mat-tab-group>
+          <mat-tab>
+            <ng-template mat-tab-label> Free </ng-template>
+            @if (freeTables.length === 0) {
+              <p class="fst-italic">There are no free tables at the moment.</p>
+            } @else {
+              @for (table of this.freeTables; track table) {
+                <div [app-table-status-card]="table"></div>
+              }
+            }
+          </mat-tab>
+
+          <mat-tab>
+            <ng-template mat-tab-label> Occupied </ng-template>
+            @if (freeTables.length === 0) {
+              <p class="fst-italic">
+                There are no occupied tables at the moment.
+              </p>
+            } @else {
+              @for (table of this.occupiedTables; track table) {
+                <div [app-table-status-card]="table"></div>
+              }
+            }
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+    </div>
+  </div>
+</div>

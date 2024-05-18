@@ -5,7 +5,7 @@
       <div class="col-sm-12 col-md-10 col-lg-8 my-auto">
         <div class="w-auto mx-auto">
           <form
-            [formGroup]="registerForm"
+            [formGroup]="form"
             (ngSubmit)="onSubmit()"
             method="post"
           >
@@ -22,8 +22,8 @@
                   formControlName="username"
                   minlength="3"
                 />
-                @if (this.registerForm.controls["username"].errors) {
-                  <mat-error>{{ getUsernameErrors() }}</mat-error>
+                @if (this.form.controls["username"].errors) {
+                  <mat-error>{{ getUsernameErrors(this.form) }}</mat-error>
                 }
               </mat-form-field>
             </div>
@@ -43,8 +43,8 @@
                   minlength="8"
                   formControlName="password"
                 />
-                @if (this.registerForm.controls["password"].errors) {
-                  <mat-error>{{ getPasswordErrors() }}</mat-error>
+                @if (this.form.controls["password"].errors) {
+                  <mat-error>{{ getPasswordErrors(this.form) }}</mat-error>
                 }
               </mat-form-field>
             </div>
@@ -63,8 +63,8 @@
                   minlength="8"
                   formControlName="confirmPassword"
                 />
-                @if (this.registerForm.controls["confirmPassword"].errors) {
-                  <mat-error>{{ getPasswordErrors() }}</mat-error>
+                @if (this.form.controls["confirmPassword"].errors) {
+                  <mat-error>{{ getPasswordConfirmErrors() }}</mat-error>
                 }
               </mat-form-field>
             </div>
@@ -85,7 +85,7 @@
                   <mat-option value="COOK">Cook</mat-option>
                   <mat-option value="WAITER">Waiter</mat-option>
                 </mat-select>
-                @if (this.registerForm.controls["role"].errors) {
+                @if (this.form.controls["role"].errors) {
                   <mat-error>{{ getRoleErrors() }}</mat-error>
                 }
               </mat-form-field>
@@ -99,6 +99,7 @@
                   type="submit"
                   id="submit"
                   value="submit"
+                  class="margin_btn"
                 >
                   <mat-icon>done</mat-icon>
                   Register

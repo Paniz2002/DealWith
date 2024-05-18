@@ -1,7 +1,13 @@
-import { HttpException } from './root';
+import { Request, Response } from "express";
+const UnauthorizedException = (
+  req: Request,
+  res: Response,
+  message: string,
+) => {
+  return res.status(401).json({
+    message: message,
+  });
+};
 
-export class UnautorizedException extends HttpException {
-    constructor(message: string, errorCode: number, errors?: any) {
-        super(message,errorCode, 401, errors);
-    }
-}
+export default UnauthorizedException;
+
