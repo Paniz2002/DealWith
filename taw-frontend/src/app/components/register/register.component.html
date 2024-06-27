@@ -80,10 +80,8 @@
                   required
                   formControlName="role"
                 >
-                  <mat-option value="CASHIER">Cashier</mat-option>
-                  <mat-option value="BARTENDER">Bartender</mat-option>
-                  <mat-option value="COOK">Cook</mat-option>
-                  <mat-option value="WAITER">Waiter</mat-option>
+                  <mat-option value="student">student</mat-option>
+                  <mat-option value="moderator">moderator</mat-option>
                 </mat-select>
                 @if (this.form.controls["role"].errors) {
                   <mat-error>{{ getRoleErrors() }}</mat-error>

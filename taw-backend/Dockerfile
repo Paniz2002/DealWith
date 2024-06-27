@@ -8,7 +8,6 @@ COPY package*.json ./
 RUN npm ci
 
 COPY . .
-RUN  npx prisma generate --schema=/app/prisma/schema.prisma
 EXPOSE 3000
 
 # This is supposed to run when we are done with the project.

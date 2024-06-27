@@ -1,11 +1,15 @@
 import { Response } from "express";
-import prisma from "../../prisma/prisma_db_connection";
 import { JWT_SECRET } from "../secret";
 import { verify } from "jsonwebtoken";
+import UserModel from "../../models/user";
+import connectDB from "../../config/db";
 
 export const loggedUserController = async (req: any, res: Response) => {
+  connectDB();
+
   const { id, role } = verify(req.headers.authorization, JWT_SECRET) as any;
-  const user = await prisma.user.findFirst({
+
+  /*const user = await prisma.user.findFirst({
     where: {
       id: id,
       role: role,
@@ -14,6 +18,13 @@ export const loggedUserController = async (req: any, res: Response) => {
       role: true,
       username: true,
     },
+  });*/
+
+  /* TODO: migliorare, è fatta male solo per migrare correttamente da prisma a mongoose*/
+
+  const user = await UserModel.findOne({
+    'username': 'DonnieBrasco'
   });
+
   return res.json(user);
 };

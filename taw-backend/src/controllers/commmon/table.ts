@@ -1,4 +1,4 @@
-import { TableStatus } from "@prisma/client";
+/*import { TableStatus } from "@prisma/client";
 import { Request, Response } from "express";
 import prisma from "../../../prisma/prisma_db_connection";
 import BadRequestException from "../../exceptions/bad-request";
@@ -24,3 +24,4 @@ export const tableController = async (req: Request, res: Response) => {
     return InternalException(req, res, "Unknown error, try again later.");
   }
 };
+*/

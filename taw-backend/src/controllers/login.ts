@@ -1,15 +1,21 @@
 import { Request, Response } from "express";
-import prisma from "../../prisma/prisma_db_connection";
 import { compareSync } from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../schema/secret";
 import BadRequestException from "../exceptions/bad-request";
 import NotFoundException from "../exceptions/not-found";
+import UserModel from "../../models/user";
+import connectDB from "../../config/db";
 
 export const loginController = async (req: Request, res: Response) => {
+
+  connectDB();
+
   const { username, password } = req.body;
 
-  let user = await prisma.user.findFirst({ where: { username } });
+  let user = await UserModel.findOne({
+    'username':req.body.username
+  });
   if (!user) {
     return NotFoundException(req, res, "User does not exists");
   }
