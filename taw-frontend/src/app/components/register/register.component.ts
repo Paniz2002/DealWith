@@ -46,6 +46,7 @@ export class RegisterComponent implements OnInit {
     this.isFormValid = false;
     this.form = this.registerFormBuilder.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.minLength(8), Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
       role: ['', [Validators.required]],
@@ -60,6 +61,21 @@ export class RegisterComponent implements OnInit {
       return 'Username required.';
     }
     if (form.controls['username'].hasError('minlength')) {
+      return 'Minimum username length is 3 characters.';
+    }
+    return '';
+  }
+  get getEmailErrors() {
+    return RegisterComponent.getEmailErrors;
+  }
+  static getEmailErrors(form: FormGroup<any>) {
+    if (form.controls['email'].hasError('required')) {
+      return 'Email required.';
+    }
+    if (form.controls['email'].hasError('email')) {
+      return 'Email format not valid.';
+    }
+    if (form.controls['email'].hasError('minlength')) {
       return 'Minimum username length is 3 characters.';
     }
     return '';

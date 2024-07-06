@@ -28,9 +28,25 @@
               </mat-form-field>
             </div>
 
-            <div
-              class="form-group row justify-content-center align-items-center"
-            >
+            <div class="form-group  row justify-content-center align-items-center">
+              <mat-form-field>
+                <mat-label>Email</mat-label>
+                <input
+                  matInput
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="Please write an email."
+                  required
+                  formControlName="email"
+                />
+                @if (this.form.controls["email"].errors) {
+                  <mat-error>{{ getEmailErrors(this.form) }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="form-group row justify-content-center align-items-center" >
               <mat-form-field>
                 <mat-label>Password</mat-label>
                 <input
@@ -48,9 +64,7 @@
                 }
               </mat-form-field>
             </div>
-            <div
-              class="form-group row justify-content-center align-items-center"
-            >
+            <div class="form-group row justify-content-center align-items-center">
               <mat-form-field>
                 <mat-label>Confirm Password</mat-label>
                 <input
@@ -68,9 +82,7 @@
                 }
               </mat-form-field>
             </div>
-            <div
-              class="form-group row justify-content-center align-items-center"
-            >
+            <div class="form-group row justify-content-center align-items-center">
               <mat-form-field>
                 <mat-label>Role</mat-label>
                 <mat-select
