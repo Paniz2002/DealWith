@@ -11,7 +11,7 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application", // Se fa storie qua.
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "dist/taw-frontend",
             "index": "src/index.html",
