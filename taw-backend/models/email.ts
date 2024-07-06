@@ -11,6 +11,8 @@ const EmailSchema = new mongoose.Schema({
         index: true,
     },
     validated: { type: Boolean, default: true },
+}, {
+    timestamps: true
 });
 
 EmailSchema.plugin(uniqueValidator, { message: 'is already taken' });
