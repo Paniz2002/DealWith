@@ -27,7 +27,7 @@ export const loginController = async (req: Request, res: Response) => {
   const token = jwt.sign(
     {
       id: user.id,
-      role: user.role,
+      is_moderator: user.isModerator(),
     },
     JWT_SECRET,
   );
