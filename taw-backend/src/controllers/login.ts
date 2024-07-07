@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { compareSync } from "bcryptjs";
+import bcrypt, { compareSync } from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../schema/secret";
 import BadRequestException from "../exceptions/bad-request";
@@ -19,7 +19,8 @@ export const loginController = async (req: Request, res: Response) => {
   if (!user) {
     return NotFoundException(req, res, "User does not exists");
   }
-  if (!compareSync(password, user.password)) {
+
+  if (!user.comparePassword (password)) {
     return BadRequestException(req, res, "Invalid Password");
   }
 

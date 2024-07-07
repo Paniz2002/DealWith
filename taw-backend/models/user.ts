@@ -41,9 +41,14 @@ UserSchema.pre("save", function (next) {
     next();
 });
 
-UserSchema.methods.comparePassword = function (plaintext: any, callback: (arg0: null, arg1: any) => any) {
-    return callback(null, bcrypt.compareSync(plaintext, this.password));
+UserSchema.methods.comparePassword = function (plaintext: string) {
+    return bcrypt.compareSync(plaintext, this.password);
 };
+
+UserSchema.methods.isModerator = function () {
+    return this.role === "moderator";
+}
+
 
 const User: Model<any> = mongoose.model("User", UserSchema);
 

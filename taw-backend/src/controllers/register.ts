@@ -57,10 +57,11 @@ export const registerController = async (req: Request, res: Response) => {
             validated: false,
         });
 
+
         // Create a new user document
          const user = new User({
              username: req.body.username,
-             password: await bcrypt.hash(req.body.password, 10),
+             password: req.body.password, //encrypted byt the user model
              email_id: email._id, // Reference the saved email document
              role: req.body.role,
          });
