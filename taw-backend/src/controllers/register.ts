@@ -13,7 +13,7 @@ const formValidator = z.object({
     password: z.string().min(8),
     email: z.string().email("This is not a valid email."),
     confirmPassword: z.string().min(8),
-    role: z.enum(["student", "moderator"]),
+    role: z.enum(["student", "update"]),
 });
 
 // Validate form input

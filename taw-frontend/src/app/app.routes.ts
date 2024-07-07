@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
+import { UpdatepassowrdComponent } from './components/update-password/updatepassowrd.component';
 import { RegisterComponent } from './components/register/register.component';
 import { AuthenticationGuard } from './guards/auth/authentication.guard';
 import { LogoutGuard } from './guards/logout/logout.guard';
@@ -15,6 +16,11 @@ export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
+    pathMatch: 'full',
+  },
+  {
+    path: 'updatepassword/:id',
+    component: UpdatepassowrdComponent,
     pathMatch: 'full',
   },
   {
@@ -36,4 +42,5 @@ export const routes: Routes = [
     pathMatch: 'full',
     children: [],
   },
+
 ];

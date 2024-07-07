@@ -93,6 +93,10 @@ export class RegisterComponent implements OnInit {
     }
     return '';
   }
+
+  static getPasswordConfirmErrors(form: FormGroup<any>) {
+    return RegisterComponent.getPasswordConfirmErrors;
+  }
   getPasswordConfirmErrors() {
     if (this.form.controls['confirmPassword'].hasError('required')) {
       return 'Confirm password required';
@@ -114,7 +118,7 @@ export class RegisterComponent implements OnInit {
     if (
       this.getRoleErrors() ||
       RegisterComponent.getPasswordErrors(this.form) ||
-      this.getPasswordConfirmErrors() ||
+      RegisterComponent.getPasswordConfirmErrors(this.form) ||
       RegisterComponent.getUsernameErrors(this.form)
     ) {
       return;

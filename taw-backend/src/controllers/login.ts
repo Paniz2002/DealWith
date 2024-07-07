@@ -1,7 +1,6 @@
-import { Request, Response } from "express";
-import bcrypt, { compareSync } from "bcryptjs";
+import {Request, Response} from "express";
 import * as jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../schema/secret";
+import {JWT_SECRET} from "../schema/secret";
 import BadRequestException from "../exceptions/bad-request";
 import NotFoundException from "../exceptions/not-found";
 import UserModel from "../../models/user";
@@ -9,28 +8,30 @@ import connectDB from "../../config/db";
 
 export const loginController = async (req: Request, res: Response) => {
 
-  connectDB();
+    connectDB();
 
-  const { username, password } = req.body;
+    const {username, password} = req.body;
 
-  let user = await UserModel.findOne({
-    'username':req.body.username
-  });
-  if (!user) {
-    return NotFoundException(req, res, "User does not exists");
-  }
+    let user = await UserModel.findOne({
+        'username': username
+    });
+    if (!user) {
+        return NotFoundException(req, res, "User does not exists");
+    }
 
-  if (!user.comparePassword (password)) {
-    return BadRequestException(req, res, "Invalid Password");
-  }
+    if (!user.comparePassword(password)) {
+        return BadRequestException(req, res, "Invalid Password");
+    }
 
-  const token = jwt.sign(
-    {
-      id: user.id,
-      is_moderator: user.isModerator(),
-    },
-    JWT_SECRET,
-  );
+    const token = jwt.sign(
+        {
+            _id: user.id,
+            username: user.username,
+            is_moderator: user.isModerator(),
+            needs_update: user.isModerator() && (user.createdAt.getTime() === user.updatedAt.getTime())
+        },
+        JWT_SECRET,
+    );
 
-  return res.json({ token });
+    return res.json({token});
 };

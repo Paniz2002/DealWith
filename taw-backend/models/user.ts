@@ -23,7 +23,7 @@ const UserSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ["student", "moderator"],
+        enum: ["student", "update"],
         default: "student"
     },
 
@@ -46,7 +46,7 @@ UserSchema.methods.comparePassword = function (plaintext: string) {
 };
 
 UserSchema.methods.isModerator = function () {
-    return this.role === "moderator";
+    return this.role === "update";
 }
 
 
