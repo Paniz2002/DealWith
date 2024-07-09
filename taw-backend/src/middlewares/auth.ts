@@ -2,7 +2,6 @@ import {Request, Response, NextFunction} from "express";
 import UnautorizedException from "../exceptions/unauthorized";
 import * as jwt from "jsonwebtoken";
 import {JWT_SECRET} from "../secret";
-// import prisma from "../../prisma/prisma_db_connection";
 import BadRequestException from "../exceptions/bad-request";
 import UserModel from "../../models/user";
 import connectDB from "../../config/db";
@@ -27,8 +26,7 @@ const authMiddleware = async (
     try {
         //  3.   if token is present, decode the token and extract the payload
         const payload = jwt.verify(token, JWT_SECRET) as any;
-        console.log(payload);
-        const user = await UserModel.findOne({
+        const user = await UserModel.exists({
             '_id': payload._id
         });
         if (!user) {

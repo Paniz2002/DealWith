@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
-import { UpdatepassowrdComponent } from './components/update-password/updatepassowrd.component';
+import { UpdatepasswordComponent } from './components/update-password/updatepassword.component';
 import { RegisterComponent } from './components/register/register.component';
 import { AuthenticationGuard } from './guards/auth/authentication.guard';
 import { LogoutGuard } from './guards/logout/logout.guard';
 import { RoleGuard } from './guards/role/role.guard';
-import { CashierHomepageComponent } from './components/cashier-homepage/cashier-homepage.component';
-import { CashierGuard } from './guards/cashier/cashier.guard';
+import { AdminHomepageComponent } from './components/admin-homepage/admin-homepage.component';
+import { AdminGuard } from './guards/cashier/adminGuard';
 export const routes: Routes = [
   {
     path: 'register',
@@ -20,7 +20,7 @@ export const routes: Routes = [
   },
   {
     path: 'updatepassword/:id',
-    component: UpdatepassowrdComponent,
+    component: UpdatepasswordComponent,
     pathMatch: 'full',
   },
   {
@@ -30,10 +30,10 @@ export const routes: Routes = [
     children: [],
   },
   {
-    path: 'cashier',
-    canActivate: [AuthenticationGuard, CashierGuard],
+    path: 'admin',
+    canActivate: [AuthenticationGuard, AdminGuard],
     pathMatch: 'full',
-    component: CashierHomepageComponent,
+    component: AdminHomepageComponent,
     children: [],
   },
   {

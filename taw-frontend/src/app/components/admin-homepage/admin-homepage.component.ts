@@ -6,13 +6,13 @@ import { LocalStorageService } from '../../services/localStorage/localStorage.se
 import { NotificationService } from '../../services/popup/notification.service';
 import { TableStatusCardComponent } from '../table-status-card/table-status-card.component';
 @Component({
-  selector: 'app-cashier-homepage',
+  selector: 'app-admin-homepage',
   standalone: true,
   imports: [MatTabsModule, TableStatusCardComponent],
-  templateUrl: './cashier-homepage.component.html',
-  styleUrl: './cashier-homepage.component.css',
+  templateUrl: './admin-homepage.component.html',
+  styleUrl: './admin-homepage.component.css',
 })
-export class CashierHomepageComponent implements OnInit {
+export class AdminHomepageComponent implements OnInit {
   constructor(
     private localStorage: LocalStorageService,
     private snackBar: NotificationService,

@@ -90,12 +90,15 @@ export class LoginComponent implements OnInit {
           state: {token: res.data.token}
         };
         console.log(json_data);
+        console.log(this.router)
         if (json_data.needs_update === true) {
           console.log("Moderaotr needs update")
-          this.router.navigate(['/updatepassword/' + res.data.id], navigationExtras); //FIXME: does not redciret to page
+         let x=  await this.router.navigate(['/updatepassword/' + res.data.id], navigationExtras); //FIXME: does not redciret to page
+          console.log(x)
         }
         console.log("CAN ACCESS");
-        this.router.navigate(['/homepageRedirect'], navigationExtras); //FIXME: does not redciret to page
+        return await this.router.navigate(['/homepageRedirect'], navigationExtras); //FIXME: does not redciret to page
+
       }
     } catch (e) {
       if (axios.isAxiosError(e)) {

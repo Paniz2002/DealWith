@@ -4,7 +4,8 @@ COPY . .
 
 RUN rm -rf node_modules
 RUN npm install -g @angular/cli@17
-COPY package.json package-lock.json ./
+COPY package*.json ./
+RUN npm install
 RUN npm ci
 
 EXPOSE 4200

@@ -35,7 +35,7 @@ import { LocalStorageService } from '../../services/localStorage/localStorage.se
   templateUrl: './updatepassowrd.html',
   styleUrl: '../register/register.component.css',
 })
-export class UpdatepassowrdComponent implements OnInit {
+export class UpdatepasswordComponent implements OnInit {
   form!: FormGroup;
   isFormValid!: Boolean;
   id!: string | null ;

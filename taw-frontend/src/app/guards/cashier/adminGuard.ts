@@ -3,7 +3,7 @@ import axios from 'axios';
 import { enviroments } from '../../../enviroments/enviroments';
 import { inject } from '@angular/core';
 import { LocalStorageService } from '../../services/localStorage/localStorage.service';
-export const CashierGuard: CanActivateFn = async () => {
+export const AdminGuard: CanActivateFn = async () => {
   try {
     const localStorage = inject(LocalStorageService);
     const res = await axios.get(enviroments.BACKEND_URL + '/api/auth/me', {
@@ -12,11 +12,7 @@ export const CashierGuard: CanActivateFn = async () => {
       },
     });
     if (res.status === 200) {
-      // TODO: Redirect on effective role?
-      // I mean:
-      // - If a bartender tries to access this route, we redirect him to
-      // the bartender homepage
-      return res.data.role === 'CASHIER';
+      return res.data.is_moderator === true;
     }
   } catch (e) {}
   return false;

@@ -1,8 +1,9 @@
-import { CanActivateFn, Router } from '@angular/router';
-import { inject } from '@angular/core';
+import {CanActivateFn, Router} from '@angular/router';
+import {inject} from '@angular/core';
 import axios from 'axios';
-import { enviroments } from '../../../enviroments/enviroments';
-import { LocalStorageService } from '../../services/localStorage/localStorage.service';
+import {enviroments} from '../../../enviroments/enviroments';
+import {LocalStorageService} from '../../services/localStorage/localStorage.service';
+
 /**
  * This guard redirects the user to his homepage for his role.
  */
@@ -25,13 +26,11 @@ export const RoleGuard: CanActivateFn = async () => {
       },
     });
     if (res.status === 200) {
-      const role = res.data.role;
-      switch (role) {
-        case 'CASHIER':
-          return router.createUrlTree(['/cashier']);
+      if (res.data.is_moderator === true) {
+        return router.createUrlTree(['/admin']);
       }
     }
-    return router.createUrlTree(['/login']);
+    return router.createUrlTree(['/home']);
   } catch (e) {
     return router.createUrlTree(['/login']);
   }
