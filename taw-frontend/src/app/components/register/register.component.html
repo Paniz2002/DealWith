@@ -78,7 +78,7 @@
                   formControlName="confirmPassword"
                 />
                 @if (this.form.controls["confirmPassword"].errors) {
-                  <mat-error>{{ getPasswordConfirmErrors() }}</mat-error>
+                  <mat-error>{{ getPasswordConfirmErrors(this.form) }}</mat-error>
                 }
               </mat-form-field>
             </div>

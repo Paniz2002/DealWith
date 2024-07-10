@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {Component, OnInit} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,15 +7,15 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { enviroments } from '../../../enviroments/enviroments';
+import {enviroments} from '../../../enviroments/enviroments';
 import axios from 'axios';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
-import { NotificationService } from '../../services/popup/notification.service';
+import {MatSelectModule} from '@angular/material/select';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {Router} from '@angular/router';
+import {NotificationService} from '../../services/popup/notification.service';
 
 @Component({
   selector: 'app-register',
@@ -41,7 +41,9 @@ export class RegisterComponent implements OnInit {
     private registerFormBuilder: FormBuilder,
     private router: Router,
     private snackBar: NotificationService,
-  ) {}
+  ) {
+  }
+
   ngOnInit() {
     this.isFormValid = false;
     this.form = this.registerFormBuilder.group({
@@ -56,6 +58,7 @@ export class RegisterComponent implements OnInit {
   get getUsernameErrors() {
     return RegisterComponent.getUsernameErrors;
   }
+
   static getUsernameErrors(form: FormGroup<any>) {
     if (form.controls['username'].hasError('required')) {
       return 'Username required.';
@@ -65,9 +68,11 @@ export class RegisterComponent implements OnInit {
     }
     return '';
   }
+
   get getEmailErrors() {
     return RegisterComponent.getEmailErrors;
   }
+
   static getEmailErrors(form: FormGroup<any>) {
     if (form.controls['email'].hasError('required')) {
       return 'Email required.';
@@ -84,24 +89,26 @@ export class RegisterComponent implements OnInit {
   get getPasswordErrors() {
     return RegisterComponent.getPasswordErrors;
   }
+
   static getPasswordErrors(form: FormGroup<any>) {
     if (form.controls['password'].hasError('required')) {
       return 'Password required.';
     }
     if (form.controls['password'].hasError('minlength')) {
-      return 'Password length is atleast 8 characters.';
+      return 'Password length is at least 8 characters.';
     }
     return '';
   }
 
-  static getPasswordConfirmErrors(form: FormGroup<any>) {
+  get getPasswordConfirmErrors() {
     return RegisterComponent.getPasswordConfirmErrors;
   }
-  getPasswordConfirmErrors() {
-    if (this.form.controls['confirmPassword'].hasError('required')) {
+
+  static getPasswordConfirmErrors(form: FormGroup<any>) {
+    if (form.controls['confirmPassword'].hasError('required')) {
       return 'Confirm password required';
     }
-    if (this.form.controls['confirmPassword'].hasError('minlength')) {
+    if (form.controls['confirmPassword'].hasError('minlength')) {
       return 'Confirm password length is atleast 8 characters.';
     }
     return '';
@@ -115,25 +122,35 @@ export class RegisterComponent implements OnInit {
   }
 
   async onSubmit() {
+
     if (
       this.getRoleErrors() ||
       RegisterComponent.getPasswordErrors(this.form) ||
       RegisterComponent.getPasswordConfirmErrors(this.form) ||
       RegisterComponent.getUsernameErrors(this.form)
     ) {
+      console.log(
+        this.getRoleErrors() ||
+        RegisterComponent.getPasswordErrors(this.form) ||
+        RegisterComponent.getPasswordConfirmErrors(this.form) ||
+        RegisterComponent.getUsernameErrors(this.form)
+      )
       return;
     }
-
+    console.log('dddd')
     const url = enviroments.BACKEND_URL + '/api/auth/register';
     try {
       await axios.post(url, this.form.value);
+      console.log(this.form.value)
       this.router.navigate(['/login']);
+      console.log('dd22222dd')
     } catch (e) {
       if (axios.isAxiosError(e)) {
         this.snackBar.notify(e.response?.data.message);
       }
     }
   }
+
   resetForm() {
     this.form.reset({
       username: '',
