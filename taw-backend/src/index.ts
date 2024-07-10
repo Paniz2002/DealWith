@@ -16,10 +16,12 @@ const port = process.env.PORT || 3000;
 
 const corsOptions = {
   origin: ["http://localhost:4200", "http://localhost:3000"],
+    credentials: true // Allow credentials (cookies) to be sent
 };
 
 // Whitelist
 app.use(cors(corsOptions));
+
 // Automatically parses JSON
 app.use(bodyParser.json());
 // parse application/x-www-form-urlencoded

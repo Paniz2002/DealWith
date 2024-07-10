@@ -30,7 +30,7 @@ export const RoleGuard: CanActivateFn = async () => {
         return router.createUrlTree(['/admin']);
       }
     }
-    return router.createUrlTree(['/home']);
+    return router.createUrlTree(['/dashboard']); //TODO dashboard page
   } catch (e) {
     return router.createUrlTree(['/login']);
   }

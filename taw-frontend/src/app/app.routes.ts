@@ -19,7 +19,7 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'updatepassword/:id',
+    path: 'updatepassword',
     component: UpdatepasswordComponent,
     pathMatch: 'full',
   },

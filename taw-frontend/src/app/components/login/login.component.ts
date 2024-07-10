@@ -18,7 +18,6 @@ import {NavigationExtras, Router} from '@angular/router';
 import {NotificationService} from '../../services/popup/notification.service';
 import {RegisterComponent} from '../register/register.component';
 import {LocalStorageService} from '../../services/localStorage/localStorage.service';
-import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "jsonwebtoken";
 
 @Component({
@@ -61,13 +60,6 @@ export class LoginComponent implements OnInit {
     return RegisterComponent.getUsernameErrors;
   }
 
-  private getDecodedAccessToken(token: string): any {
-    try {
-      return jwtDecode<JwtPayload>(token);
-    } catch (Error) {
-      return null;
-    }
-  }
 
   get getPasswordErrors() {
     return RegisterComponent.getPasswordErrors;
@@ -82,22 +74,12 @@ export class LoginComponent implements OnInit {
     }
     const url = enviroments.BACKEND_URL + '/api/auth/login';
     try {
-      const res = await axios.post(url, this.form.value);
+      const res = await axios.post(url, this.form.value, {withCredentials: true});
       if (res.status == 200) {
-        this.localStorage.set('jwt', res.data.token as string);
-        let json_data = this.getDecodedAccessToken(res.data.token as string);
-        const navigationExtras: NavigationExtras = {
-          state: {token: res.data.token}
-        };
-        console.log(json_data);
-        console.log(this.router)
-        if (json_data.needs_update === true) {
-          console.log("Moderaotr needs update")
-         let x=  await this.router.navigate(['/updatepassword/' + res.data.id], navigationExtras); //FIXME: does not redciret to page
-          console.log(x)
+        if (res.data.needs_update === true) {
+          return await this.router.navigate(['/updatepassword/']);
         }
-        console.log("CAN ACCESS");
-        return await this.router.navigate(['/homepageRedirect'], navigationExtras); //FIXME: does not redciret to page
+        return await this.router.navigate(['/homepageRedirect']); //FIXME: does not redciret to page
 
       }
     } catch (e) {

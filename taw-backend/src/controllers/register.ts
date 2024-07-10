@@ -50,7 +50,6 @@ export const registerController = async (req: Request, res: Response) => {
     }
 
     try {
-
         // Create a new email document
         const email = await Email.create({
             address: req.body.email,

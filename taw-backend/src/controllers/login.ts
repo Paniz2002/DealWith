@@ -23,15 +23,21 @@ export const loginController = async (req: Request, res: Response) => {
         return BadRequestException(req, res, "Invalid Password");
     }
 
+    let response_json = {
+        _id: user.id,
+        username: user.username,
+        is_moderator: user.isModerator(),
+        needs_update: user.isModerator() && (user.createdAt.getTime() === user.updatedAt.getTime())
+    };
+
     const token = jwt.sign(
-        {
-            _id: user.id,
-            username: user.username,
-            is_moderator: user.isModerator(),
-            needs_update: user.isModerator() && (user.createdAt.getTime() === user.updatedAt.getTime())
-        },
+        response_json,
         JWT_SECRET,
     );
-
-    return res.json({token});
+    res.cookie("jwt", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax'
+    });
+    return res.json(response_json);
 };
