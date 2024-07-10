@@ -10,7 +10,8 @@ import UnautorizedException from "../exceptions/unauthorized";
 export const loggedUserController = async (req: any, res: Response) => {
     connectDB();
     //  1.   extract the token from header
-    const token = req.headers.authorization;
+    const token = req.cookies.jwt;
+
     //  2.   if token is not present, throw a bad request exception.
     if (!token) {
         // Next prints to console ... because reasons.

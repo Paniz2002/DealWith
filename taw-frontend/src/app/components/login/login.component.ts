@@ -76,8 +76,9 @@ export class LoginComponent implements OnInit {
     try {
       const res = await axios.post(url, this.form.value, {withCredentials: true});
       if (res.status == 200) {
+        console.log(res.data);
         if (res.data.needs_update === true) {
-          return await this.router.navigate(['/updatepassword/']);
+          return await this.router.navigate(['/updatepassword']);
         }
         return await this.router.navigate(['/homepageRedirect']); //FIXME: does not redciret to page
 

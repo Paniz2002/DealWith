@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common';
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -51,27 +51,21 @@ export class UpdatepasswordComponent implements OnInit {
 
   ngOnInit() {
 
-    /*
-        const res = await axios.get(enviroments.BACKEND_URL + '/api/auth/me', {
-          headers: {
-            Authorization: localStorage.get('jwt')!,
-          },
-        });
-        if (res.status === 200) {
-          if (res.data.needs_update === true) {
-          }
-        } else {
-          this.router.navigate(['/login']);
-        }
 
-      */
+    const res = axios.get(enviroments.BACKEND_URL + '/api/auth/me').then((res) => {
+      if (res.status != 200 || res.data.needs_update !== true) {
+        this.router.navigate(['/login']);
+      }
+    }).catch((err) => {
+      this.router.navigate(['/login']);
+    });
 
-
-    /*this.form = this.loginFormBuilder.group({
+    this.form = this.loginFormBuilder.group({
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
-    });*/
+    });
   }
+
 
   get getPasswordErrors() {
     return RegisterComponent.getPasswordErrors;
@@ -89,21 +83,8 @@ export class UpdatepasswordComponent implements OnInit {
     ) {
       return;
     }
-    console.log('ok');
-    /*const url = enviroments.BACKEND_URL + '/api/auth/password/';
-    try {
-      const data = this.form.value;
-      data.id = this.id;
-      const res = await axios.patch(url, data);
-      if (res.status == 200) {
-        return this.router.navigate(['/homepageRedirect']);
-      }
-    } catch (e) {
-      if (axios.isAxiosError(e)) {
-        this.snackBar.notify(e.response?.data.message);
-      }
-    }
-    return true; */
+
+
   }
 
   resetForm() {

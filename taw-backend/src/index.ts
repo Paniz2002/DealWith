@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import apiRouter from "./routes";
 import cors from "cors";
 import bodyParser from "body-parser";
+const cookieParser = require("cookie-parser");
 import { whitelistMiddleware } from "./middlewares/whitelist";
 dotenv.config();
 
@@ -26,6 +27,9 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(cookieParser());
+
 
 app.use("/api", whitelistMiddleware, apiRouter);
 
