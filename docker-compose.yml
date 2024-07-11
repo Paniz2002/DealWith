@@ -32,10 +32,8 @@ services:
       - ./initdb.d/:/docker-entrypoint-initdb.d/
       - ./dbdata/mongo_data/data:/data/db/
       - ./dbdata/mongo_data/db_config:/data/configdb/
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: "${MONGODB_DB_USERNAME}"
-      MONGO_INITDB_ROOT_PASSWORD: "${MONGODB_DB_PASSWORD}"
-      MONGO_INITDB_DATABASE: "${MONGODB_DB_NAME}"
+    env_file:
+      - ./taw-backend/.env
     networks:
       - taw-network
 networks:
