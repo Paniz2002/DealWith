@@ -10,7 +10,8 @@ export const updateProfileController = (req: Request, res: Response) => {
   if (oldPassword === password || password !== confirmPassword) {
     return BadRequestException(req, res, "Invalid credentials.");
   }
-  // I don't like this, but i might create an interface when we're all done with this project.
+  // I don't like this.
+  // TODO: create interface when we're all done with this project.
   const update = {} as any;
   const jwtToken = req.cookies.jwt;
   const jwtBody = jwt.verify(jwtToken, JWT_SECRET) as any;
