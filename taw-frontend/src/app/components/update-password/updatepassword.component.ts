@@ -49,10 +49,10 @@ export class UpdatepasswordComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const res = axios
+    axios
       .get(enviroments.BACKEND_URL + '/api/auth/me')
       .then((res) => {
-        if (res.status != 200 || res.data.needs_update !== true) {
+        if (res.status != 200) {
           this.router.navigate(['/login']);
         }
       })

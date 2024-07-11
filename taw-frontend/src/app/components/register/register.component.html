@@ -4,11 +4,7 @@
       <div class="col-md-1 col-lg-2"></div>
       <div class="col-sm-12 col-md-10 col-lg-8 my-auto">
         <div class="w-auto mx-auto">
-          <form
-            [formGroup]="form"
-            (ngSubmit)="onSubmit()"
-            method="post"
-          >
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" method="post">
             <div class="form-group row">
               <mat-form-field>
                 <mat-label>Username</mat-label>
@@ -28,7 +24,9 @@
               </mat-form-field>
             </div>
 
-            <div class="form-group  row justify-content-center align-items-center">
+            <div
+              class="form-group row justify-content-center align-items-center"
+            >
               <mat-form-field>
                 <mat-label>Email</mat-label>
                 <input
@@ -46,7 +44,9 @@
               </mat-form-field>
             </div>
 
-            <div class="form-group row justify-content-center align-items-center" >
+            <div
+              class="form-group row justify-content-center align-items-center"
+            >
               <mat-form-field>
                 <mat-label>Password</mat-label>
                 <input
@@ -64,7 +64,9 @@
                 }
               </mat-form-field>
             </div>
-            <div class="form-group row justify-content-center align-items-center">
+            <div
+              class="form-group row justify-content-center align-items-center"
+            >
               <mat-form-field>
                 <mat-label>Confirm Password</mat-label>
                 <input
@@ -78,11 +80,15 @@
                   formControlName="confirmPassword"
                 />
                 @if (this.form.controls["confirmPassword"].errors) {
-                  <mat-error>{{ getPasswordConfirmErrors(this.form) }}</mat-error>
+                  <mat-error>{{
+                    getPasswordConfirmErrors(this.form)
+                  }}</mat-error>
                 }
               </mat-form-field>
             </div>
-            <div class="form-group row justify-content-center align-items-center">
+            <div
+              class="form-group row justify-content-center align-items-center"
+            >
               <mat-form-field>
                 <mat-label>Role</mat-label>
                 <mat-select

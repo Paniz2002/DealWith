@@ -20,6 +20,7 @@ export const routes: Routes = [
   },
   {
     path: 'updatepassword',
+    canActivate: [AuthenticationGuard],
     component: UpdatepasswordComponent,
     pathMatch: 'full',
   },
@@ -36,11 +37,4 @@ export const routes: Routes = [
     component: AdminHomepageComponent,
     children: [],
   },
-  {
-    path: 'homepageRedirect',
-    canActivate: [RoleGuard],
-    pathMatch: 'full',
-    children: [],
-  },
-
 ];
