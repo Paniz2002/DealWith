@@ -17,7 +17,7 @@ const port = process.env.PORT || 3000;
 
 const corsOptions = {
   origin: ["http://localhost:4200", "http://localhost:3000"],
-    credentials: true // Allow credentials (cookies) to be sent
+  credentials: true, // Allows credentials (cookies) to be sent
 };
 
 // Whitelist
@@ -30,11 +30,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(cookieParser());
 
-
 app.use("/api", whitelistMiddleware, apiRouter);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
-
-
