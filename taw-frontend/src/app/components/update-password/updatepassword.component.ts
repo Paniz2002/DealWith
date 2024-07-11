@@ -8,7 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { enviroments } from '../../../enviroments/enviroments';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -72,7 +72,20 @@ export class UpdatepasswordComponent implements OnInit {
       return;
     }
     console.log(this.form.value);
-    // axios.patch(enviroments.BACKEND_URL + '/api/auth/profile');
+    axios
+      .patch(enviroments.BACKEND_URL + '/api/auth/me', this.form.value)
+      .then((res) => {
+        if (res.status === 200) {
+          return this.router.navigate(['/homepage']);
+        }
+        this.snackBar.notify(res.data.message);
+        return;
+      })
+      .catch((err) => {
+        if (axios.isAxiosError(err)) {
+          this.snackBar.notify(err.response?.data.message);
+        }
+      });
   }
 
   resetForm() {

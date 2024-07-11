@@ -4,26 +4,38 @@ import { JWT_SECRET } from "../secret";
 import UserModel from "../../models/user";
 import InternalException from "../exceptions/internal-exception";
 import BadRequestException from "../exceptions/bad-request";
+import { compareSync } from "bcryptjs";
 export const updateProfileController = (req: Request, res: Response) => {
-  const { currentPassword, newPassword, confirmNewPassword } = req.body;
-  if (newPassword !== confirmNewPassword || currentPassword === newPassword) {
+  const { oldPassword, password, confirmPassword } = req.body;
+  if (oldPassword === password || password !== confirmPassword) {
     return BadRequestException(req, res, "Invalid credentials.");
   }
-  const update = {};
+  // I don't like this, but i might create an interface when we're all done with this project.
+  const update = {} as any;
   const jwtToken = req.cookies.jwt;
   const jwtBody = jwt.verify(jwtToken, JWT_SECRET) as any;
-
   const userID = jwtBody._id;
+  if (password !== undefined) {
+    update.password = password;
+  }
   try {
-    UserModel.updateOne(
-      {
-        _id: userID,
-      },
-      update,
-      {
-        runValidators: true,
-      },
-    );
+    UserModel.findById(userID)
+      .exec()
+      .then((user) => {
+        if (compareSync(password, user.password)) {
+          UserModel.updateOne(
+            {
+              _id: userID,
+            },
+            update,
+            {
+              runValidators: true,
+            },
+          );
+          return res.sendStatus(200);
+        }
+        return BadRequestException(req, res, "Invalid credentials.");
+      });
   } catch (e) {
     return InternalException(req, res, "Unknown error while updating profile.");
   }
