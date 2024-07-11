@@ -49,18 +49,8 @@ export class UpdatepasswordComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    axios
-      .get(enviroments.BACKEND_URL + '/api/auth/me')
-      .then((res) => {
-        if (res.status != 200) {
-          this.router.navigate(['/login']);
-        }
-      })
-      .catch((err) => {
-        this.router.navigate(['/login']);
-      });
-
     this.form = this.loginFormBuilder.group({
+      oldPassword: ['', [Validators.required, Validators.minLength(8)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
     });
@@ -81,6 +71,7 @@ export class UpdatepasswordComponent implements OnInit {
     ) {
       return;
     }
+    axios.patch(enviroments.BACKEND_URL + '/api/auth/profile');
   }
 
   resetForm() {
