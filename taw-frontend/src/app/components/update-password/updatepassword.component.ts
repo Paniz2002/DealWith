@@ -41,7 +41,7 @@ export class UpdatepasswordComponent implements OnInit {
   id!: string | null;
 
   constructor(
-    private loginFormBuilder: FormBuilder,
+    private updatePasswordFormBuilder: FormBuilder,
     private router: Router,
     private snackBar: NotificationService,
     private localStorage: LocalStorageService,
@@ -49,7 +49,7 @@ export class UpdatepasswordComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.form = this.loginFormBuilder.group({
+    this.form = this.updatePasswordFormBuilder.group({
       oldPassword: ['', [Validators.required, Validators.minLength(8)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
@@ -71,13 +71,15 @@ export class UpdatepasswordComponent implements OnInit {
     ) {
       return;
     }
-    axios.patch(enviroments.BACKEND_URL + '/api/auth/profile');
+    console.log(this.form.value);
+    // axios.patch(enviroments.BACKEND_URL + '/api/auth/profile');
   }
 
   resetForm() {
     this.form.reset({
-      username: '',
+      oldPassword: '',
       password: '',
+      confirmPassword: '',
     });
   }
 }
