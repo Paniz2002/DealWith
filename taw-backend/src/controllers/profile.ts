@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
-import { JWT_SECRET } from "src/secret";
+import { JWT_SECRET } from "../secret";
 import UserModel from "../../models/user";
-import InternalException from "src/exceptions/internal-exception";
-import BadRequestException from "src/exceptions/bad-request";
+import InternalException from "../exceptions/internal-exception";
+import BadRequestException from "../exceptions/bad-request";
 export const updateProfileController = (req: Request, res: Response) => {
   const { currentPassword, newPassword, confirmNewPassword } = req.body;
   if (newPassword !== confirmNewPassword || currentPassword === newPassword) {
@@ -25,6 +25,6 @@ export const updateProfileController = (req: Request, res: Response) => {
       },
     );
   } catch (e) {
-    return InternalException(req, res, "");
+    return InternalException(req, res, "Unknown error while updating profile.");
   }
 };
