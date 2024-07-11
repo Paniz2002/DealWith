@@ -2,24 +2,15 @@ import { Response } from "express";
 import { JWT_SECRET } from "../secret";
 import UserModel from "../../models/user";
 import connectDB from "../../config/db";
-import BadRequestException from "../exceptions/bad-request";
 import * as jwt from "jsonwebtoken";
 import UnautorizedException from "../exceptions/unauthorized";
 
-export const checkJWTController = async (req: any, res: Response) => {
+export const profileController = async (req: any, res: Response) => {
   connectDB();
-  //  1.   extract the token from header
+  // Should be guaranteed by the checkAutenticationMiddleware.
   const token = req.cookies.jwt;
-
-  //  2.   if token is not present, throw a bad request exception.
-  if (!token) {
-    // Next prints to console ... because reasons.
-    // So i modified it accordingly
-    return BadRequestException(req, res, "Bad Request: Missing JWT");
-  }
-
   try {
-    //  3.   if token is present, decode the token and extract the payload
+    // If token is present, decode the token and extract the payload
     const payload = jwt.verify(token, JWT_SECRET) as any;
     const user = await UserModel.findOne({
       _id: payload._id,
