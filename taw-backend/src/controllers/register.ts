@@ -4,7 +4,7 @@ import BadRequestException from "../exceptions/bad-request";
 import connectDB from "../../config/db";
 import Email from "../../models/email";
 import User from "../../models/user";
-import InternalException from "src/exceptions/internal-exception";
+import InternalException from "../exceptions/internal-exception";
 
 // Form validation schema
 const formValidator = z.object({
