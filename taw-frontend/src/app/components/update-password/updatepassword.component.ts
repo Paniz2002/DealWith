@@ -1,5 +1,5 @@
-import {CommonModule} from '@angular/common';
-import {Component, inject, OnInit} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,17 +7,17 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import {enviroments} from '../../../enviroments/enviroments';
+import { enviroments } from '../../../enviroments/enviroments';
 import axios from 'axios';
-import {MatSelectModule} from '@angular/material/select';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatButtonModule} from '@angular/material/button';
-import {MatIconModule} from '@angular/material/icon';
-import {ActivatedRoute, Router} from '@angular/router';
-import {NotificationService} from '../../services/popup/notification.service';
-import {RegisterComponent} from '../register/register.component';
-import {LocalStorageService} from '../../services/localStorage/localStorage.service';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NotificationService } from '../../services/popup/notification.service';
+import { RegisterComponent } from '../register/register.component';
+import { LocalStorageService } from '../../services/localStorage/localStorage.service';
 
 @Component({
   selector: 'app-register',
@@ -32,7 +32,7 @@ import {LocalStorageService} from '../../services/localStorage/localStorage.serv
     MatButtonModule,
     MatIconModule,
   ],
-  templateUrl: './updatepassowrd.html',
+  templateUrl: './updatepassword.html',
   styleUrl: '../register/register.component.css',
 })
 export class UpdatepasswordComponent implements OnInit {
@@ -45,27 +45,26 @@ export class UpdatepasswordComponent implements OnInit {
     private router: Router,
     private snackBar: NotificationService,
     private localStorage: LocalStorageService,
-    private route: ActivatedRoute
-  ) {
-  }
+    private route: ActivatedRoute,
+  ) {}
 
   ngOnInit() {
-
-
-    const res = axios.get(enviroments.BACKEND_URL + '/api/auth/me').then((res) => {
-      if (res.status != 200 || res.data.needs_update !== true) {
+    const res = axios
+      .get(enviroments.BACKEND_URL + '/api/auth/me')
+      .then((res) => {
+        if (res.status != 200 || res.data.needs_update !== true) {
+          this.router.navigate(['/login']);
+        }
+      })
+      .catch((err) => {
         this.router.navigate(['/login']);
-      }
-    }).catch((err) => {
-      this.router.navigate(['/login']);
-    });
+      });
 
     this.form = this.loginFormBuilder.group({
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
     });
   }
-
 
   get getPasswordErrors() {
     return RegisterComponent.getPasswordErrors;
@@ -75,7 +74,6 @@ export class UpdatepasswordComponent implements OnInit {
     return RegisterComponent.getPasswordConfirmErrors;
   }
 
-
   onSubmit() {
     if (
       RegisterComponent.getPasswordErrors(this.form) ||
@@ -83,8 +81,6 @@ export class UpdatepasswordComponent implements OnInit {
     ) {
       return;
     }
-
-
   }
 
   resetForm() {
