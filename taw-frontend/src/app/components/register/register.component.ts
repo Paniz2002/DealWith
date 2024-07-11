@@ -138,13 +138,10 @@ export class RegisterComponent implements OnInit {
       );
       return;
     }
-    console.log('dddd');
     const url = enviroments.BACKEND_URL + '/api/auth/register';
     try {
       await axios.post(url, this.form.value);
-      console.log(this.form.value);
       this.router.navigate(['/login']);
-      console.log('dd22222dd');
     } catch (e) {
       if (axios.isAxiosError(e)) {
         this.snackBar.notify(e.response?.data.message);
