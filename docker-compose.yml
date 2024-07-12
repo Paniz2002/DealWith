@@ -25,7 +25,6 @@ services:
         ipv4_address: 172.77.0.17
   mongodb:
     image: mongo:latest
-    restart: always
     ports:
       - 27017:27017
     volumes:
