@@ -8,7 +8,7 @@ export default function connectDB() {
 
   // initial try catch to handle mongoDB errors
   try {
-    mongoose.connect(url);
+    mongoose.connect(url, {});
   } catch (err) {
     console.error((err as Error).message);
     process.exit(1);
@@ -27,4 +27,3 @@ export default function connectDB() {
 
   return;
 }
-

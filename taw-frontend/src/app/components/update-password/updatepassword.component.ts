@@ -8,7 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { enviroments } from '../../../enviroments/enviroments';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -44,7 +44,6 @@ export class UpdatepasswordComponent implements OnInit {
     private updatePasswordFormBuilder: FormBuilder,
     private router: Router,
     private snackBar: NotificationService,
-    private localStorage: LocalStorageService,
     private route: ActivatedRoute,
   ) {}
 
@@ -76,7 +75,7 @@ export class UpdatepasswordComponent implements OnInit {
       .patch(enviroments.BACKEND_URL + '/api/auth/me', this.form.value)
       .then((res) => {
         if (res.status === 200) {
-          return this.router.navigate(['/homepage']);
+          return this.router.navigate(['/admin']);
         }
         this.snackBar.notify(res.data.message);
         return;

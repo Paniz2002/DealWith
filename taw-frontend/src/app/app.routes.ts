@@ -4,9 +4,7 @@ import { UpdatepasswordComponent } from './components/update-password/updatepass
 import { RegisterComponent } from './components/register/register.component';
 import { AuthenticationGuard } from './guards/auth/authentication.guard';
 import { LogoutGuard } from './guards/logout/logout.guard';
-import { RoleGuard } from './guards/role/role.guard';
 import { AdminHomepageComponent } from './components/admin-homepage/admin-homepage.component';
-import { AdminGuard } from './guards/cashier/adminGuard';
 export const routes: Routes = [
   {
     path: 'register',
@@ -32,7 +30,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    canActivate: [AuthenticationGuard, AdminGuard],
+    canActivate: [AuthenticationGuard],
     pathMatch: 'full',
     component: AdminHomepageComponent,
     children: [],
