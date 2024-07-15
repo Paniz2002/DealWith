@@ -25,7 +25,6 @@ const authMiddleware = async (
   try {
     //  3.   if token is present, decode the token and extract the payload
     const payload = jwt.verify(token, JWT_SECRET) as any;
-    console.log(payload);
     const user = await UserModel.exists({
       _id: payload._id,
     });

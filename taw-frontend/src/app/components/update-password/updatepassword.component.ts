@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {Component, OnInit} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,17 +7,16 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { enviroments } from '../../../enviroments/enviroments';
-import axios, { AxiosError } from 'axios';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NotificationService } from '../../services/popup/notification.service';
-import { RegisterComponent } from '../register/register.component';
-import { LocalStorageService } from '../../services/localStorage/localStorage.service';
+import {enviroments} from '../../../enviroments/enviroments';
+import axios from 'axios';
+import {MatSelectModule} from '@angular/material/select';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import { Router} from '@angular/router';
+import {NotificationService} from '../../services/popup/notification.service';
+import {RegisterComponent} from '../register/register.component';
 
 @Component({
   selector: 'app-register',
@@ -44,9 +43,8 @@ export class UpdatepasswordComponent implements OnInit {
     private updatePasswordFormBuilder: FormBuilder,
     private router: Router,
     private snackBar: NotificationService,
-    private localStorage: LocalStorageService,
-    private route: ActivatedRoute,
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.form = this.updatePasswordFormBuilder.group({
@@ -65,23 +63,16 @@ export class UpdatepasswordComponent implements OnInit {
   }
 
   onSubmit() {
-    if (
-      RegisterComponent.getPasswordErrors(this.form) ||
-      RegisterComponent.getPasswordConfirmErrors(this.form)
-    ) {
+    if (RegisterComponent.getPasswordErrors(this.form) ||RegisterComponent.getPasswordConfirmErrors(this.form)) {
       return;
     }
-    console.log(this.form.value);
-    axios
-      .patch(enviroments.BACKEND_URL + '/api/auth/me', this.form.value)
-      .then((res) => {
+    axios.patch(enviroments.BACKEND_URL + '/api/auth/me', this.form.value).then((res) => {
         if (res.status === 200) {
-          return this.router.navigate(['/homepage']);
+          return this.router.navigate(['/login']);
         }
         this.snackBar.notify(res.data.message);
         return;
-      })
-      .catch((err) => {
+      }).catch((err) => {
         if (axios.isAxiosError(err)) {
           this.snackBar.notify(err.response?.data.message);
         }
