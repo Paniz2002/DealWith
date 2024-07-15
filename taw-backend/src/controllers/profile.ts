@@ -23,7 +23,7 @@ export const updateProfileController = (req: Request, res: Response) => {
     UserModel.findById(userID)
       .exec()
       .then((user) => {
-        if (compareSync(password, user.password)) {
+        if (compareSync(oldPassword, user.password)) {
           UserModel.updateOne(
             {
               _id: userID,
@@ -34,8 +34,7 @@ export const updateProfileController = (req: Request, res: Response) => {
             },
           );
           return res.sendStatus(200);
-        }
-        return BadRequestException(req, res, "Invalid credentials.");
+        } else return BadRequestException(req, res, "Invalid credentials.");
       });
   } catch (e) {
     return InternalException(req, res, "Unknown error while updating profile.");
