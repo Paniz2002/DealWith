@@ -46,6 +46,8 @@ export class RegisterComponent implements OnInit {
   ngOnInit() {
     this.isFormValid = false;
     this.form = this.registerFormBuilder.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      surname: ['', [Validators.required, Validators.minLength(2)]],
       username: ['', [Validators.required, Validators.minLength(3)]],
       email: [
         '',
@@ -123,6 +125,30 @@ export class RegisterComponent implements OnInit {
     return '';
   }
 
+  get getNameError() {
+    return RegisterComponent.getNameError;
+  }
+  static getNameError(form: FormGroup<any>) {
+    if (form.controls['name'].hasError('required')) {
+      return 'You must write your name.';
+    }
+    if (form.controls['name'].hasError('minlength')) {
+      return 'Name minimum length is 2 characters.';
+    }
+    return '';
+  }
+  static getSurnameError(form: FormGroup<any>) {
+    if (form.controls['surname'].hasError('required')) {
+      return 'You must write your surname.';
+    }
+    if (form.controls['surname'].hasError('minlength')) {
+      return 'Surname minimum length is 2 characters.';
+    }
+    return '';
+  }
+  get getSurnameError() {
+    return RegisterComponent.getSurnameError;
+  }
   async onSubmit() {
     if (
       this.getRoleErrors() ||

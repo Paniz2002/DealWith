@@ -8,7 +8,9 @@ import InternalException from "../exceptions/internal-exception";
 
 // Form validation schema
 const formValidator = z.object({
-  username: z.string().min(1),
+  name: z.string().min(2),
+  surname: z.string().min(2),
+  username: z.string().min(3),
   password: z.string().min(8),
   email: z.string().email("This is not a valid email."),
   confirmPassword: z.string().min(8),
@@ -64,6 +66,10 @@ export const registerController = async (req: Request, res: Response) => {
 
     // Create a new user document
     const user = new User({
+      profile: {
+        firstName: req.body.name,
+        lastName: req.body.surname,
+      },
       username: req.body.username,
       password: req.body.password, //encrypted byt the user model
       email_id: email._id, // Reference the saved email document

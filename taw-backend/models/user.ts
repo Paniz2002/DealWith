@@ -58,4 +58,3 @@ UserSchema.methods.isModerator = function () {
 const User: Model<any> = mongoose.model("User", UserSchema);
 
 export default User;
-

@@ -13,7 +13,7 @@
                   id="username"
                   name="username"
                   type="text"
-                  placeholder="Please write an username."
+                  placeholder="Please write a username."
                   required
                   formControlName="username"
                   minlength="3"
@@ -23,7 +23,42 @@
                 }
               </mat-form-field>
             </div>
-
+            <div class="form-group row">
+              <mat-form-field>
+                <mat-label>Name</mat-label>
+                <input
+                  matInput
+                  id="name"
+                  name="name"
+                  type="text"
+                  placeholder="Please write a name."
+                  required
+                  formControlName="name"
+                  minlength="2"
+                />
+                @if (this.form.controls["name"].errors) {
+                  <mat-error>{{ getNameError(this.form) }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="form-group row">
+              <mat-form-field>
+                <mat-label>Surname</mat-label>
+                <input
+                  matInput
+                  id="surname"
+                  surname="name"
+                  type="text"
+                  placeholder="Please write a surname."
+                  required
+                  formControlName="surname"
+                  minlength="2"
+                />
+                @if (this.form.controls["surname"].errors) {
+                  <mat-error>{{ getSurnameError(this.form) }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
             <div
               class="form-group row justify-content-center align-items-center"
             >

@@ -9,7 +9,7 @@ services:
       - "4200:4200"
     networks:
       taw-network:
-         ipv4_address: 172.77.0.7
+        ipv4_address: 172.77.0.7
   backend:
     container_name: taw-backend
     hostname: taw-backend
@@ -41,4 +41,3 @@ networks:
       config:
         - subnet: 172.77.0.0/24
           gateway: 172.77.0.1
-
