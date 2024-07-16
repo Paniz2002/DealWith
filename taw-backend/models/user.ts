@@ -14,7 +14,7 @@ const UserSchema = new mongoose.Schema(
         },
         //Our password is hashed with bcrypt
         password: {type: String, required: true},
-        email_id: {
+        email: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Email",
             required: true,

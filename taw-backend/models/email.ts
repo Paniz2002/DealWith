@@ -1,5 +1,5 @@
 import mongoose, { Model } from 'mongoose';
-import uniqueValidator from 'mongoose-unique-validator';
+import uniqueValidator from "mongoose-unique-validator";
 
 const EmailSchema = new mongoose.Schema({
     address: {
@@ -15,7 +15,7 @@ const EmailSchema = new mongoose.Schema({
     timestamps: true
 });
 
-EmailSchema.plugin(uniqueValidator, { message: 'is already taken' });
+EmailSchema.plugin( uniqueValidator, { message: 'is already taken' });
 
 const Email: Model<any> = mongoose.model('Email', EmailSchema);
 

@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "mongoose-validators": "^0.1.0"
+  }
+}
