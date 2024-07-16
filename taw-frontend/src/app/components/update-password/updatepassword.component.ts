@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -14,10 +14,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { NotificationService } from '../../services/popup/notification.service';
 import { RegisterComponent } from '../register/register.component';
-import { LocalStorageService } from '../../services/localStorage/localStorage.service';
 
 @Component({
   selector: 'app-register',
@@ -44,7 +43,6 @@ export class UpdatepasswordComponent implements OnInit {
     private updatePasswordFormBuilder: FormBuilder,
     private router: Router,
     private snackBar: NotificationService,
-    private route: ActivatedRoute,
   ) {}
 
   ngOnInit() {
@@ -70,12 +68,11 @@ export class UpdatepasswordComponent implements OnInit {
     ) {
       return;
     }
-    console.log(this.form.value);
     axios
       .patch(enviroments.BACKEND_URL + '/api/auth/me', this.form.value)
       .then((res) => {
         if (res.status === 200) {
-          return this.router.navigate(['/admin']);
+          return this.router.navigate(['/login']);
         }
         this.snackBar.notify(res.data.message);
         return;

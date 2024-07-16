@@ -156,12 +156,6 @@ export class RegisterComponent implements OnInit {
       RegisterComponent.getPasswordConfirmErrors(this.form) ||
       RegisterComponent.getUsernameErrors(this.form)
     ) {
-      console.log(
-        this.getRoleErrors() ||
-          RegisterComponent.getPasswordErrors(this.form) ||
-          RegisterComponent.getPasswordConfirmErrors(this.form) ||
-          RegisterComponent.getUsernameErrors(this.form),
-      );
       return;
     }
     const url = enviroments.BACKEND_URL + '/api/auth/register';
