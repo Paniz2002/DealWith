@@ -14,11 +14,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { NavigationExtras, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { NotificationService } from '../../services/popup/notification.service';
 import { RegisterComponent } from '../register/register.component';
 import { LocalStorageService } from '../../services/localStorage/localStorage.service';
-import { JwtPayload } from 'jsonwebtoken';
 
 @Component({
   selector: 'app-register',
@@ -76,17 +75,19 @@ export class LoginComponent implements OnInit {
         withCredentials: true,
       });
       if (res.status == 200) {
-        if (res.data.is_moderator === true && res.data.needs_update === true) {
+        if (res.data.is_moderator === true && res.data.needs_update === true)
           return await this.router.navigate(['/updatepassword']);
-        }
-        return await this.router.navigate(['/homepageRedirect']); //FIXME: does not redciret to page
+
+        if (res.data.is_moderator)
+          return await this.router.navigate(['/admin']);
+        else return await this.router.navigate(['/user']);
       }
     } catch (e) {
       if (axios.isAxiosError(e)) {
         this.snackBar.notify(e.response?.data.message);
       }
     }
-    return true;
+    return false;
   }
 
   resetForm() {
