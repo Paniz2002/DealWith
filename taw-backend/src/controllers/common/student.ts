@@ -7,6 +7,6 @@ export const GET_STUDENTS_CONTROLLER = async (req: Request, res: Response) => {
     role: "student",
   };
   const select = "_id username profile";
-  const students = await UserModel.find(filters).select(select).exec();
+  const students = await UserModel.find(filters, select).exec();
   return res.status(200).json(students);
 };
