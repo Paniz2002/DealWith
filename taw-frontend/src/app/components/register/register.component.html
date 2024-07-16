@@ -133,8 +133,8 @@
                   required
                   formControlName="role"
                 >
-                  <mat-option value="student">student</mat-option>
-                  <mat-option value="moderator">moderator</mat-option>
+                  <mat-option value="student">Student</mat-option>
+                  <mat-option value="moderator">Moderator</mat-option>
                 </mat-select>
                 @if (this.form.controls["role"].errors) {
                   <mat-error>{{ getRoleErrors() }}</mat-error>
