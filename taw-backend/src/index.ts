@@ -1,11 +1,10 @@
-// src/index.js
 import connectDB from "../config/db";
 import express, { Express } from "express";
 import dotenv from "dotenv";
 import apiRouter from "./routes";
 import cors from "cors";
 import bodyParser from "body-parser";
-const cookieParser = require("cookie-parser");
+import cookieParser from "cookie-parser";
 import { whitelistMiddleware } from "./middlewares/whitelist";
 dotenv.config();
 
