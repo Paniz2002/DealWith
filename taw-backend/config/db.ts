@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export default function connectDB() {
+export default async function connectDB() {
   const url = process.env.MONGODB_URI as string;
 
   // initial try catch to handle mongoDB errors

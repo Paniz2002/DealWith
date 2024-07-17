@@ -6,7 +6,7 @@ import UserModel from "../../models/user";
 import connectDB from "../../config/db";
 
 export const loginController = async (req: Request, res: Response) => {
-  connectDB();
+  await connectDB();
 
   const { username, password } = req.body;
 

@@ -11,7 +11,7 @@ const authMiddleware = async (
   res: Response,
   next: NextFunction,
 ) => {
-  connectDB();
+  await connectDB();
   //  1.   extract the token from header
 
   const token = req.cookies.jwt;

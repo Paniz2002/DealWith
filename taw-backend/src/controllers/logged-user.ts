@@ -6,7 +6,7 @@ import * as jwt from "jsonwebtoken";
 import UnautorizedException from "../exceptions/unauthorized";
 
 export const profileController = async (req: any, res: Response) => {
-  connectDB();
+  await connectDB();
   // Should be guaranteed by the checkAutenticationMiddleware.
   const token = req.cookies.jwt;
   try {

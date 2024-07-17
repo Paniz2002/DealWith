@@ -28,7 +28,7 @@ const validateForm = (input: unknown) => {
 
 // Registration controller
 export const registerController = async (req: Request, res: Response) => {
-  connectDB();
+  await connectDB();
   const isValid = validateForm(req.body);
   if (!isValid) {
     return BadRequestException(

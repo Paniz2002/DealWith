@@ -18,7 +18,8 @@ const CitySchema = new mongoose.Schema({
     },
     province:{
         type: String,
-        required: [true, "can't be blank"]
+        required: [true, "can't be blank"],
+        validator: (v:string) => !(v.length > 2)
     },
     country:{
         type: String,

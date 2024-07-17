@@ -11,7 +11,10 @@ dotenv.config();
 
 const app: Express = express();
 
-connectDB();
+connectDB().then(() => {}).catch((err) => {
+    console.error("Error in connecting to the database:", err);
+    throw err;
+});
 
 const port = process.env.PORT || 3000;
 
