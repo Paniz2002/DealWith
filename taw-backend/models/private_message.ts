@@ -21,3 +21,7 @@ const PrivateMessageSchema = new mongoose.Schema({
         required: [true, "can't be blank"]
     }
 });
+
+const PrivateMessage: Model<any> = mongoose.model('PrivateMessage', PrivateMessageSchema);
+
+export default PrivateMessage;

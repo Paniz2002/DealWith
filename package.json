@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "mongoose-validators": "^0.1.0"
+    "mongoose-dummy": "^1.0.8",
+    "mongoose-validators": "^0.1.0",
+    "nodemon": "^3.1.4"
   }
 }
