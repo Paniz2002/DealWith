@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { JWT_SECRET } from "../secret";
 import UserModel from "../../models/user";
-import connectDB from "../../config/db.js";
+import connectDB from "../../config/db";
 import * as jwt from "jsonwebtoken";
 import UnautorizedException from "../exceptions/unauthorized";
 

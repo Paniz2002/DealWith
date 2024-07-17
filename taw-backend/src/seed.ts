@@ -11,18 +11,8 @@ import PrivateMessage from '../models/private_message';
 import Bid from '../models/bid';
 */
 
-const dummy = require ("mongoose-dummy");
-
 const seedData = async () => {
     connectDB();
-    const ignoredFields = ['_id','created_at', '__v', /detail.*_info/];
-
-    /* mongoose-dummy to create dummy data */
-    let randomObject = dummy(User, {
-        ignore: ignoredFields,
-        returnDate: true
-    })
-    console.log(randomObject);
 }
 
 seedData();
