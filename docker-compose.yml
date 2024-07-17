@@ -10,6 +10,7 @@ services:
     networks:
       taw-network:
         ipv4_address: 172.77.0.7
+    depends_on: [backend]
   backend:
     container_name: taw-backend
     hostname: taw-backend
@@ -23,6 +24,7 @@ services:
     networks:
       taw-network:
         ipv4_address: 172.77.0.17
+    depends_on: [mongodb]
   mongodb:
     image: mongo:latest
     ports:

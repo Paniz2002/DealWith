@@ -13,8 +13,9 @@ RUN npm ci
 
 EXPOSE 3000
 # This is supposed to run when we are done with the project.
-# CMD ["npm", "run", "build"]
-# CMD ["npm", "start"]
+#FIXME THIS WILL NOT WORK IF WE USE IMPORT REQUIRE, IT WILL WORK IF WE USE IMPORT FROM @see: https://stackoverflow.com/questions/39664068/import-assignment-cannot-be-used-when-targeting-ecmascript-2015-modules
+#CMD ["sh", "-c", "npm run build && npm run seed:prod && npm run start"]
 
 # Instead while developing run this.
-CMD ["npm", "run", "dev"]
+CMD ["sh", "-c", "npm run seed:init && npm run dev"]
+
