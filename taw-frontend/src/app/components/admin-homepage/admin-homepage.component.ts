@@ -1,4 +1,5 @@
 import { OnInit, Component, ViewChild } from '@angular/core';
+import { SelectionModel } from '@angular/cdk/collections';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { NotificationService } from '../../services/popup/notification.service';
@@ -7,6 +8,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import axios from 'axios';
 import { enviroments } from '../../../enviroments/enviroments';
 
@@ -28,13 +30,15 @@ interface Student {
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
+    MatCheckboxModule,
   ],
   templateUrl: './admin-homepage.component.html',
   styleUrls: ['./admin-homepage.component.css'],
 })
 export class AdminHomepageComponent implements OnInit {
-  students!: MatTableDataSource<Student>;
-  displayedColumns = ['_id', 'username', 'firstName', 'lastName'];
+  students = new MatTableDataSource<Student>();
+  displayedColumns = ['select', '_id', 'username', 'firstName', 'lastName'];
+  selection = new SelectionModel<Student>(true, []);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -50,7 +54,7 @@ export class AdminHomepageComponent implements OnInit {
           firstName: student.profile.firstName,
           lastName: student.profile.lastName,
         }));
-        this.students = new MatTableDataSource(studentsData);
+        this.students.data = studentsData;
         this.students.paginator = this.paginator;
         this.students.sort = this.sort;
       })
@@ -68,5 +72,30 @@ export class AdminHomepageComponent implements OnInit {
     if (this.students.paginator) {
       this.students.paginator.firstPage();
     }
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.students.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  toggleAllRows() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      return;
+    }
+
+    this.selection.select(...this.students.data);
+  }
+
+  /** The label for the checkbox on the passed row */
+  checkboxLabel(row?: Student): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row._id}`;
   }
 }
