@@ -6,7 +6,9 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node out/index.js",
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon src/index.ts",
+    "seed:init": "ts-node ./src/seed.ts",
+    "seed:prod": "NODE_ENV=production node ./out/seed.js"
   },
   "author": "",
   "license": "ISC",
