@@ -1,6 +1,5 @@
 import mongoose, { Model } from 'mongoose';
-import uniqueValidator = require('mongoose-unique-validator');
-import validators from 'mongoose-validators';
+import uniqueValidator from 'mongoose-unique-validator';
 
 const BookSchema = new mongoose.Schema({
     /* TODO aggiungere immagini*/

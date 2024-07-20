@@ -1,5 +1,5 @@
 import mongoose, { Model } from 'mongoose';
-import uniqueValidator = require('mongoose-unique-validator');
+import uniqueValidator from 'mongoose-unique-validator';
 
 const UniversitySchema = new mongoose.Schema({
     name: {
