@@ -1,10 +1,8 @@
 import mongoose, { Model } from 'mongoose';
-import uniqueValidator from 'mongoose-unique-validator';
 
 const CourseSchema = new mongoose.Schema({
     name: {
         type: String,
-        lowercase: true,
         required: [true, "can't be blank"],
     },
     year: {

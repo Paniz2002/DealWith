@@ -4,7 +4,6 @@ import uniqueValidator from 'mongoose-unique-validator';
 const UniversitySchema = new mongoose.Schema({
     name: {
         type: String,
-        lowercase: true,
         unique: true,
         required: [true, "can't be blank"],
         index:true

@@ -2,7 +2,10 @@ import mongoose, { Model } from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 
 const BookSchema = new mongoose.Schema({
-    /* TODO aggiungere immagini*/
+    images:{
+        type: [String],
+        required: false
+    },
     title: {
         type: String,
         lowercase: false,
@@ -13,10 +16,10 @@ const BookSchema = new mongoose.Schema({
         index:true
     },
     ISBN: {
-        type: Number,
+        type: String,
         required: [true, "can't be blank"],
         validate: {
-            validator: (v:Number) => !(v.toString().length != 13 && v.toString().length != 10)
+            validator: (v:String) => !(v.length != 13 && v.length != 10)
         },
         unique: true,
         index:true
