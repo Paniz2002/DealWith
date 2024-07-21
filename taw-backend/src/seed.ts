@@ -87,14 +87,20 @@ const seedCourses = async (): Promise<void> => {
                 console.log(`Course already exists: ${existingCourse.name}`);
             }
 
+            const newExistingCourse = await Course.findOne({ name: courseData.name });
             // Add the Course to the University
             const university = await University.findOne({name: courseData.university});
             if (!university) {
                 console.log(`University not found for course: ${courseData.name}`);
             }else{
-                university.courses.push(existingCourse);
-                await university.save();
-                console.log(`Course added to university: ${existingCourse.name}`);
+                // Check if the course is already in the university
+                if(!university.courses.includes(newExistingCourse._id)) {
+                    university.courses.push(newExistingCourse);
+                    await university.save();
+                    console.log(`Course added to university: ${newExistingCourse.name}`);
+                }else{
+                    console.log(`Course already in university: ${existingCourse.name}`);
+                }
             }
         } catch (err) {
             console.error(`Error saving course: ${courseData.name}`, err);
@@ -124,14 +130,21 @@ const seedUniversities = async (): Promise<void> => {
             } else {
                 console.log(`University already exists: ${existingUniversity.name}`);
             }
+
+            const newExistingUniversity = await University.findOne({ name: universityData.name });
             // Add the University to the City
             const city = await City.findOne({name: universityData.city});
             if (!city) {
                 console.log(`City not found for university: ${universityData.name}`);
             }else{
-                city.universities.push(existingUniversity);
-                await city.save();
-                console.log(`University added to city: ${existingUniversity.name}`);
+                // Check if the university is already in the city
+                if(!city.universities.includes(newExistingUniversity._id)) {
+                    city.universities.push(newExistingUniversity);
+                    await city.save();
+                    console.log(`University added to city: ${newExistingUniversity.name}`);
+                }else{
+                    console.log(`University already in city: ${newExistingUniversity.name}`);
+                }
             }
         } catch (err) {
             console.error(`Error saving university: ${universityData.name}`, err);
@@ -175,10 +188,40 @@ const seedBooks = async (): Promise<void> => {
             // Check if the book already exists
             const existingBook = await Book.findOne({ ISBN: bookData.ISBN });
             if (!existingBook) {
+                // Get a random seller
+                const randomSeller = await User.aggregate([{ $sample: { size: 1 } }]);
+                // Get a random course
+                const randomCourse = await Course.aggregate([{ $sample: { size: 1 } }]);
+
                 // Create the new book and save it
-                const newBook = new Book(bookData);
+                const newBook = new Book({
+                    title: bookData.title,
+                    year: bookData.year,
+                    ISBN: bookData.ISBN,
+                    condition: bookData.condition,
+                    auction_duration: bookData.auction_duration,
+                    starting_price: bookData.starting_price,
+                    reserve_price: bookData.reserve_price,
+                    description: bookData.description,
+                    seller: randomSeller[0]._id,
+                    course: randomCourse[0]._id
+                });
                 await newBook.save();
                 console.log(`Book saved: ${newBook.title}`);
+
+                // Add the Book to the Course
+                const course = await Course.findById(newBook.course);
+                if (!course) {
+                    console.log(`Course not found for book: ${newBook.title}`);
+                }else{
+                    if(!course.books.includes(newBook)){
+                        course.books.push(newBook);
+                        await course.save();
+                        console.log(`Book added to course: ${newBook.title}`);
+                    }else{
+                        console.log(`Book already in course: ${newBook.title}`);
+                    }
+                }
             } else {
                 console.log(`Book already exists: ${existingBook.title}`);
             }
@@ -199,6 +242,7 @@ const seedData = async () => {
         await seedCities();
         await seedUniversities();
         await seedCourses();
+        await seedBooks();
     }
     catch(err){
         console.error(err);
