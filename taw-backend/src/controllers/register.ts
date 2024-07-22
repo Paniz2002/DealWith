@@ -28,7 +28,8 @@ const validateForm = (input: unknown) => {
 
 // Registration controller
 export const registerController = async (req: Request, res: Response) => {
-  connectDB();
+  await connectDB();
+
   const isValid = validateForm(req.body);
   if (!isValid) {
     return BadRequestException(
@@ -72,7 +73,7 @@ export const registerController = async (req: Request, res: Response) => {
       },
       username: req.body.username,
       password: req.body.password, //encrypted byt the user model
-      email_id: email._id, // Reference the saved email document
+      email: email._id, // Reference the saved email document
       role: req.body.role,
     });
 

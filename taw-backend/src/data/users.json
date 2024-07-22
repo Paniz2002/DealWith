@@ -1,0 +1,92 @@
+[
+  {
+    "profile": {
+      "firstName": "Mario",
+      "lastName": "Rossi"
+    },
+    "username": "mario",
+    "password": "password2",
+    "email": "mario.rossi@example.com",
+    "role": "student"
+  },
+  {
+    "profile": {
+      "firstName": "Luca",
+      "lastName": "Bianchi"
+    },
+    "username": "luca",
+    "password": "password3",
+    "email": "luca.bianchi@example.com",
+    "role": "student"
+  },
+  {
+    "profile": {
+      "firstName": "Anna",
+      "lastName": "Verdi"
+    },
+    "username": "anna",
+    "password": "password4",
+    "email": "anna.verdi@example.com",
+    "role": "student"
+  },
+  {
+    "profile": {
+      "firstName": "Sara",
+      "lastName": "Neri"
+    },
+    "username": "sara",
+    "password": "password5",
+    "email": "sara.neri@example.com",
+    "role": "student"
+  },
+  {
+    "profile": {
+      "firstName": "Paolo",
+      "lastName": "Moro"
+    },
+    "username": "paolo",
+    "password": "password6",
+    "email": "paolo.moro@example.com",
+    "role": "student"
+  },
+  {
+    "profile": {
+      "firstName": "Giulia",
+      "lastName": "Rossi"
+    },
+    "username": "giulia",
+    "password": "password7",
+    "email": "giulia.rossi@example.com",
+    "role": "moderator"
+  },
+  {
+    "profile": {
+      "firstName": "Davide",
+      "lastName": "Bianchi"
+    },
+    "username": "davide",
+    "password": "password8",
+    "email": "davide.bianchi@example.com",
+    "role": "moderator"
+  },
+  {
+    "profile": {
+      "firstName": "Francesca",
+      "lastName": "Verdi"
+    },
+    "username": "francesca",
+    "password": "password9",
+    "email": "francesca.verdi@example.com",
+    "role": "moderator"
+  },
+  {
+    "profile": {
+      "firstName": "Alessandro",
+      "lastName": "Neri"
+    },
+    "username": "alessandro",
+    "password": "password10",
+    "email": "alessandro.neri@example.com",
+    "role": "moderator"
+  }
+]

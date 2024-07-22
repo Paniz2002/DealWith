@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Sapienza University of Rome",
+    "city": "rome",
+    "courses": []
+  },
+  {
+    "name": "Politecnico di Milano",
+    "city": "milan",
+    "courses": []
+  },
+  {
+    "name": "Federico II University of Naples",
+    "city": "naples",
+    "courses": []
+  },
+  {
+    "name": "Politecnico di Torino",
+    "city": "turin",
+    "courses": []
+  },
+  {
+    "name": "University of Palermo",
+    "city": "palermo",
+    "courses": []
+  },
+  {
+    "name": "University of Genova",
+    "city": "genoa",
+    "courses": []
+  },
+  {
+    "name": "University of Bologna",
+    "city": "bologna",
+    "courses": []
+  },
+  {
+    "name": "University of Florence",
+    "city": "florence",
+    "courses": []
+  },
+  {
+    "name": "University of Verona",
+    "city": "verona",
+    "courses": []
+  },
+  {
+    "name": "Ca'Foscari University of Venice",
+    "city": "venice",
+    "courses": []
+  }
+]

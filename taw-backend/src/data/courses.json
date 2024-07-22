@@ -1,0 +1,62 @@
+[
+  {
+    "name": "computer science",
+    "year": { "year1": 2023, "year2": 2024 },
+    "university": "Sapienza University of Rome"
+  },
+  {
+    "name": "computer science",
+    "year": { "year1": 2023, "year2": 2024 },
+    "university": "Politecnico di Milano"
+  },
+  {
+    "name": "computer science",
+    "year": { "year1": 2023, "year2": 2024 },
+    "university": "Federico II University of Naples"
+  },
+  {
+    "name": "mechanical engineering",
+    "year": { "year1": 2023, "year2": 2024 },
+    "university": "Politecnico di Torino"
+  },
+  {
+    "name": "electrical engineering",
+    "year": { "year1": 2023, "year2": 2024 },
+    "university": "University of Palermo"
+  },
+  {
+    "name": "civil engineering",
+    "year": { "year1": 2023, "year2": 2024 },
+    "university": "University of Genova"
+  },
+  {
+    "name": "business administration",
+    "year": { "year1": 2023, "year2": 2024 },
+    "university": "University of Bologna"
+  },
+  {
+    "name": "psychology",
+    "year": { "year1": 2023, "year2": 2024 },
+    "university": "University of Florence"
+  },
+  {
+    "name": "economics",
+    "year": { "year1": 2023, "year2": 2024 },
+    "university": "University of Verona"
+  },
+  {
+    "name": "biology",
+    "year": { "year1": 2023, "year2": 2024 },
+    "university": "Ca'Foscari University of Venice"
+  },
+  {
+    "name": "chemistry",
+    "year": { "year1": 2023, "year2": 2024 },
+    "university": "Ca'Foscari University of Venice"
+  },
+  {
+    "name": "physics",
+    "year": { "year1": 2023, "year2": 2024 },
+    "university": "Ca'Foscari University of Venice"
+  }
+]

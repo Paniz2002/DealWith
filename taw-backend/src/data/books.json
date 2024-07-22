@@ -1,0 +1,92 @@
+[
+  {
+    "title": "Introduction to the theory of computation",
+    "year": 2012,
+    "ISBN": "0000000001",
+    "condition": "Mint",
+    "auction_duration": 7,
+    "starting_price": 20,
+    "reserve_price": 50,
+    "description": "This book is a must have for any computer science student"
+  },
+  {
+    "title": "Introduction to the theory of computation",
+    "year": 2012,
+    "ISBN": "0000000002",
+    "condition": "Mint",
+    "auction_duration": 7,
+    "starting_price": 20,
+    "reserve_price": 50,
+    "description": "This book is a must have for any computer science student"
+  },
+  {
+    "title": "Introduction to the theory of computation",
+    "year": 2012,
+    "ISBN": "0000000003",
+    "condition": "Mint",
+    "auction_duration": 7,
+    "starting_price": 20,
+    "reserve_price": 50,
+    "description": "This book is a must have for any computer science student"
+  },
+  {
+    "title": "Introduction to the theory of computation",
+    "year": 2012,
+    "ISBN": "0000000004",
+    "condition": "Mint",
+    "auction_duration": 7,
+    "starting_price": 20,
+    "reserve_price": 50,
+    "description": "This book is a must have for any computer science student"
+  },
+  {
+    "title": "Introduction to the theory of computation",
+    "year": 2012,
+    "ISBN": "0000000005",
+    "condition": "Mint",
+    "auction_duration": 7,
+    "starting_price": 20,
+    "reserve_price": 50,
+    "description": "This book is a must have for any computer science student"
+  },
+  {
+    "title": "Introduction to the theory of computation",
+    "year": 2012,
+    "ISBN": "0000000006",
+    "condition": "Mint",
+    "auction_duration": 7,
+    "starting_price": 20,
+    "reserve_price": 50,
+    "description": "This book is a must have for any computer science student"
+  },
+  {
+    "title": "Introduction to the theory of computation",
+    "year": 2012,
+    "ISBN": "0000000007",
+    "condition": "Mint",
+    "auction_duration": 7,
+    "starting_price": 20,
+    "reserve_price": 50,
+    "description": "This book is a must have for any computer science student"
+  },
+  {
+    "title": "Introduction to the theory of computation",
+    "year": 2012,
+    "ISBN": "0000000008",
+    "condition": "Mint",
+    "auction_duration": 7,
+    "starting_price": 20,
+    "reserve_price": 50,
+    "description": "This book is a must have for any computer science student"
+  },
+  {
+    "title": "Introduction to the theory of computation",
+    "year": 2012,
+    "ISBN": "0000000009",
+    "condition": "Mint",
+    "auction_duration": 7,
+    "starting_price": 20,
+    "reserve_price": 50,
+    "description": "This book is a must have for any computer science student"
+  }
+]

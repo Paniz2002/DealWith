@@ -1,0 +1,52 @@
+[
+  {
+    "name": "rome",
+    "province": "rome",
+    "country": "Italy"
+  },
+  {
+    "name": "milan",
+    "province": "milan",
+    "country": "Italy"
+  },
+  {
+    "name": "naples",
+    "province": "naples",
+    "country": "Italy"
+  },
+  {
+    "name": "turin",
+    "province": "turin",
+    "country": "Italy"
+  },
+  {
+    "name": "palermo",
+    "province": "palermo",
+    "country": "Italy"
+  },
+  {
+    "name": "genoa",
+    "province": "genoa",
+    "country": "Italy"
+  },
+  {
+    "name": "bologna",
+    "province": "bologna",
+    "country": "Italy"
+  },
+  {
+    "name": "florence",
+    "province": "florence",
+    "country": "Italy"
+  },
+  {
+    "name": "verona",
+    "province": "verona",
+    "country": "Italy"
+  },
+  {
+    "name": "venice",
+    "province": "venice",
+    "country": "Italy"
+  }
+]
