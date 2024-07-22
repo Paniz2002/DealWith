@@ -8,7 +8,6 @@ import University from "../models/university";
 import PublicComment from '../models/public_comment';
 import PrivateMessage from '../models/private_message';
 import Bid from '../models/bid';
-import InternalException from "./exceptions/internal-exception";
 
 import path from 'path';
 import fs from 'fs';
@@ -223,7 +222,7 @@ const seedBooks = async (): Promise<void> => {
                     }
                 }
             } else {
-                console.log(`Book already exists: ${existingBook.title}`);
+                console.log(`Book already exists: ${existingBook.ISBN}`);
             }
         } catch (err) {
             console.error(`Error saving book: ${bookData.title}`, err);
@@ -238,18 +237,43 @@ const seedData = async () => {
 
     try{
         await seedEmails();
-        await seedUsers();
-        await seedCities();
-        await seedUniversities();
-        await seedCourses();
-        await seedBooks();
     }
     catch(err){
-        console.error(err);
-    } finally {
-        await mongoose.connection.close();
+        console.error('Error seeding Emails', err);
     }
+
+    try{
+        await seedUsers();
+    }catch(err){
+        console.error('Error seeding Users',err);
+    }
+
+    try{
+        await seedCities();
+    }catch(err){
+        console.error('Error seeding Cities',err);
+    }
+
+    try{
+        await seedUniversities();
+    }catch(err){
+        console.error('Error seeding Universities',err);
+    }
+
+    try{
+        await seedCourses();
+    }catch(err){
+        console.error('Error seeding Courses',err);
+    }
+
+    try{
+        await seedBooks();
+    }catch(err){
+        console.error('Error seeding Books',err);
+    }
+
+    await mongoose.connection.close();
 
 }
 
-seedData();
+seedData().then(() => { console.log("Seeding complete"); }).catch((err) => { console.error("Error seeding data", err); });
