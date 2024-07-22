@@ -116,30 +116,32 @@
                 />
                 @if (this.form.controls["confirmPassword"].errors) {
                   <mat-error>{{
-                    getPasswordConfirmErrors(this.form)
-                  }}</mat-error>
+                      getPasswordConfirmErrors(this.form)
+                    }}
+                  </mat-error>
                 }
               </mat-form-field>
             </div>
-            <div
-              class="form-group row justify-content-center align-items-center"
-            >
-              <mat-form-field>
-                <mat-label>Role</mat-label>
-                <mat-select
-                  matNativeControl
-                  name="role"
-                  id="role"
-                  required
-                  formControlName="role"
-                >
-                  <mat-option value="student">Student</mat-option>
-                  <mat-option value="moderator">Moderator</mat-option>
-                </mat-select>
-                @if (this.form.controls["role"].errors) {
-                  <mat-error>{{ getRoleErrors() }}</mat-error>
-                }
-              </mat-form-field>
+            <!-- show the role only if the user is an admin -->
+            <div *ngIf="amIAdmin">
+              <div class="form-group row justify-content-center align-items-center">
+                <mat-form-field>
+                  <mat-label>Role</mat-label>
+                  <mat-select
+                    matNativeControl
+                    name="role"
+                    id="role"
+                    required
+                    formControlName="role"
+                  >
+                    <mat-option value="student">Student</mat-option>
+                    <mat-option value="moderator">Moderator</mat-option>
+                  </mat-select>
+                  @if (this.form.controls["role"].errors) {
+                    <mat-error>{{ getRoleErrors() }}</mat-error>
+                  }
+                </mat-form-field>
+              </div>
             </div>
             <div class="row">
               <div class="form-group">

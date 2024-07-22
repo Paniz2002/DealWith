@@ -11,6 +11,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import axios from 'axios';
 import { enviroments } from '../../../enviroments/enviroments';
+import {RegisterComponent} from "../register/register.component";
 
 interface Student {
   _id: string;
@@ -31,6 +32,7 @@ interface Student {
     MatSortModule,
     MatPaginatorModule,
     MatCheckboxModule,
+    RegisterComponent,
   ],
   templateUrl: './admin-homepage.component.html',
   styleUrls: ['./admin-homepage.component.css'],

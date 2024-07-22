@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {Component, OnInit} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,15 +7,15 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { enviroments } from '../../../enviroments/enviroments';
+import {enviroments} from '../../../enviroments/enviroments';
 import axios from 'axios';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
-import { NotificationService } from '../../services/popup/notification.service';
+import {MatSelectModule} from '@angular/material/select';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {Router} from '@angular/router';
+import {NotificationService} from '../../services/popup/notification.service';
 
 @Component({
   selector: 'app-register',
@@ -36,12 +36,22 @@ import { NotificationService } from '../../services/popup/notification.service';
 export class RegisterComponent implements OnInit {
   form!: FormGroup;
   isFormValid!: Boolean;
+  amIAdmin: Boolean = false;
 
   constructor(
     private registerFormBuilder: FormBuilder,
     private router: Router,
     private snackBar: NotificationService,
-  ) {}
+  ) {
+    //try to get the role from api /auth/me
+    axios.get(enviroments.BACKEND_URL + '/api/auth/me')
+      .then((res) => {
+        this.amIAdmin = res.data.is_moderator;
+      })
+      .catch((err) => {
+        //ignore error because we are not sure if the user (moderator) is logged in
+      });
+  }
 
   ngOnInit() {
     this.isFormValid = false;
@@ -113,13 +123,13 @@ export class RegisterComponent implements OnInit {
       return 'Confirm password required.';
     }
     if (form.controls['confirmPassword'].hasError('minlength')) {
-      return 'Confirm password length is atleast 8 characters.';
+      return 'Confirm password length is at least 8 characters.';
     }
     return '';
   }
 
   getRoleErrors() {
-    if (this.form.controls['role'].hasError('required')) {
+    if (this.amIAdmin && this.form.controls['role'].hasError('required')) {
       return 'You must select a role.';
     }
     return '';
@@ -128,6 +138,7 @@ export class RegisterComponent implements OnInit {
   get getNameError() {
     return RegisterComponent.getNameError;
   }
+
   static getNameError(form: FormGroup<any>) {
     if (form.controls['name'].hasError('required')) {
       return 'You must write your name.';
@@ -137,6 +148,7 @@ export class RegisterComponent implements OnInit {
     }
     return '';
   }
+
   static getSurnameError(form: FormGroup<any>) {
     if (form.controls['surname'].hasError('required')) {
       return 'You must write your surname.';
@@ -146,9 +158,11 @@ export class RegisterComponent implements OnInit {
     }
     return '';
   }
+
   get getSurnameError() {
     return RegisterComponent.getSurnameError;
   }
+
   async onSubmit() {
     if (
       this.getRoleErrors() ||
@@ -158,10 +172,18 @@ export class RegisterComponent implements OnInit {
     ) {
       return;
     }
+    if (!this.amIAdmin) {
+      this.form.controls['role'].setValue('student');
+    }
     const url = enviroments.BACKEND_URL + '/api/auth/register';
     try {
       await axios.post(url, this.form.value);
-      this.router.navigate(['/login']);
+      if (this.amIAdmin) {
+        this.snackBar.notify('User registered successfully.');
+        this.resetForm();
+      } else {
+        await this.router.navigate(['/login']);
+      }
     } catch (e) {
       if (axios.isAxiosError(e)) {
         this.snackBar.notify(e.response?.data.message);
