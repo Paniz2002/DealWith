@@ -120,23 +120,12 @@
                 />
                 @if (this.form.controls["confirmPassword"].errors) {
                   <mat-error
-                    >{{ getPasswordConfirmErrors(this.form) }}
+                  >{{ getPasswordConfirmErrors(this.form) }}
                   </mat-error>
                 }
               </mat-form-field>
             </div>
-            <input
-              name="role"
-              type="hidden"
-              id="role"
-              readonly
-              value="{{ isUserModerator ? 'moderator' : 'student' }}"
-              formControlName="role"
-            />
-
-            <div
-              class="form-group row justify-content-center align-items-center"
-            >
+            <div  class="form-group row justify-content-center align-items-center" >
               <button
                 mat-fab
                 extended

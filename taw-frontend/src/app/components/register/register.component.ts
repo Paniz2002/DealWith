@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {Component, OnInit} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,15 +7,15 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { enviroments } from '../../../enviroments/enviroments';
+import {enviroments} from '../../../enviroments/enviroments';
 import axios from 'axios';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
-import { NotificationService } from '../../services/popup/notification.service';
+import {MatSelectModule} from '@angular/material/select';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {Router} from '@angular/router';
+import {NotificationService} from '../../services/popup/notification.service';
 
 @Component({
   selector: 'app-register',
@@ -43,13 +43,16 @@ export class RegisterComponent implements OnInit {
     private router: Router,
     private snackBar: NotificationService,
   ) {
-    axios.get(enviroments.BACKEND_URL + '/api/auth/me').then((res) => {
-      this.isUserModerator = res.data.is_moderator;
-    });
+    //check if current route is /register
+    if (this.router.url !== '/register') {
+      axios.get(enviroments.BACKEND_URL + '/api/auth/me').then((res) => {
+        this.isUserModerator = res.data.is_moderator;
+      }).catch((e) => {/*avoid printing in console*/});
+    }
+    //TODO logged student must logout before see register page again
   }
 
   ngOnInit() {
-    // Try to get the role from api /auth/me
     this.isFormValid = false;
     this.form = this.registerFormBuilder.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
@@ -61,10 +64,6 @@ export class RegisterComponent implements OnInit {
       ],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
-      role: [
-        this.isUserModerator ? 'moderator' : 'student',
-        [Validators.required],
-      ],
     });
   }
 
@@ -163,12 +162,16 @@ export class RegisterComponent implements OnInit {
     ) {
       return;
     }
-    console.log(this.form.value);
     const url = enviroments.BACKEND_URL + '/api/auth/register';
     try {
-      await axios.post(url, this.form.value);
       if (this.isUserModerator) {
-        this.snackBar.notify('User registered successfully.');
+        this.form.value.role = 'moderator';
+      } else {
+        this.form.value.role = 'student';
+      }
+      await axios.post(url, this.form.value);
+      this.snackBar.notify('User registered successfully.');
+      if (this.isUserModerator) {
         this.resetForm();
       } else {
         await this.router.navigate(['/login']);
@@ -184,8 +187,7 @@ export class RegisterComponent implements OnInit {
     this.form.reset({
       username: '',
       password: '',
-      confirmPassword: '',
-      role: '',
+      confirmPassword: ''
     });
   }
 }
