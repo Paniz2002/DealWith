@@ -13,7 +13,6 @@ export default async function connectDB() {
     console.error((err as Error).message);
     process.exit(1);
   }
-
   const dbConnection = mongoose.connection;
 
   // event listeners for mongoDB connection
