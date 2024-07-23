@@ -77,10 +77,6 @@ export class LoginComponent implements OnInit {
       if (res.status == 200) {
         if (res.data.is_moderator === true && res.data.needs_update === true)
           return await this.router.navigate(['/updatepassword']);
-
-        if (res.data.is_moderator)
-          return await this.router.navigate(['/admin']);
-        else return await this.router.navigate(['/user']);
       }
     } catch (e) {
       if (axios.isAxiosError(e)) {
