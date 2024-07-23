@@ -43,18 +43,13 @@ export class RegisterComponent implements OnInit {
     private router: Router,
     private snackBar: NotificationService,
   ) {
-    //try to get the role from api /auth/me
-    axios
-      .get(enviroments.BACKEND_URL + '/api/auth/me')
-      .then((res) => {
-        this.isUserModerator = res.data.is_moderator;
-      })
-      .catch((err) => {
-        //ignore error because we are not sure if the user (moderator) is logged in
-      });
+    axios.get(enviroments.BACKEND_URL + '/api/auth/me').then((res) => {
+      this.isUserModerator = res.data.is_moderator;
+    });
   }
 
   ngOnInit() {
+    // Try to get the role from api /auth/me
     this.isFormValid = false;
     this.form = this.registerFormBuilder.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
@@ -66,7 +61,10 @@ export class RegisterComponent implements OnInit {
       ],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
-      role: ['', [Validators.required]],
+      role: [
+        this.isUserModerator ? 'moderator' : 'student',
+        [Validators.required],
+      ],
     });
   }
 
@@ -129,16 +127,6 @@ export class RegisterComponent implements OnInit {
     return '';
   }
 
-  getRoleErrors() {
-    if (
-      this.isUserModerator &&
-      this.form.controls['role'].hasError('required')
-    ) {
-      return 'You must select a role.';
-    }
-    return '';
-  }
-
   get getNameError() {
     return RegisterComponent.getNameError;
   }
@@ -169,16 +157,13 @@ export class RegisterComponent implements OnInit {
 
   async onSubmit() {
     if (
-      this.getRoleErrors() ||
       RegisterComponent.getPasswordErrors(this.form) ||
       RegisterComponent.getPasswordConfirmErrors(this.form) ||
       RegisterComponent.getUsernameErrors(this.form)
     ) {
       return;
     }
-    if (!this.isUserModerator) {
-      this.form.controls['role'].setValue('student');
-    }
+    console.log(this.form.value);
     const url = enviroments.BACKEND_URL + '/api/auth/register';
     try {
       await axios.post(url, this.form.value);

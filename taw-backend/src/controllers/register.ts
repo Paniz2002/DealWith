@@ -32,8 +32,8 @@ const validateForm = (input: unknown) => {
 
 // Registration controller
 export const registerController = async (req: Request, res: Response) => {
+  console.log(req.body);
   await connectDB();
-
   const isValid = validateForm(req.body);
   if (!isValid) {
     return BadRequestException(
@@ -62,8 +62,6 @@ export const registerController = async (req: Request, res: Response) => {
     return BadRequestException(req, res, "Email already exists.");
   }
 
-  // TODO:
-  // Create moderator only if currentUser jwt role is moderator.
   const token = req.cookies.jwt;
   const payload = jwt.verify(token, JWT_SECRET) as any;
   const user = await UserModel.findOne({
