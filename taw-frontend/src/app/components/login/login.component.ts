@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {Component, OnInit} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,18 +7,18 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { enviroments } from '../../../enviroments/enviroments';
+import {enviroments} from '../../../enviroments/enviroments';
 import axios from 'axios';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { NavigationExtras, Router } from '@angular/router';
-import { NotificationService } from '../../services/popup/notification.service';
-import { RegisterComponent } from '../register/register.component';
-import { LocalStorageService } from '../../services/localStorage/localStorage.service';
-import { JwtPayload } from 'jsonwebtoken';
+import {MatSelectModule} from '@angular/material/select';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {NavigationExtras, Router} from '@angular/router';
+import {NotificationService} from '../../services/popup/notification.service';
+import {RegisterComponent} from '../register/register.component';
+import {LocalStorageService} from '../../services/localStorage/localStorage.service';
+import {JwtPayload} from 'jsonwebtoken';
 
 @Component({
   selector: 'app-register',
@@ -45,7 +45,8 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private snackBar: NotificationService,
     private localStorage: LocalStorageService,
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.isFormValid = false;
@@ -76,11 +77,14 @@ export class LoginComponent implements OnInit {
         withCredentials: true,
       });
       if (res.status == 200) {
-        if (res.data.is_moderator === true && res.data.needs_update === true) {
-          return await this.router.navigate(['/updatepassword']);
+        if (res.data.is_moderator === true) {
+          if (res.data.needs_update === true) {
+            return await this.router.navigate(['/updatepassword']);
+          } else {
+            return await this.router.navigate(['/admin']);
+          }
         }
-        console.log(res.data);
-        return await this.router.navigate(['/']); //FIXME: does not redciret to page
+        return await this.router.navigate(['/']);
       }
     } catch (e) {
       if (axios.isAxiosError(e)) {
