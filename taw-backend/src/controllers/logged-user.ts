@@ -14,7 +14,7 @@ export const profileController = async (req: any, res: Response) => {
     const payload = jwt.verify(token, JWT_SECRET) as any;
     const user = await UserModel.findOne({
       _id: payload._id,
-    }).populate("email_id");
+    }).populate("email");
     if (!user) {
       return UnautorizedException(req, res, "Unauthorized: Invalid JWT");
     }
@@ -24,7 +24,7 @@ export const profileController = async (req: any, res: Response) => {
       needs_update:
         user.isModerator() &&
         user.createdAt.getTime() === user.updatedAt.getTime(),
-      email_address: user.email_id.address,
+      email_address: user.email.address,
     };
     return res.json(response_json);
   } catch (error) {

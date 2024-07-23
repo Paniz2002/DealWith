@@ -1,0 +1,25 @@
+<div class="bid-form-container">
+  <form [formGroup]="bidForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="fill">
+      <mat-label>Price</mat-label>
+      <input matInput formControlName="price" type="number" required>
+      @if (this.bidForm.controls["price"].errors) {
+        <mat-error>{{
+            gePriceErrors(this.bidForm)
+          }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Book ID</mat-label>
+      <input matInput formControlName="book" required>
+      @if (this.bidForm.controls["book"].errors) {
+      <mat-error>
+        {{getBookErrors(this.bidForm)}}
+      </mat-error>
+      }
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit">Submit Bid</button>
+  </form>
+</div>
