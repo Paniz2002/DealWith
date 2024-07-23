@@ -1,5 +1,5 @@
-import {CommonModule} from '@angular/common';
-import {Component, OnInit} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,15 +7,15 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import {enviroments} from '../../../enviroments/enviroments';
+import { enviroments } from '../../../enviroments/enviroments';
 import axios from 'axios';
-import {MatSelectModule} from '@angular/material/select';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatButtonModule} from '@angular/material/button';
-import {MatIconModule} from '@angular/material/icon';
-import {Router} from '@angular/router';
-import {NotificationService} from '../../services/popup/notification.service';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { Router } from '@angular/router';
+import { NotificationService } from '../../services/popup/notification.service';
 
 @Component({
   selector: 'app-register',
@@ -36,7 +36,7 @@ import {NotificationService} from '../../services/popup/notification.service';
 export class RegisterComponent implements OnInit {
   form!: FormGroup;
   isFormValid!: Boolean;
-  amIAdmin: Boolean = false;
+  isUserModerator: Boolean = false;
 
   constructor(
     private registerFormBuilder: FormBuilder,
@@ -44,9 +44,10 @@ export class RegisterComponent implements OnInit {
     private snackBar: NotificationService,
   ) {
     //try to get the role from api /auth/me
-    axios.get(enviroments.BACKEND_URL + '/api/auth/me')
+    axios
+      .get(enviroments.BACKEND_URL + '/api/auth/me')
       .then((res) => {
-        this.amIAdmin = res.data.is_moderator;
+        this.isUserModerator = res.data.is_moderator;
       })
       .catch((err) => {
         //ignore error because we are not sure if the user (moderator) is logged in
@@ -129,7 +130,10 @@ export class RegisterComponent implements OnInit {
   }
 
   getRoleErrors() {
-    if (this.amIAdmin && this.form.controls['role'].hasError('required')) {
+    if (
+      this.isUserModerator &&
+      this.form.controls['role'].hasError('required')
+    ) {
       return 'You must select a role.';
     }
     return '';
@@ -172,13 +176,13 @@ export class RegisterComponent implements OnInit {
     ) {
       return;
     }
-    if (!this.amIAdmin) {
+    if (!this.isUserModerator) {
       this.form.controls['role'].setValue('student');
     }
     const url = enviroments.BACKEND_URL + '/api/auth/register';
     try {
       await axios.post(url, this.form.value);
-      if (this.amIAdmin) {
+      if (this.isUserModerator) {
         this.snackBar.notify('User registered successfully.');
         this.resetForm();
       } else {

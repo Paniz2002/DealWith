@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../secret";
 import BadRequestException from "../exceptions/bad-request";
-import NotFoundException from "../exceptions/not-found";
 import UserModel from "../../models/user";
 import connectDB from "../../config/db";
 
