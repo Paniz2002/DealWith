@@ -1,0 +1,40 @@
+.custom-toolbar {
+  background: linear-gradient(45deg, #2196F3, #21CBF3);
+  box-shadow: 0 3px 5px 2px rgba(33, 203, 243, 0.3);
+  color: white;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo-icon {
+  margin-right: 8px;
+  color: white;
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+}
+
+.header-button {
+  color: white;
+  font-weight: bold;
+  border-radius: 20px;
+  transition: background 0.3s ease;
+}
+
+.header-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

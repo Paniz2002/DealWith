@@ -26,7 +26,7 @@ export const loginController = async (req: Request, res: Response) => {
     _id: user.id,
     username: user.username as string,
     is_moderator: user.isModerator(),
-    needs_update: user.createdAt.getTime() === user.updatedAt.getTime(),
+    needs_update: user.isModerator() && (user.createdAt.getTime() === user.updatedAt.getTime()),
   };
 
   const jwtToken = jwt.sign(response, JWT_SECRET);

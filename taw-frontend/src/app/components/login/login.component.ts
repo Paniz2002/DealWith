@@ -79,7 +79,8 @@ export class LoginComponent implements OnInit {
         if (res.data.is_moderator === true && res.data.needs_update === true) {
           return await this.router.navigate(['/updatepassword']);
         }
-        return await this.router.navigate(['/homepageRedirect']); //FIXME: does not redciret to page
+        console.log(res.data);
+        return await this.router.navigate(['/']); //FIXME: does not redciret to page
       }
     } catch (e) {
       if (axios.isAxiosError(e)) {
