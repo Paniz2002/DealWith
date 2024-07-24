@@ -10,6 +10,10 @@ const authRoutes: Router = Router();
 authRoutes.post("/login", loginController);
 authRoutes.post("/register", registerController);
 authRoutes.post("/logout", logoutController);
-authRoutes.get("/me", checkAuthenticationMiddleware, profileController);
-authRoutes.patch("/me", checkAuthenticationMiddleware, updateProfileController);
+authRoutes.get("/me", [checkAuthenticationMiddleware], profileController);
+authRoutes.patch(
+  "/me",
+  [checkAuthenticationMiddleware],
+  updateProfileController,
+);
 export default authRoutes;
