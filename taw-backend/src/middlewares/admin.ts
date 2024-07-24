@@ -12,7 +12,7 @@ export const adminMiddleware = (
     const token = req.cookies.jwt;
     const payload = jwt.verify(token, JWT_SECRET) as any;
     if (payload.is_moderator) return next()
-    else return UnauthorizedException(req, res, "Unauthorized: invalid");
+    else return UnauthorizedException(req, res, "Unauthorized");
   } catch (err) {
     return UnauthorizedException(req, res, "Unauthorized: invalid jwt.");
   }
