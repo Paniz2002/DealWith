@@ -2,9 +2,9 @@ import connectDB from "../config/db";
 import User from "../models/user";
 import Email from "../models/email";
 import City from "../models/city";
-import Book from "../models/book";
 import Course from "../models/course";
 import University from "../models/university";
+import Auction from "../models/auction";
 import PublicComment from "../models/public_comment";
 import PrivateMessage from "../models/private_message";
 import Bid from "../models/bid";
@@ -12,6 +12,7 @@ import Bid from "../models/bid";
 import path from "path";
 import fs from "fs";
 import mongoose, {Schema} from "mongoose";
+import Book from "../models/book";
 
 const seedEmails = async () => {
   const emailsFilePath = path.join(__dirname, "data", "emails.json");
@@ -190,7 +191,7 @@ const seedCities = async (): Promise<void> => {
   }
 };
 
-const seedBooks = async (): Promise<void> => {
+const seedAuctions = async (): Promise<void> => {
   const booksFilePath = path.join(__dirname, "data", "books.json");
   const booksData = JSON.parse(fs.readFileSync(booksFilePath, "utf-8"));
 
@@ -205,45 +206,62 @@ const seedBooks = async (): Promise<void> => {
     try {
       // Check if the book already exists
       const existingBook = await Book.findOne({ ISBN: bookData.ISBN });
+      let newBook=existingBook;
       if (!existingBook) {
-        // Get a random seller
-        const randomSeller = await User.aggregate([{ $sample: { size: 1 } }]);
-        // Get a random course
-        const randomCourse = await Course.aggregate([{ $sample: { size: 1 } }]);
+          // Create the new book and save it
+           newBook = new Auction({
+              title: bookData.title,
+              year: bookData.year,
+              ISBN: bookData.ISBN
+          });
+          await newBook.save();
+          console.log(`Book saved: ${newBook.title}`);
+      }else {
+          console.log(`Book already exists: ${existingBook.ISBN}`);
+      }
 
-        // Create the new book and save it
-        const newBook = new Book({
-          title: bookData.title,
-          year: bookData.year,
-          ISBN: bookData.ISBN,
-          condition: bookData.condition,
-          start_date: '1-1-2024',
-          end_date: '1-1-2025',
-          starting_price: bookData.starting_price,
-          reserve_price: bookData.reserve_price,
-          description: bookData.description,
-          seller: randomSeller[0]._id,
-          course: randomCourse[0]._id,
-        });
-        await newBook.save();
-        console.log(`Book saved: ${newBook.title}`);
+      //create auction if not present with current book id
+        let newAuction=null;
+        const existingAuction = await Auction.findOne({book: newBook._id});
+        newAuction=existingAuction;
+      if(!existingAuction){
+            const randomSeller = await User.aggregate([{$sample: {size: 1}}]);
+            const randomCourse = await Course.aggregate([{$sample: {size: 1}}]);
+             newAuction = new Auction({
+                images: bookData.images,
+                condition: bookData.condition,
+                start_date: bookData.start_date,
+                end_date: bookData.end_date,
+                starting_price: bookData.starting_price,
+                reserve_price: bookData.reserve_price,
+                description: bookData.description,
+                seller: randomSeller[0]._id,
+                course: randomCourse[0]._id,
+                book: newBook._id
+            });
+            await newAuction.save();
+            console.log(`Auction saved: ${newAuction.book}`);
+
+            //add autction to book
+            newBook.auctions.push(newAuction);
+            await newBook.save();
+      }
+
 
         // Add the Book to the Course
         const course = await Course.findById(newBook.course);
         if (!course) {
           console.log(`Course not found for book: ${newBook.title}`);
         } else {
-          if (!course.books.includes(newBook)) {
-            course.books.push(newBook);
+          if (!course.auction.includes(newBook)) {
+            course.auction.push(newBook);
             await course.save();
             console.log(`Book added to course: ${newBook.title}`);
           } else {
             console.log(`Book already in course: ${newBook.title}`);
           }
         }
-      } else {
-        console.log(`Book already exists: ${existingBook.ISBN}`);
-      }
+
     } catch (err) {
       console.error(`Error saving book: ${bookData.title}`, err);
     }
@@ -285,7 +303,7 @@ const seedData = async () => {
   }
 
   try {
-    await seedBooks();
+    await seedAuctions();
   } catch (err) {
     console.error("Error seeding Books", err);
   }

@@ -17,6 +17,8 @@ services:
     build: ./taw-backend
     volumes:
       - ./taw-backend/src:/app/src
+      - ./taw-backend/models:/app/models
+      - ./taw-backend/config:/app/config
     env_file:
       - ./taw-backend/.env
     ports:
