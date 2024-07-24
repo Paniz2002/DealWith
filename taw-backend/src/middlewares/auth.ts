@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import UnautorizedException from "../exceptions/unauthorized";
+import UnauthorizedException from "../exceptions/unauthorized";
 import * as jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../secret";
 import BadRequestException from "../exceptions/bad-request";
@@ -18,8 +18,6 @@ const authMiddleware = async (
 
   //  2.   if token is not present, throw a bad request exception.
   if (!token) {
-    // Next prints to console ... because reasons.
-    // So i modified it accordingly
     return BadRequestException(req, res, "Bad Request: Missing JWT");
   }
   try {
@@ -29,11 +27,11 @@ const authMiddleware = async (
       _id: payload._id,
     });
     if (!user) {
-      return UnautorizedException(req, res, "Unauthorized: Invalid JWT");
+      return UnauthorizedException(req, res, "Unauthorized: Invalid JWT");
     }
     return next();
   } catch (error) {
-    return UnautorizedException(req, res, "Unauthorized: Unknown error.");
+    return UnauthorizedException(req, res, "Unauthorized: Unknown error.");
   }
 };
 export default authMiddleware;

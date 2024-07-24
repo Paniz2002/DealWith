@@ -6,6 +6,7 @@ import { AuthenticationGuard } from './guards/auth/authentication.guard';
 import { LogoutGuard } from './guards/logout/logout.guard';
 import { AdminHomepageComponent } from './components/admin-homepage/admin-homepage.component';
 import {BidFormComponent} from "./components/bid-form/bid-form.component";
+import { AdminGuard } from './guards/admin/adminGuard';
 export const routes: Routes = [
   {
     path: 'register',
@@ -31,7 +32,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    canActivate: [AuthenticationGuard],
+    canActivate: [AuthenticationGuard, AdminGuard],
     pathMatch: 'full',
     component: AdminHomepageComponent,
     children: [],

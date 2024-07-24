@@ -3,20 +3,19 @@ import { JWT_SECRET } from "../secret";
 import UserModel from "../../models/user";
 import connectDB from "../../config/db";
 import * as jwt from "jsonwebtoken";
-import UnautorizedException from "../exceptions/unauthorized";
+import UnauthorizedException from "../exceptions/unauthorized";
 
 export const profileController = async (req: any, res: Response) => {
-  connectDB();
+  await connectDB();
   // Should be guaranteed by the checkAutenticationMiddleware.
   const token = req.cookies.jwt;
   try {
-    // If token is present, decode the token and extract the payload
     const payload = jwt.verify(token, JWT_SECRET) as any;
     const user = await UserModel.findOne({
       _id: payload._id,
     }).populate("email");
     if (!user) {
-      return UnautorizedException(req, res, "Unauthorized: Invalid JWT");
+      return UnauthorizedException(req, res, "Unauthorized: Invalid JWT");
     }
     let response_json = {
       username: user.username,
@@ -26,8 +25,9 @@ export const profileController = async (req: any, res: Response) => {
         user.createdAt.getTime() === user.updatedAt.getTime(),
       email_address: user.email.address,
     };
-    return res.json(response_json);
+    return res.status(200).json(response_json);
   } catch (error) {
-    return UnautorizedException(req, res, "Unauthorized: Unknown error.");
+    console.error("Error", error);
+    return UnauthorizedException(req, res, "Unauthorized: Unknown error.");
   }
 };

@@ -77,6 +77,7 @@ export class LoginComponent implements OnInit {
         withCredentials: true,
       });
       if (res.status == 200) {
+
         if (res.data.is_moderator === true) {
           if (res.data.needs_update === true) {
             return await this.router.navigate(['/updatepassword']);
@@ -91,7 +92,7 @@ export class LoginComponent implements OnInit {
         this.snackBar.notify(e.response?.data.message);
       }
     }
-    return true;
+    return false;
   }
 
   resetForm() {

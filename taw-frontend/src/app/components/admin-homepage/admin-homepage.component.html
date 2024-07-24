@@ -1,7 +1,115 @@
 <div class="container-fluid">
   <div class="d-flex align-items-center justify-content-center">
     <div class="row w-100 h-100">
-      <div class="col-10"></div>
+      <div class="col-md-1 col-lg-2"></div>
+      <div class="col-sm-12 col-md-10 col-lg-8 my-auto">
+        <div class="w-auto mx-auto">
+          <mat-tab-group>
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon class="example-tab-icon">how_to_reg</mat-icon>
+                Register moderators
+              </ng-template>
+              <!-- include register component-->
+              <app-register></app-register>
+            </mat-tab>
+
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">warning</mat-icon>
+                Delete students
+              </ng-template>
+
+              <mat-form-field>
+                <mat-label>Filter</mat-label>
+                <input
+                  matInput
+                  placeholder="Username"
+                  (keyup)="applyFilter($event)"
+                />
+              </mat-form-field>
+              <table
+                mat-table
+                [dataSource]="students"
+                matSort
+                class="mat-elevation-z8"
+              >
+                <!-- Checkbox Column -->
+                <ng-container matColumnDef="select">
+                  <th mat-header-cell *matHeaderCellDef>
+                    <mat-checkbox
+                      (change)="$event ? toggleAllRows() : null"
+                      [checked]="selection.hasValue() && isAllSelected()"
+                      [indeterminate]="selection.hasValue() && !isAllSelected()"
+                      [aria-label]="checkboxLabel()"
+                    >
+                    </mat-checkbox>
+                  </th>
+                  <td mat-cell *matCellDef="let row">
+                    <mat-checkbox
+                      (click)="$event.stopPropagation()"
+                      (change)="$event ? selection.toggle(row) : null"
+                      [checked]="selection.isSelected(row)"
+                      [aria-label]="checkboxLabel(row)"
+                    >
+                    </mat-checkbox>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="_id">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+                  <td mat-cell *matCellDef="let student">
+                    {{ student._id }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="username">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Username
+                  </th>
+                  <td mat-cell *matCellDef="let student">
+                    {{ student.username }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="firstName">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    First Name
+                  </th>
+                  <td mat-cell *matCellDef="let student">
+                    {{ student.firstName }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="lastName">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Last Name
+                  </th>
+                  <td mat-cell *matCellDef="let student">
+                    {{ student.lastName }}
+                  </td>
+                </ng-container>
+
+                <tr class="mat-row" *matNoDataRow>
+                  <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                    There are no students matching the filter.
+                  </td>
+                </tr>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr
+                  mat-row
+                  *matRowDef="let row; columns: displayedColumns"
+                  (click)="selection.toggle(row)"
+                ></tr>
+              </table>
+              <mat-paginator
+                [pageSizeOptions]="[10, 25, 50, 100]"
+                showFirstLastButtons
+              ></mat-paginator>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+      </div>
+      <div class="col-md-1 col-lg-2"></div>
     </div>
   </div>
 </div>
