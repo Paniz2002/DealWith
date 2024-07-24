@@ -30,7 +30,8 @@ const BookSchema = new mongoose.Schema({
         required: [true, "can't be blank"],
     },
     auction_duration: {
-        type: Number
+        type: Number,
+        required: [true, "can't be blank"]
     },
     starting_price: {
         type: Number,
