@@ -25,9 +25,9 @@ export const profileController = async (req: any, res: Response) => {
         user.createdAt.getTime() === user.updatedAt.getTime(),
       email_address: user.email.address,
     };
-    return res.json(response_json);
+    return res.status(200).json(response_json);
   } catch (error) {
     console.error("Error", error);
-    return UnautorizedException(req, res, "Unauthorized: Unknown error.");
+    return UnauthorizedException(req, res, "Unauthorized: Unknown error.");
   }
 };
