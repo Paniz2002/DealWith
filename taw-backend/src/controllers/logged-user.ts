@@ -6,11 +6,10 @@ import * as jwt from "jsonwebtoken";
 import UnauthorizedException from "../exceptions/unauthorized";
 
 export const profileController = async (req: any, res: Response) => {
-  connectDB();
+  await connectDB();
   // Should be guaranteed by the checkAutenticationMiddleware.
   const token = req.cookies.jwt;
   try {
-    // If token is present, decode the token and extract the payload
     const payload = jwt.verify(token, JWT_SECRET) as any;
     const user = await UserModel.findOne({
       _id: payload._id,
@@ -28,6 +27,7 @@ export const profileController = async (req: any, res: Response) => {
     };
     return res.json(response_json);
   } catch (error) {
-    return UnauthorizedException(req, res, "Unauthorized: Unknown error.");
+    console.error("Error", error);
+    return UnautorizedException(req, res, "Unauthorized: Unknown error.");
   }
 };

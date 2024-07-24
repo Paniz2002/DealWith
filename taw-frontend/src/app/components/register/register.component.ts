@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {Component, OnInit} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,15 +7,15 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { enviroments } from '../../../enviroments/enviroments';
+import {enviroments} from '../../../enviroments/enviroments';
 import axios from 'axios';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
-import { NotificationService } from '../../services/popup/notification.service';
+import {MatSelectModule} from '@angular/material/select';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {Router} from '@angular/router';
+import {NotificationService} from '../../services/popup/notification.service';
 
 @Component({
   selector: 'app-register',
@@ -36,12 +36,21 @@ import { NotificationService } from '../../services/popup/notification.service';
 export class RegisterComponent implements OnInit {
   form!: FormGroup;
   isFormValid!: Boolean;
+  isUserModerator: Boolean = false;
 
   constructor(
     private registerFormBuilder: FormBuilder,
     private router: Router,
     private snackBar: NotificationService,
-  ) {}
+  ) {
+    //check if current route is /register
+    if (this.router.url !== '/register') {
+      axios.get(enviroments.BACKEND_URL + '/api/auth/me').then((res) => {
+        this.isUserModerator = res.data.is_moderator;
+      }).catch((e) => {/*avoid printing in console*/});
+    }
+    //TODO logged student must logout before see register page again
+  }
 
   ngOnInit() {
     this.isFormValid = false;
@@ -55,7 +64,6 @@ export class RegisterComponent implements OnInit {
       ],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
-      role: ['', [Validators.required]],
     });
   }
 
@@ -113,14 +121,7 @@ export class RegisterComponent implements OnInit {
       return 'Confirm password required.';
     }
     if (form.controls['confirmPassword'].hasError('minlength')) {
-      return 'Confirm password length is atleast 8 characters.';
-    }
-    return '';
-  }
-
-  getRoleErrors() {
-    if (this.form.controls['role'].hasError('required')) {
-      return 'You must select a role.';
+      return 'Confirm password length is at least 8 characters.';
     }
     return '';
   }
@@ -128,6 +129,7 @@ export class RegisterComponent implements OnInit {
   get getNameError() {
     return RegisterComponent.getNameError;
   }
+
   static getNameError(form: FormGroup<any>) {
     if (form.controls['name'].hasError('required')) {
       return 'You must write your name.';
@@ -137,6 +139,7 @@ export class RegisterComponent implements OnInit {
     }
     return '';
   }
+
   static getSurnameError(form: FormGroup<any>) {
     if (form.controls['surname'].hasError('required')) {
       return 'You must write your surname.';
@@ -146,12 +149,13 @@ export class RegisterComponent implements OnInit {
     }
     return '';
   }
+
   get getSurnameError() {
     return RegisterComponent.getSurnameError;
   }
+
   async onSubmit() {
     if (
-      this.getRoleErrors() ||
       RegisterComponent.getPasswordErrors(this.form) ||
       RegisterComponent.getPasswordConfirmErrors(this.form) ||
       RegisterComponent.getUsernameErrors(this.form)
@@ -160,8 +164,18 @@ export class RegisterComponent implements OnInit {
     }
     const url = enviroments.BACKEND_URL + '/api/auth/register';
     try {
+      if (this.isUserModerator) {
+        this.form.value.role = 'moderator';
+      } else {
+        this.form.value.role = 'student';
+      }
       await axios.post(url, this.form.value);
-      this.router.navigate(['/login']);
+      this.snackBar.notify('User registered successfully.');
+      if (this.isUserModerator) {
+        this.resetForm();
+      } else {
+        await this.router.navigate(['/login']);
+      }
     } catch (e) {
       if (axios.isAxiosError(e)) {
         this.snackBar.notify(e.response?.data.message);
@@ -173,8 +187,7 @@ export class RegisterComponent implements OnInit {
     this.form.reset({
       username: '',
       password: '',
-      confirmPassword: '',
-      role: '',
+      confirmPassword: ''
     });
   }
 }
