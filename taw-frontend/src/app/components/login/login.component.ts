@@ -9,20 +9,6 @@ import {
 } from '@angular/forms';
 import {enviroments} from '../../../enviroments/enviroments';
 import axios from 'axios';
-
-<<<<<<< HEAD
-import {MatSelectModule} from '@angular/material/select';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatButtonModule} from '@angular/material/button';
-import {MatIconModule} from '@angular/material/icon';
-import {Router} from '@angular/router';
-import {NotificationService} from '../../services/popup/notification.service';
-import {RegisterComponent} from '../register/register.component';
-import {LocalStorageService} from '../../services/localStorage/localStorage.service';
-
-======
-=
 import {MatSelectModule} from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -33,9 +19,6 @@ import {NotificationService} from '../../services/popup/notification.service';
 import {RegisterComponent} from '../register/register.component';
 import {LocalStorageService} from '../../services/localStorage/localStorage.service';
 import {JwtPayload} from 'jsonwebtoken';
-
->>>>>>>
-main
 
 @Component({
   selector: 'app-register',
