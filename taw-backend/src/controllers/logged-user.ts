@@ -3,7 +3,7 @@ import { JWT_SECRET } from "../secret";
 import UserModel from "../../models/user";
 import connectDB from "../../config/db";
 import * as jwt from "jsonwebtoken";
-import UnautorizedException from "../exceptions/unauthorized";
+import UnauthorizedException from "../exceptions/unauthorized";
 
 export const profileController = async (req: any, res: Response) => {
   connectDB();
@@ -16,7 +16,7 @@ export const profileController = async (req: any, res: Response) => {
       _id: payload._id,
     }).populate("email");
     if (!user) {
-      return UnautorizedException(req, res, "Unauthorized: Invalid JWT");
+      return UnauthorizedException(req, res, "Unauthorized: Invalid JWT");
     }
     let response_json = {
       username: user.username,
@@ -28,6 +28,6 @@ export const profileController = async (req: any, res: Response) => {
     };
     return res.json(response_json);
   } catch (error) {
-    return UnautorizedException(req, res, "Unauthorized: Unknown error.");
+    return UnauthorizedException(req, res, "Unauthorized: Unknown error.");
   }
 };
