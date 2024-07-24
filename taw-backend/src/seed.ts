@@ -11,7 +11,7 @@ import Bid from "../models/bid";
 
 import path from "path";
 import fs from "fs";
-import mongoose from "mongoose";
+import mongoose, {Schema} from "mongoose";
 
 const seedEmails = async () => {
   const emailsFilePath = path.join(__dirname, "data", "emails.json");
@@ -217,7 +217,8 @@ const seedBooks = async (): Promise<void> => {
           year: bookData.year,
           ISBN: bookData.ISBN,
           condition: bookData.condition,
-          auction_duration: bookData.auction_duration,
+          start_date: '1-1-2024',
+          end_date: '1-1-2025',
           starting_price: bookData.starting_price,
           reserve_price: bookData.reserve_price,
           description: bookData.description,

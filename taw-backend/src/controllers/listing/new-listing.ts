@@ -12,12 +12,16 @@ import InternalException from "../../exceptions/internal-exception";
 // TODO caricare le immagini e gestirle
 // https://chatgpt.com/share/c6a5221d-83d5-444b-8939-920f39c2d22e
 
+// TODO controllare se la data di inizio è minore di quella di fine
+
 const formValidator = z.object({
     title: z.string(),
     year: z.number().optional(),
     ISBN: z.string().length(10),
     condition: z.enum(['Mint', 'Near Mint', 'Excellent', 'Good', 'Fair', 'Poor']),
-    auction_duration: z.number(),
+    //auction_duration: z.number(),
+    start_date: z.date(),
+    end_date: z.date(),
     starting_price: z.number(),
     reserve_price: z.number(),
     description: z.string().optional(),
@@ -53,7 +57,7 @@ export const newListingController = async (req: Request, res: Response) => {
 
     await connectDB();
 
-    const { title, year, ISBN, condition, auction_duration, starting_price, reserve_price, description, course_id } = req.body;
+    const { title, year, ISBN, condition, start_date, end_date,/*auction_duration*/ starting_price, reserve_price, description, course_id } = req.body;
 
 
     const alreadyExistingBook = await Book.findOne({ISBN: ISBN});
@@ -76,7 +80,8 @@ export const newListingController = async (req: Request, res: Response) => {
             year,
             ISBN,
             condition,
-            auction_duration,
+            start_date,
+            end_date,
             starting_price,
             reserve_price,
             description,

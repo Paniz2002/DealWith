@@ -29,8 +29,16 @@ const BookSchema = new mongoose.Schema({
         enum: ['Mint', 'Near Mint', 'Excellent', 'Good', 'Fair', 'Poor'],
         required: [true, "can't be blank"],
     },
-    auction_duration: {
+    /*auction_duration: {
         type: Number,
+        required: [true, "can't be blank"]
+    },*/
+    start_date:{
+        type: Date,
+        required: [true, "can't be blank"]
+    },
+    end_date:{
+        type: Date,
         required: [true, "can't be blank"]
     },
     starting_price: {
