@@ -1,8 +1,8 @@
 import { Router } from "express";
 import authRoutes from "./auth";
-import commonRoutes from "./common";
+import adminRoutes from "./admin";
 const apiRouter: Router = Router();
 
 apiRouter.use("/auth", authRoutes);
-apiRouter.use("/common", commonRoutes);
+apiRouter.use("/admin", adminRoutes);
 export default apiRouter;
