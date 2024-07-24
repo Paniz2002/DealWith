@@ -38,7 +38,7 @@ const AuctionSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Course'
     },
-    auction: {
+    book: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Book'
     }
