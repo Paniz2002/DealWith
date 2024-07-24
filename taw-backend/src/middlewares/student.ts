@@ -3,7 +3,7 @@ import * as jwt from "jsonwebtoken";
 
 import { JWT_SECRET } from "../secret";
 import UnauthorizedException from "../exceptions/unauthorized";
-export const adminMiddleware = (
+export const studentMiddleware = (
     req: Request,
     res: Response,
     next: NextFunction,
