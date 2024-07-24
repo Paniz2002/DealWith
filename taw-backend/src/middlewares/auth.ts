@@ -18,8 +18,6 @@ const authMiddleware = async (
 
   //  2.   if token is not present, throw a bad request exception.
   if (!token) {
-    // Next prints to console ... because reasons.
-    // So i modified it accordingly
     return BadRequestException(req, res, "Bad Request: Missing JWT");
   }
   try {
