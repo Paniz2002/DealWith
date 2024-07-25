@@ -21,7 +21,7 @@ export class AuctionService {
   }
 
   getBooks() {
-    return axios.get(`${this.apiUrl}/api/books`)
+    return axios.get(`${this.apiUrl}/api/book`)
       .then(res => res.data)
       .catch(err => {
         console.error('Error fetching books:', err);
@@ -30,7 +30,7 @@ export class AuctionService {
   }
 
   getCourses() {
-    return axios.get(`${this.apiUrl}/api/courses`)
+    return axios.get(`${this.apiUrl}/api/course`)
       .then(res => res.data)
       .catch(err => {
         console.error('Error fetching courses:', err);
@@ -39,7 +39,7 @@ export class AuctionService {
   }
 
   addBook(name: string) {
-    return axios.post(`${this.apiUrl}/api/books`, { name })
+    return axios.post(`${this.apiUrl}/api/book`, { name })
       .then(res => res.data)
       .catch(err => {
         console.error('Error adding book:', err);
@@ -48,7 +48,7 @@ export class AuctionService {
   }
 
   addCourse(name: string) {
-    return axios.post(`${this.apiUrl}/api/courses`, { name })
+    return axios.post(`${this.apiUrl}/api/course`, { name })
       .then(res => res.data)
       .catch(err => {
         console.error('Error adding course:', err);
