@@ -137,6 +137,8 @@ export class AdminHomepageComponent implements AfterViewInit {
       if (res.status === 200) {
         this.snackBar.notify('Students deleted successfully!');
         // Fetch again the API to have the updated students list.
+        // This way if we have a new student registering we find it immediatly
+        // instead of waiting for a page reload.
         const res = await axios.get(
           enviroments.BACKEND_URL + '/api/admin/students',
         );
