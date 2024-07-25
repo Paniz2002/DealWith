@@ -6,15 +6,15 @@ import {FormGroup} from "@angular/forms";
 @Injectable({
   providedIn: 'root'
 })
-export class BidService {
+export class AuctionService {
 
   private apiUrl = enviroments.BACKEND_URL + '/api/new-listing';
 
   constructor() {
   }
 
-  addBid(bid: FormGroup) {
-    axios.post(this.apiUrl, bid.value).then((res) => {
+  addAuction(auctionForm: FormGroup) {
+    axios.post(this.apiUrl, auctionForm.value).then((res) => {
       return res;
     }).catch((e) => {
       return false

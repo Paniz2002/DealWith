@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {BidService} from "../../services/bid/bid.service";
+import {AuctionService} from "../../services/bid/auction.service";
 import {CommonModule} from "@angular/common";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
@@ -26,24 +26,25 @@ import {Router} from "@angular/router";
   styleUrls: ['./auction-form.component.css']
 })
 export class AuctionFormComponent implements OnInit {
-  bidForm!: FormGroup;
+  auctionForm!: FormGroup;
   constructor(
     private registerFormBuilder: FormBuilder,
     private router: Router,
-    private bidService: BidService
+    private bidService: AuctionService
   ) {}
 
   ngOnInit() {
-    this.bidForm = this.registerFormBuilder.group({
+    this.auctionForm = this.registerFormBuilder.group({
+      book: ['', Validators.required],
+      course: ['', Validators.required],
       price: ['', [Validators.required, Validators.min(1)]],
       user: ['', Validators.required],
-      book: ['', Validators.required]
     });
   }
 
   onSubmit(): void {
-    if (this.bidForm.valid) {
-      this.bidService.addBid(this.bidForm);
+    if (this.auctionForm.valid) {
+      this.bidService.addAuction(this.auctionForm);
     }
   }
 
