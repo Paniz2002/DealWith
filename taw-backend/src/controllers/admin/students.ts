@@ -23,15 +23,15 @@ export const getStudentsController = async (req: Request, res: Response) => {
 export const deleteStudentsController = async (req: Request, res: Response) => {
   await connectDB();
   const { users } = req.body;
-  //First we have to check if for some reason there's a moderator to be deleted.
-  users.forEach(async (user: Student) => {
+  // First we have to check if for some reason there's a moderator to be deleted.
+  for await (const user of users) {
     let u = await UserModel.findById({ _id: user._id });
     if (u.isModerator())
       return BadRequestException(req, res, "Bad request: Invalid user IDs");
-  });
-
-  users.forEach(async (user: Student) => {
+  }
+  // Then we can delete every user on the array if there were no problems.
+  for await (const user of users) {
     await UserModel.deleteOne({ _id: user._id });
-  });
+  }
   return res.sendStatus(200);
 };

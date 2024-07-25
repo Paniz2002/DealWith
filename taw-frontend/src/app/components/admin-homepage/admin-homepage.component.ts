@@ -1,4 +1,10 @@
-import { inject, OnInit, Component, ViewChild } from '@angular/core';
+import {
+  inject,
+  Component,
+  ViewChild,
+  AfterViewInit,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
@@ -39,19 +45,28 @@ interface Student {
   templateUrl: './admin-homepage.component.html',
   styleUrls: ['./admin-homepage.component.css'],
 })
-export class AdminHomepageComponent implements OnInit {
-  students = new MatTableDataSource<Student>();
-  displayedColumns = ['select', '_id', 'username', 'firstName', 'lastName'];
+export class AdminHomepageComponent implements AfterViewInit {
+  students: MatTableDataSource<Student> = new MatTableDataSource<Student>();
+  displayedColumns: Array<String> = [
+    'select',
+    '_id',
+    'username',
+    'firstName',
+    'lastName',
+  ];
   selection = new SelectionModel<Student>(true, []);
   dialog: MatDialog;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private snackBar: NotificationService) {
+  constructor(
+    private snackBar: NotificationService,
+    private changes: ChangeDetectorRef,
+  ) {
     this.dialog = inject(MatDialog);
   }
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     axios
       .get(enviroments.BACKEND_URL + '/api/admin/students')
       .then((res) => {
@@ -64,6 +79,7 @@ export class AdminHomepageComponent implements OnInit {
         this.students.data = studentsData;
         this.students.paginator = this.paginator;
         this.students.sort = this.sort;
+        this.changes.detectChanges();
       })
       .catch((err) => {
         if (axios.isAxiosError(err)) {
@@ -113,7 +129,6 @@ export class AdminHomepageComponent implements OnInit {
     }
     let component = this.dialog.open(DialogComponent);
     component.afterClosed().subscribe(async (dialogResult) => {
-      console.log(dialogResult);
       if (!dialogResult) return;
       const res = await axios.delete(
         enviroments.BACKEND_URL + '/api/admin/students',
@@ -121,6 +136,18 @@ export class AdminHomepageComponent implements OnInit {
       );
       if (res.status === 200) {
         this.snackBar.notify('Students deleted successfully!');
+        // Delete the student.
+        for (const student of this.students.data) {
+          if (this.selection.selected.includes(student)) {
+            let index = this.students.data.indexOf(student);
+            this.students.data.splice(index, 1);
+          }
+        }
+
+        this.selection.clear();
+        this.students.paginator = this.paginator;
+        this.students.sort = this.sort;
+        this.changes.detectChanges();
       }
     });
   }
