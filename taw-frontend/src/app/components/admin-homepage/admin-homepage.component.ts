@@ -136,17 +136,16 @@ export class AdminHomepageComponent implements AfterViewInit {
       );
       if (res.status === 200) {
         this.snackBar.notify('Students deleted successfully!');
-        // Delete the student.
-        for (const student of this.students.data) {
-          if (this.selection.selected.includes(student)) {
-            let index = this.students.data.indexOf(student);
-            this.students.data.splice(index, 1);
-          }
-        }
-
-        this.selection.clear();
-        this.students.paginator = this.paginator;
-        this.students.sort = this.sort;
+        // Fetch again the API to have the updated students list.
+        const res = await axios.get(
+          enviroments.BACKEND_URL + '/api/admin/students',
+        );
+        this.students.data = res.data.map((student: any) => ({
+          _id: student._id,
+          username: student.username,
+          firstName: student.profile.firstName,
+          lastName: student.profile.lastName,
+        }));
         this.changes.detectChanges();
       }
     });

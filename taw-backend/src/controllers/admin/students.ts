@@ -1,17 +1,9 @@
 import { Request, Response } from "express";
 import connectDB from "../../../config/db";
 import UserModel from "../../../models/user";
-import BadRequestException from "../../exceptions/bad-request";
-// TODO: this is in common between frontend and backend
-// maybe we can have it in the same file.
-interface Student {
-  _id: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-}
+import InternalException from "src/exceptions/internal-exception";
 export const getStudentsController = async (req: Request, res: Response) => {
-  connectDB();
+  await connectDB();
   const filters = {
     role: "student",
   };
@@ -21,17 +13,19 @@ export const getStudentsController = async (req: Request, res: Response) => {
 };
 
 export const deleteStudentsController = async (req: Request, res: Response) => {
-  await connectDB();
-  const { users } = req.body;
-  // First we have to check if for some reason there's a moderator to be deleted.
-  for await (const user of users) {
-    let u = await UserModel.findById({ _id: user._id });
-    if (u.isModerator())
-      return BadRequestException(req, res, "Bad request: Invalid user IDs");
+  try {
+    await connectDB();
+    const { users } = req.body;
+    for await (const user of users) {
+      let u = await UserModel.findById({ _id: user._id });
+      if (!u.isModerator()) await UserModel.deleteOne({ _id: user._id });
+    }
+    return res.sendStatus(200);
+  } catch (err) {
+    return InternalException(
+      req,
+      res,
+      "Unknown error while deleting students.",
+    );
   }
-  // Then we can delete every user on the array if there were no problems.
-  for await (const user of users) {
-    await UserModel.deleteOne({ _id: user._id });
-  }
-  return res.sendStatus(200);
 };
