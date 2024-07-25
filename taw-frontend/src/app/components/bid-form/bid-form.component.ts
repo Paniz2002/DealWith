@@ -43,17 +43,7 @@ export class BidFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.bidForm.valid) {
-      this.bidService.addBid(this.bidForm.value).subscribe({
-        next: (response) => {
-          console.log('Bid submitted successfully', response);
-          // Reset the form or show a success message
-          this.bidForm.reset();
-        },
-        error: (error) => {
-          console.error('Error submitting bid', error);
-          // Show an error message
-        }
-      });
+      this.bidService.addBid(this.bidForm);
     }
   }
 

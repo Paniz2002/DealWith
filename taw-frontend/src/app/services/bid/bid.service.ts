@@ -1,17 +1,23 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {Injectable} from '@angular/core';
+import axios from 'axios';
+import {enviroments} from "../../../enviroments/enviroments";
+import {FormGroup} from "@angular/forms";
 
 @Injectable({
   providedIn: 'root'
 })
 export class BidService {
 
-  private apiUrl = 'http://your-api-endpoint.com/bids';
+  private apiUrl = enviroments.BACKEND_URL + '/api/new-listing';
 
-  constructor(private http: HttpClient) { }
+  constructor() {
+  }
 
-  addBid(bid: any): Observable<any> {
-    return this.http.post(this.apiUrl, bid);
+  addBid(bid: FormGroup) {
+    axios.post(this.apiUrl, bid.value).then((res) => {
+      return res;
+    }).catch((e) => {
+      return false
+    });
   }
 }
