@@ -1,4 +1,4 @@
-import { OnInit, Component, ViewChild } from '@angular/core';
+import { inject, OnInit, Component, ViewChild } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,8 +11,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import axios from 'axios';
 import { enviroments } from '../../../enviroments/enviroments';
-import {RegisterComponent} from "../register/register.component";
-
+import { RegisterComponent } from '../register/register.component';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { DialogComponent } from '../dialog/dialog.component';
 interface Student {
   _id: string;
   username: string;
@@ -33,6 +34,7 @@ interface Student {
     MatPaginatorModule,
     MatCheckboxModule,
     RegisterComponent,
+    MatDialogModule,
   ],
   templateUrl: './admin-homepage.component.html',
   styleUrls: ['./admin-homepage.component.css'],
@@ -41,14 +43,17 @@ export class AdminHomepageComponent implements OnInit {
   students = new MatTableDataSource<Student>();
   displayedColumns = ['select', '_id', 'username', 'firstName', 'lastName'];
   selection = new SelectionModel<Student>(true, []);
+  dialog: MatDialog;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private snackBar: NotificationService) {}
+  constructor(private snackBar: NotificationService) {
+    this.dialog = inject(MatDialog);
+  }
 
   ngOnInit(): void {
     axios
-      .get(enviroments.BACKEND_URL + '/api/common/students')
+      .get(enviroments.BACKEND_URL + '/api/admin/students')
       .then((res) => {
         const studentsData = res.data.map((student: any) => ({
           _id: student._id,
@@ -99,5 +104,24 @@ export class AdminHomepageComponent implements OnInit {
       return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
     }
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row._id}`;
+  }
+
+  async onSubmit(): Promise<void> {
+    if (this.selection.selected.length === 0) {
+      this.snackBar.notify("You can't select 0 students.");
+      return;
+    }
+    let component = this.dialog.open(DialogComponent);
+    component.afterClosed().subscribe(async (dialogResult) => {
+      console.log(dialogResult);
+      if (!dialogResult) return;
+      const res = await axios.delete(
+        enviroments.BACKEND_URL + '/api/admin/students',
+        { data: { users: this.selection.selected } },
+      );
+      if (res.status === 200) {
+        this.snackBar.notify('Students deleted successfully!');
+      }
+    });
   }
 }

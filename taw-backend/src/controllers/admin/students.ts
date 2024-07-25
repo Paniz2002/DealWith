@@ -2,6 +2,14 @@ import { Request, Response } from "express";
 import connectDB from "../../../config/db";
 import UserModel from "../../../models/user";
 import BadRequestException from "../../exceptions/bad-request";
+// TODO: this is in common between frontend and backend
+// maybe we can have it in the same file.
+interface Student {
+  _id: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+}
 export const getStudentsController = async (req: Request, res: Response) => {
   connectDB();
   const filters = {
@@ -14,13 +22,16 @@ export const getStudentsController = async (req: Request, res: Response) => {
 
 export const deleteStudentsController = async (req: Request, res: Response) => {
   await connectDB();
-  const { userIDs } = req.body;
-  // First we have to check if for some reason there's a moderator to be deleted.
-  userIDs.forEach(async (userID: String) => {
-    let user = await UserModel.findById({ _id: userID }, "role");
-    if (user.isModerator())
+  const { users } = req.body;
+  //First we have to check if for some reason there's a moderator to be deleted.
+  users.forEach(async (user: Student) => {
+    let u = await UserModel.findById({ _id: user._id });
+    if (u.isModerator())
       return BadRequestException(req, res, "Bad request: Invalid user IDs");
   });
-  await UserModel.deleteMany({ _id: { $in: userIDs } });
+
+  users.forEach(async (user: Student) => {
+    await UserModel.deleteOne({ _id: user._id });
+  });
   return res.sendStatus(200);
 };
