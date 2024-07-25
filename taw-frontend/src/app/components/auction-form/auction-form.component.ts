@@ -10,8 +10,8 @@ import {MatIconModule} from "@angular/material/icon";
 import {Router} from "@angular/router";
 
 @Component({
-  selector: 'app-bid-form',
-  templateUrl: './bid-form.component.html',
+  selector: 'app-auction-form',
+  templateUrl: './auction-form.component.html',
   standalone: true,
   imports: [
     CommonModule,
@@ -23,9 +23,9 @@ import {Router} from "@angular/router";
     MatButtonModule,
     MatIconModule,
   ],
-  styleUrls: ['./bid-form.component.css']
+  styleUrls: ['./auction-form.component.css']
 })
-export class BidFormComponent implements OnInit {
+export class AuctionFormComponent implements OnInit {
   bidForm!: FormGroup;
   constructor(
     private registerFormBuilder: FormBuilder,
