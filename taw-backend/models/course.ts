@@ -14,9 +14,9 @@ const CourseSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'University'
     },
-    books: [{
+    auction: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Book'
+        ref: 'Auction'
     }]
 });
 

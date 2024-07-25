@@ -1,7 +1,7 @@
-import { CanActivateFn, Router } from '@angular/router';
-import { inject } from '@angular/core';
+import {CanActivateFn, Router} from '@angular/router';
+import {inject} from '@angular/core';
 import axios from 'axios';
-import { enviroments } from '../../../enviroments/enviroments';
+import {enviroments} from '../../../enviroments/enviroments';
 
 export const AuthenticationGuard: CanActivateFn = async () => {
   // Simplest way possible:
@@ -11,9 +11,12 @@ export const AuthenticationGuard: CanActivateFn = async () => {
   // and if the request is successful, it means that we successfully authenticated
   // before.
   const router = inject(Router);
+
   try {
     const res = await axios.get(enviroments.BACKEND_URL + '/api/auth/me');
-    if (res.status == 200) return true;
+    if (res.status == 200) {
+      return true
+    }
   } catch (e) {}
   return router.createUrlTree(['/login']);
 };
