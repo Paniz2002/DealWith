@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import axios from 'axios';
 import {enviroments} from "../../../enviroments/enviroments";
-import { FormGroup } from '@angular/forms';
+import {FormGroup} from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +9,8 @@ import { FormGroup } from '@angular/forms';
 export class AuctionService {
   private apiUrl = enviroments.BACKEND_URL;
 
-  constructor() { }
+  constructor() {
+  }
 
   addAuction(auctionForm: FormGroup) {
     return axios.post(`${this.apiUrl}/api/listing`, auctionForm.value)
@@ -20,13 +21,21 @@ export class AuctionService {
       });
   }
 
-  getBooks() {
-    return axios.get(`${this.apiUrl}/api/book`)
-      .then(res => res.data)
-      .catch(err => {
-        console.error('Error fetching books:', err);
-        return [];
-      });
+  async getBooks(to_search: string) {
+    try {
+      let res;
+      if (to_search && to_search.length > 0) {
+        res = await axios.get(`${this.apiUrl}/api/book`, {params: {q: to_search}});
+
+        console.log(res.data);
+      } else {
+        res = await axios.get(`${this.apiUrl}/api/book`);
+      }
+      return res.data;
+    } catch (err) {
+      console.error('Error fetching books:', err);
+      return [];
+    }
   }
 
   getCourses() {
@@ -39,7 +48,7 @@ export class AuctionService {
   }
 
   addBook(name: string) {
-    return axios.post(`${this.apiUrl}/api/book`, { name })
+    return axios.post(`${this.apiUrl}/api/book`, {name})
       .then(res => res.data)
       .catch(err => {
         console.error('Error adding book:', err);
@@ -48,7 +57,7 @@ export class AuctionService {
   }
 
   addCourse(name: string) {
-    return axios.post(`${this.apiUrl}/api/course`, { name })
+    return axios.post(`${this.apiUrl}/api/course`, {name})
       .then(res => res.data)
       .catch(err => {
         console.error('Error adding course:', err);

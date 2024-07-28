@@ -3,12 +3,12 @@
     <!-- Book Select with Text Search and Create Option -->
     <mat-form-field appearance="fill">
       <mat-label>Book</mat-label>
-      <input matInput formControlName="book" [matAutocomplete]="autoBook" required>
-      <mat-autocomplete #autoBook="matAutocomplete" (optionSelected)="addBook($event.option.value)">
-        <mat-option *ngFor="let book of filteredBooks | async" [value]="book.id">{{ book.name }}</mat-option>
-        <mat-option *ngIf="!(filteredBooks | async)?.length" (click)="addBook(auctionForm.controls['book'].value)">Add
-          "{{ auctionForm.controls['book'].value }}"
-        </mat-option>
+      <input matInput formControlName="book" (keyup)="searchBook()" [matAutocomplete]="autoBook" required>
+      <mat-autocomplete #autoBook="matAutocomplete" >
+        <mat-option *ngFor="let book of this.books" [value]="book.id">[{{book.ISBN}}] {{ book.title }} ({{book.year}})</mat-option>
+        @if(this.books.length<=0){
+          <mat-option (click)="addBook()">Add "{{ auctionForm.controls['book'].value }}" </mat-option>
+        }
       </mat-autocomplete>
       <mat-error *ngIf="auctionForm.controls['book'].hasError('required')">
         Book is required.
