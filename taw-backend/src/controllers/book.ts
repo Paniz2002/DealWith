@@ -40,18 +40,14 @@ async function searchBooks(req:Request, res:Response,to_search: string | undefin
 */
 
 
-export const searchBooks = async (req: Request, res: Response) => {
-    const text = req.params['text'];
-
-    await connectDB();
-
+export const searchBooks = async (text: any, req: Request, res: Response) => {
     try {
         let books  = await Book.find({
             $text: {$search: text}
         });
 
-        if(!books)
-            return NotFoundException(req, res, "No books found.");
+        if(books.length === 0)
+            return res.status(200).json([]);
 
         // return res.status(200).json(books);
         //take only id, name year and ISBN
@@ -66,8 +62,6 @@ export const searchBooks = async (req: Request, res: Response) => {
 
         return res.status(200).json(books);
 
-
-
     } catch (err) {
         return InternalException(req, res, "Unknown error while searching books.");
     }
@@ -75,6 +69,10 @@ export const searchBooks = async (req: Request, res: Response) => {
 
 export const getBooks = async (req: Request, res: Response) => {
     try {
+        const q = req.query.q;
+        if (q) {
+            return searchBooks(q, req, res);
+        }
         const books = await Book.find();
         return res.status(200).json(books);
     } catch (err) {
