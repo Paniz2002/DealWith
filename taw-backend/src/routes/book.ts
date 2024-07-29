@@ -4,5 +4,5 @@ import { getBooks } from "../controllers/book";
 
 // students only
 const bookRoutes: Router = Router();
-bookRoutes.get("/books", [studentMiddleware] , getBooks); // get all books or filter by string q
+bookRoutes.get("/", [studentMiddleware] , getBooks); // get all books or filter by string q
 export default bookRoutes;

@@ -7,6 +7,6 @@ const apiRouter: Router = Router();
 
 apiRouter.use("/auth", authRoutes);
 apiRouter.use("/admin", adminRoutes);
-apiRouter.use("/", listingRoutes);
-apiRouter.use("/", bookRoutes);
+apiRouter.use("/listings", listingRoutes);
+apiRouter.use("/books", bookRoutes);
 export default apiRouter;
