@@ -2,10 +2,10 @@ import {Component, NgModule, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuctionService} from '../../services/bid/auction.service';
 import {Router} from '@angular/router';
-import {Observable, of} from 'rxjs';
+import {Observable} from 'rxjs';
 import {startWith, map} from 'rxjs/operators';
 import {CommonModule} from "@angular/common";
-import {MatFormFieldControl, MatFormFieldModule} from "@angular/material/form-field";
+import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
 import {MatButtonModule} from "@angular/material/button";
@@ -48,6 +48,7 @@ export class AuctionFormComponent implements OnInit {
   courses: any[] = [];
   filteredBooks!: Observable<any[]>;
   filteredCourses!: Observable<any[]>;
+
 
   constructor(
     private registerFormBuilder: FormBuilder,
@@ -132,11 +133,14 @@ export class AuctionFormComponent implements OnInit {
   searchBook() {
     //get the value of the input
     const search = this.auctionForm.controls['book'].value;
-    console.log(search);
     //fetch the books from the service
     this.auctionService.getBooks(search).then((data) => {
-      console.log(data);
       this.books = data
     });
+  }
+
+  displayBookTitle(bookId: string): string {
+    const book = this.books.find(book => book.id === bookId);
+    return book ?  "["+ book.ISBN+"] " +book.title +" ("+ book.year +")" : '';
   }
 }
