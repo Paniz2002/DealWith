@@ -1,4 +1,4 @@
-import {Component, NgModule, OnInit} from '@angular/core';
+import {Component,  OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuctionService} from '../../services/bid/auction.service';
 import {Router} from '@angular/router';
@@ -12,6 +12,8 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {EditorModule} from '@tinymce/tinymce-angular';
+import {BookModalComponent} from "../book-modal/book-modal.component";
+import {MatDialog} from "@angular/material/dialog";
 
 
 interface Book {
@@ -53,7 +55,8 @@ export class AuctionFormComponent implements OnInit {
   constructor(
     private registerFormBuilder: FormBuilder,
     private router: Router,
-    private auctionService: AuctionService
+    private auctionService: AuctionService,
+    private dialog: MatDialog
   ) {
   }
 
@@ -75,25 +78,18 @@ export class AuctionFormComponent implements OnInit {
     this.auctionService.getCourses().then(data => this.courses = data);
 
 
-    console.log(this.books)
     // Set up filters
     this.filteredBooks = this.auctionForm.controls['book'].valueChanges.pipe(
       startWith(''),
       map(value => value)
     );
-    console.log(this.filteredBooks)
-
     this.filteredCourses = this.auctionForm.controls['course'].valueChanges.pipe(
       startWith(''),
       map(value => this._filterCourses(value))
     );
   }
 
-  private _filterBooks(value: string): any[] {
-    console.log(value)
-    const filterValue = value.toLowerCase();
-    return this.books.filter(option => option.title.toLowerCase().includes(filterValue));
-  }
+
 
   private _filterCourses(value: string): any[] {
     const filterValue = value.toLowerCase();
@@ -101,11 +97,15 @@ export class AuctionFormComponent implements OnInit {
   }
 
   addBook() {
-    let name = this.auctionForm.controls['book'].value
-    this.auctionService.addBook(name).then(newBook => {
-      if (newBook) {
-        this.books.push(newBook);
-        this.auctionForm.controls['book'].setValue(newBook.id);
+    const dialogRef = this.dialog.open(BookModalComponent, {
+      width: '300pt',
+      height: '350pt',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.books.push(result);
+        this.auctionForm.controls['book'].setValue(result.id);
       }
     });
   }
