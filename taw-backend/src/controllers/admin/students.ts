@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import connectDB from "../../../config/db";
 import UserModel from "../../../models/user";
-import InternalException from "src/exceptions/internal-exception";
+import InternalException from "../../exceptions/internal-exception";
 export const getStudentsController = async (req: Request, res: Response) => {
   await connectDB();
   const filters = {
