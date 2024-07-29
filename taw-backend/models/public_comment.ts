@@ -15,9 +15,9 @@ const PublicCommentSchema = new mongoose.Schema({
         ref: 'User',
         required: [true, "can't be blank"]
     },
-    book: {
+    auction: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Book',
+        ref: 'Auction',
         required: [true, "can't be blank"]
     }
 });

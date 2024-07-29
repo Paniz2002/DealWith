@@ -1,4 +1,13 @@
-<!-- Every page will see this so just add header and footer. -->
 <app-header></app-header>
-<router-outlet></router-outlet>
+<div class="container-fluid">
+  <div class="d-flex">
+    <div class="row w-100 h-100">
+      <div class="col-md-1 col-lg-2"></div>
+      <div class="col-sm-12 col-md-10 col-lg-8 my-auto">
+        <router-outlet></router-outlet>
+      </div>
+      <div class="col-md-1 col-lg-2"></div>
+    </div>
+  </div>
+</div>
 <app-footer></app-footer>
