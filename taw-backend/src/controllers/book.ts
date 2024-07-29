@@ -42,20 +42,20 @@ async function searchBooks(req:Request, res:Response,to_search: string | undefin
 
 export const searchBooks = async (req: Request, res: Response) => {
     const text = req.params['text'];
-    // return res.status(200).json(text);
+
     await connectDB();
 
     try {
-        let books = await Book.find({
+        let books  = await Book.find({
             $text: {$search: text}
         });
 
         if(!books)
             return NotFoundException(req, res, "No books found.");
 
-
+        // return res.status(200).json(books);
         //take only id, name year and ISBN
-        return books.map((book) => {
+        books = books.map((book) => {
             return {
                 id: book._id,
                 title: book.title,
@@ -63,6 +63,10 @@ export const searchBooks = async (req: Request, res: Response) => {
                 ISBN: book.ISBN
             }
         });
+
+        return res.status(200).json(books);
+
+
 
     } catch (err) {
         return InternalException(req, res, "Unknown error while searching books.");
