@@ -1,158 +1,128 @@
-<div class="container-fluid">
-  <div class="d-flex align-items-center justify-content-center">
-    <div class="row w-100 h-100">
-      <div class="col-md-1 col-lg-2"></div>
-      <div class="col-sm-12 col-md-10 col-lg-8 my-auto">
-        <div class="w-auto mx-auto">
-          <form [formGroup]="form" (ngSubmit)="onSubmit()" method="post">
-            <div
-              class="form-group row justify-content-center align-items-center"
-            >
-              <mat-form-field>
-                <mat-label>Username</mat-label>
-                <input
-                  matInput
-                  id="username"
-                  name="username"
-                  type="text"
-                  placeholder="Please write a username."
-                  required
-                  formControlName="username"
-                  minlength="3"
-                />
-                @if (this.form.controls["username"].errors) {
-                  <mat-error>{{ getUsernameErrors(this.form) }}</mat-error>
-                }
-              </mat-form-field>
-            </div>
-            <div
-              class="form-group row justify-content-center align-items-center"
-            >
-              <mat-form-field>
-                <mat-label>Name</mat-label>
-                <input
-                  matInput
-                  id="name"
-                  name="name"
-                  type="text"
-                  placeholder="Please write a name."
-                  required
-                  formControlName="name"
-                  minlength="2"
-                />
-                @if (this.form.controls["name"].errors) {
-                  <mat-error>{{ getNameError(this.form) }}</mat-error>
-                }
-              </mat-form-field>
-            </div>
-            <div class="form-group row">
-              <mat-form-field>
-                <mat-label>Surname</mat-label>
-                <input
-                  matInput
-                  id="surname"
-                  surname="name"
-                  type="text"
-                  placeholder="Please write a surname."
-                  required
-                  formControlName="surname"
-                  minlength="2"
-                />
-                @if (this.form.controls["surname"].errors) {
-                  <mat-error>{{ getSurnameError(this.form) }}</mat-error>
-                }
-              </mat-form-field>
-            </div>
-            <div
-              class="form-group row justify-content-center align-items-center"
-            >
-              <mat-form-field>
-                <mat-label>Email</mat-label>
-                <input
-                  matInput
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="Please write an email."
-                  required
-                  formControlName="email"
-                />
-                @if (this.form.controls["email"].errors) {
-                  <mat-error>{{ getEmailErrors(this.form) }}</mat-error>
-                }
-              </mat-form-field>
-            </div>
-
-            <div
-              class="form-group row justify-content-center align-items-center"
-            >
-              <mat-form-field>
-                <mat-label>Password</mat-label>
-                <input
-                  matInput
-                  type="password"
-                  name="password"
-                  id="password"
-                  placeholder="Please insert a password."
-                  required
-                  minlength="8"
-                  formControlName="password"
-                />
-                @if (this.form.controls["password"].errors) {
-                  <mat-error>{{ getPasswordErrors(this.form) }}</mat-error>
-                }
-              </mat-form-field>
-            </div>
-            <div
-              class="form-group row justify-content-center align-items-center"
-            >
-              <mat-form-field>
-                <mat-label>Confirm Password</mat-label>
-                <input
-                  matInput
-                  type="password"
-                  name="confirmPassword"
-                  id="confirmPassword"
-                  placeholder="Please repeat the same password."
-                  required
-                  minlength="8"
-                  formControlName="confirmPassword"
-                />
-                @if (this.form.controls["confirmPassword"].errors) {
-                  <mat-error
-                  >{{ getPasswordConfirmErrors(this.form) }}
-                  </mat-error>
-                }
-              </mat-form-field>
-            </div>
-            <div  class="form-group row justify-content-center align-items-center" >
-              <button
-                mat-fab
-                extended
-                color="success"
-                type="submit"
-                id="submit"
-                value="submit"
-                class="margin_btn"
-              >
-                <mat-icon>done</mat-icon>
-                Register
-              </button>
-              <button
-                mat-fab
-                extended
-                type="reset"
-                color="warn"
-                (click)="resetForm()"
-              >
-                <mat-icon>warning</mat-icon>
-                Reset
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-      <div class="col-md-1 col-lg-2"></div>
-    </div>
+<form [formGroup]="form" (ngSubmit)="onSubmit()" method="post">
+  <div class="form-group row justify-content-center align-items-center">
+    <mat-form-field>
+      <mat-label>Username</mat-label>
+      <input
+        matInput
+        id="username"
+        name="username"
+        type="text"
+        placeholder="Please write a username."
+        required
+        formControlName="username"
+        minlength="3"
+      />
+      @if (this.form.controls["username"].errors) {
+        <mat-error>{{ getUsernameErrors(this.form) }}</mat-error>
+      }
+    </mat-form-field>
   </div>
-</div>
+  <div class="form-group row justify-content-center align-items-center">
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input
+        matInput
+        id="name"
+        name="name"
+        type="text"
+        placeholder="Please write a name."
+        required
+        formControlName="name"
+        minlength="2"
+      />
+      @if (this.form.controls["name"].errors) {
+        <mat-error>{{ getNameError(this.form) }}</mat-error>
+      }
+    </mat-form-field>
+  </div>
+  <div class="form-group row">
+    <mat-form-field>
+      <mat-label>Surname</mat-label>
+      <input
+        matInput
+        id="surname"
+        surname="name"
+        type="text"
+        placeholder="Please write a surname."
+        required
+        formControlName="surname"
+        minlength="2"
+      />
+      @if (this.form.controls["surname"].errors) {
+        <mat-error>{{ getSurnameError(this.form) }}</mat-error>
+      }
+    </mat-form-field>
+  </div>
+  <div class="form-group row justify-content-center align-items-center">
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input
+        matInput
+        id="email"
+        name="email"
+        type="email"
+        placeholder="Please write an email."
+        required
+        formControlName="email"
+      />
+      @if (this.form.controls["email"].errors) {
+        <mat-error>{{ getEmailErrors(this.form) }}</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <div class="form-group row justify-content-center align-items-center">
+    <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        type="password"
+        name="password"
+        id="password"
+        placeholder="Please insert a password."
+        required
+        minlength="8"
+        formControlName="password"
+      />
+      @if (this.form.controls["password"].errors) {
+        <mat-error>{{ getPasswordErrors(this.form) }}</mat-error>
+      }
+    </mat-form-field>
+  </div>
+  <div class="form-group row justify-content-center align-items-center">
+    <mat-form-field>
+      <mat-label>Confirm Password</mat-label>
+      <input
+        matInput
+        type="password"
+        name="confirmPassword"
+        id="confirmPassword"
+        placeholder="Please repeat the same password."
+        required
+        minlength="8"
+        formControlName="confirmPassword"
+      />
+      @if (this.form.controls["confirmPassword"].errors) {
+        <mat-error>{{ getPasswordConfirmErrors(this.form) }} </mat-error>
+      }
+    </mat-form-field>
+  </div>
+  <div class="form-group row">
+    <button
+      mat-fab
+      extended
+      color="success"
+      type="submit"
+      id="submit"
+      value="submit"
+      class="margin_btn"
+    >
+      <mat-icon>done</mat-icon>
+      Register
+    </button>
+    <button mat-fab extended type="reset" color="warn" (click)="resetForm()">
+      <mat-icon>warning</mat-icon>
+      Reset
+    </button>
+  </div>
+</form>
