@@ -242,7 +242,7 @@ const seedAuctions = async (): Promise<void> => {
                 await newAuction.save();
                 console.log(`Auction saved: ${newAuction.book}`);
 
-                //add autction to book
+                //add auction to book
                 newBook.auctions.push(newAuction);
                 await newBook.save();
             }
@@ -253,8 +253,8 @@ const seedAuctions = async (): Promise<void> => {
             if (!course) {
                 console.log(`Course not found for book: ${newBook.title}`);
             } else {
-                if (!course.auction.includes(newBook)) {
-                    course.auction.push(newBook);
+                if (!course.auctions.includes(newBook)) {
+                    course.auctions.push(newBook);
                     await course.save();
                     console.log(`Book added to course: ${newBook.title}`);
                 } else {
