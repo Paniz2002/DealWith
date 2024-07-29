@@ -27,6 +27,7 @@ const BookSchema = new mongoose.Schema({
 });
 
 BookSchema.plugin(uniqueValidator, {message: 'already exists'});
+BookSchema.index({'$**': 'text'}); //FIXME, full text search does not work
 
 const Book: Model<any> = mongoose.model('Book', BookSchema);
 

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BidFormComponent } from './bid-form.component';
+import { AuctionFormComponent } from './auction-form.component';
 
 describe('BidFormComponent', () => {
-  let component: BidFormComponent;
-  let fixture: ComponentFixture<BidFormComponent>;
+  let component: AuctionFormComponent;
+  let fixture: ComponentFixture<AuctionFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BidFormComponent]
+      imports: [AuctionFormComponent]
     })
     .compileComponents();
-    
-    fixture = TestBed.createComponent(BidFormComponent);
+
+    fixture = TestBed.createComponent(AuctionFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

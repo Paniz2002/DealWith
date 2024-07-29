@@ -14,7 +14,7 @@ const CourseSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'University'
     },
-    auction: [{
+    auctions: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Auction'
     }]
