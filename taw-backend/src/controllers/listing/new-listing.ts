@@ -50,7 +50,7 @@ const getUserId = (req: Request, res: Response) => {
     }
 }
 
-export const newListingController = async (req: Request, res: Response) => {
+export const newAuctionController = async (req: Request, res: Response) => {
     if (!validateForm(req.body)) {
         return BadRequestException(req, res, 'Invalid input');
     }
