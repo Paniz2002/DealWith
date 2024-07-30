@@ -206,13 +206,16 @@ const seedAuctions = async (): Promise<void> => {
         try {
             // Check if the book already exists
             const existingBook = await Book.findOne({ISBN: bookData.ISBN});
+            const randomCourse = await Course.aggregate([{$sample: {size: 1}}]);
+
             let newBook = existingBook;
             if (!existingBook) {
                 // Create the new book and save it
                 newBook = new Book({
                     title: bookData.title,
                     year: bookData.year,
-                    ISBN: bookData.ISBN
+                    ISBN: bookData.ISBN,
+                    course: randomCourse[0]._id
                 });
                 await newBook.save();
                 console.log(`Book saved: ${newBook.title}`);
@@ -226,7 +229,6 @@ const seedAuctions = async (): Promise<void> => {
             newAuction = existingAuction;
             if (!existingAuction) {
                 const randomSeller = await User.aggregate([{$sample: {size: 1}}]);
-                const randomCourse = await Course.aggregate([{$sample: {size: 1}}]);
                 newAuction = new Auction({
                     images: bookData.images,
                     condition: bookData.condition,
@@ -236,7 +238,6 @@ const seedAuctions = async (): Promise<void> => {
                     reserve_price: bookData.reserve_price,
                     description: bookData.description,
                     seller: randomSeller[0]._id,
-                    course: randomCourse[0]._id,
                     book: newBook._id
                 });
                 await newAuction.save();
