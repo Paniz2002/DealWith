@@ -12,8 +12,6 @@ import Book from "../../models/book";
 // TODO caricare le immagini e gestirle
 // https://chatgpt.com/share/c6a5221d-83d5-444b-8939-920f39c2d22e
 
-// TODO controllare se la data di inizio è minore di quella di fine
-
 const formValidator = z.object({
     title: z.string(),
     year: z.number().optional(),

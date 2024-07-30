@@ -20,6 +20,10 @@ const BookSchema = new mongoose.Schema({
         unique: true,
         index: true
     },
+    course: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Course'
+    },
     auctions: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Auction'
@@ -28,7 +32,6 @@ const BookSchema = new mongoose.Schema({
 
 BookSchema.plugin(uniqueValidator, {message: 'already exists'});
 BookSchema.index({'$**': 'text'});
-
 
 const Book: Model<any> = mongoose.model('Book', BookSchema);
 

@@ -34,10 +34,6 @@ const AuctionSchema = new mongoose.Schema({
         ref: 'User',
         required: [true, "can't be blank"]
     },
-    course: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Course'
-    },
     book: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Book'
