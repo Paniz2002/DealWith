@@ -20,10 +20,10 @@ const BookSchema = new mongoose.Schema({
         unique: true,
         index: true
     },
-    course: {
+    courses: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Course'
-    },
+    }],
     auctions: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Auction'

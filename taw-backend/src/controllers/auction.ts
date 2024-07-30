@@ -11,13 +11,11 @@ import Auction from "../../models/auction";
 import Book from "../../models/book";
 import upload, {MulterRequest} from "../config/multer";
 import User from "../../models/user";
+import {getUserId, validateForm} from "../index";
 // TODO caricare le immagini e gestirle
 // https://chatgpt.com/share/c6a5221d-83d5-444b-8939-920f39c2d22e
 
 const formValidator = z.object({
-    title: z.string(),
-    year: z.number().optional(),
-    ISBN: z.string(),
     condition: z.enum(['Mint', 'Near Mint', 'Excellent', 'Good', 'Fair', 'Poor']),
     //auction_duration: z.number(),
     start_date: z.date(),
@@ -28,36 +26,11 @@ const formValidator = z.object({
     course_id: z.string()
 }).refine(data => data.start_date < data.end_date, {
     message: "End date must be greater than start date", path: ['start_date','end_date']
-}).refine(data => data.ISBN.length === 10 || data.ISBN.length === 13, {
-    message: "ISBN not valid", path: ['ISBN']
 });
 
-const validateForm = (req: Request, res: Response, input: unknown) => {
-    try {
-        formValidator.parse(input);
-        return true;
-    } catch (e) {
-        if (e instanceof z.ZodError){
-            let errors = e.errors.map(err => err.message);
-            return BadRequestException(req, res, errors.join("; "));
-        }
-        else
-            return BadRequestException(req, res, "Invalid input");
-    }
-}
 
-const getUserId = (req: Request, res: Response) => {
-    const token = req.cookies.jwt;
-    if (!token) {
-        return BadRequestException(req, res, "Bad Request: Missing JWT");
-    }
-    try {
-        const payload = jwt.verify(token, JWT_SECRET) as any;
-        return payload._id;
-    } catch (e) {
-        return UnauthorizedException(req, res, "Unauthorized: Invalid JWT");
-    }
-}
+
+
 
 export const newAuctionController = async (req: Request, res: Response) => {
     try{
@@ -66,50 +39,37 @@ export const newAuctionController = async (req: Request, res: Response) => {
     }catch (e){
         return BadRequestException(req, res, "Invalid date format");
     }
-    validateForm(req, res, req.body);
+    validateForm(req, res, req.body, formValidator);
 
     await connectDB();
 
     const {
-        title,
-        year,
-        ISBN,
         condition,
         start_date,
         end_date,
         starting_price,
         reserve_price,
         description,
-        course_id
+        book_id,
     } = req.body;
 
-    /* const alreadyExistingBook = await Auction.findOne({ISBN: ISBN});
-    commented out because we don't want use already created books
 
-    if (alreadyExistingBook) {
-         return BadRequestException( req, res, 'Book already exists')
-      }
-      */
-
+/*
     const alreadyExistingCourse = await Course.findOne({_id: course_id});
 
     if (!alreadyExistingCourse) {
         return BadRequestException(req, res, 'Course does not exist')
     }
+    */
+
 
     try {
         const user_id = getUserId(req, res);
 
-        const book = await Book.create({
-            title,
-            year,
-            ISBN
-        });
 
-        await book.save();
 
         const auction = await Auction.create({
-            book: book._id,
+            book: book_id,
             condition,
             start_date,
             end_date,
@@ -117,13 +77,12 @@ export const newAuctionController = async (req: Request, res: Response) => {
             reserve_price,
             description,
             seller: user_id,
-            course: course_id
         });
 
         await auction.save();
 
-        alreadyExistingCourse.auctions.push(auction);
-        await alreadyExistingCourse.save();
+        /* alreadyExistingCourse.auctions.push(auction);
+        await alreadyExistingCourse.save(); */
 
         res.sendStatus(201);
 
@@ -168,5 +127,5 @@ export const uploadAuctionImagesController = async (req: Request, res: Response)
 
 
 
-    return res.status(201).send("Images uploaded");
+    return res.status(200).send("Images uploaded");
 }
