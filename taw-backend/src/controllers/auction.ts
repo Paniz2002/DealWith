@@ -1,13 +1,13 @@
 import {Request, Response} from 'express';
 import {z} from 'zod';
 import * as jwt from 'jsonwebtoken';
-import {JWT_SECRET} from '../../secret';
-import connectDB from "../../../config/db";
-import BadRequestException from "../../exceptions/bad-request";
-import Course from "../../../models/course";
-import UnauthorizedException from "../../exceptions/unauthorized";
-import InternalException from "../../exceptions/internal-exception";
-import Auction from "../../../models/auction";
+import {JWT_SECRET} from '../secret';
+import connectDB from "../../config/db";
+import BadRequestException from "../exceptions/bad-request";
+import Course from "../../models/course";
+import UnauthorizedException from "../exceptions/unauthorized";
+import InternalException from "../exceptions/internal-exception";
+import Auction from "../../models/auction";
 
 // TODO caricare le immagini e gestirle
 // https://chatgpt.com/share/c6a5221d-83d5-444b-8939-920f39c2d22e
