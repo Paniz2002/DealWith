@@ -49,7 +49,7 @@ export const getBooks = async (req: Request, res: Response) => {
 
 const formValidator = z.object({
     title: z.string(),
-    year: z.number().optional(),
+    year: z.number(),
     ISBN: z.string()
 }).refine(data => data.ISBN.length === 10 || data.ISBN.length === 13, {
     message: "ISBN not valid", path: ['ISBN']
@@ -62,28 +62,24 @@ export const addBook = async (req: Request, res: Response) => {
             year,
             ISBN
         } = req.body;
-
         const alreadyExistingBook = await Book.findOne({ISBN: ISBN});
         if (alreadyExistingBook) {
             return BadRequestException(req, res, 'Book already exists')
         }
-
         const book = await Book.create({
-            title,
-            year,
-            ISBN
+            title: title,
+            year: year,
+            ISBN: ISBN
         });
-
         await book.save();
-
         return res.status(200).json({
             id: book._id,
             title: book.title,
             year: book.year,
             ISBN: book.ISBN
         });
-
     } catch (err) {
-        return InternalException(req, res, "Unknown error while getting books.");
+        console.log(err);
+        return InternalException(req, res, "Unknown error while adding book.");
     }
 }

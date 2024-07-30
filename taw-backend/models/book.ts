@@ -9,7 +9,10 @@ const BookSchema = new mongoose.Schema({
     },
     year: {
         type: Number,
-        index: true
+        index: true,
+        validate: {
+            validator: (v: number) => !(v < 1970 && v > new Date().getFullYear())
+        },
     },
     ISBN: {
         type: String,
