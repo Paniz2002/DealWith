@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { studentMiddleware } from "../middlewares/student";
-import { newAuctionController } from "../controllers/listing/new-listing";
+import { newAuctionController } from "../controllers/auction";
 
 // students only
 const auctionRoutes: Router = Router();

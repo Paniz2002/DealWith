@@ -206,6 +206,8 @@ const seedAuctions = async (): Promise<void> => {
         try {
             // Check if the book already exists
             const existingBook = await Book.findOne({ISBN: bookData.ISBN});
+            const randomCourse = await Course.aggregate([{$sample: {size: 1}}]);
+
             let newBook = existingBook;
             if (!existingBook) {
                 // Create the new book and save it
@@ -249,7 +251,7 @@ const seedAuctions = async (): Promise<void> => {
 
 
             // Add the Book to the Course
-            const course = await Course.findById(newBook.course);
+            const course = await Course.findById(newAuction.course);
             if (!course) {
                 console.log(`Course not found for book: ${newBook.title}`);
             } else {

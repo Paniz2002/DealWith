@@ -24,12 +24,13 @@ export class AuctionService {
   async getBooks(to_search: string) {
     try {
       let res;
-      if (to_search && to_search.length > 0) {
-        res = await axios.get(`${this.apiUrl}/api/book`, {params: {q: to_search}});
+      if (to_search && to_search!=='' && to_search.length > 0) {
+        res = await axios.get(`${this.apiUrl}/api/books/`+to_search);
 
         console.log(res.data);
       } else {
-        res = await axios.get(`${this.apiUrl}/api/book`);
+        res = await axios.get(`${this.apiUrl}/api/books`);
+        console.log(res.data);
       }
       return res.data;
     } catch (err) {
