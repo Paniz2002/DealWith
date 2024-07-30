@@ -1,4 +1,4 @@
-import connectDB from "../config/db";
+
 import express, { Express } from "express";
 import dotenv from "dotenv";
 import apiRouter from "./routes";
@@ -7,6 +7,7 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import { whitelistMiddleware } from "./middlewares/whitelist";
 import {Model, Schema} from "mongoose";
+import connectDB from "./config/db";
 
 dotenv.config();
 

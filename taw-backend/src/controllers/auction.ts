@@ -2,13 +2,15 @@ import {Request, Response} from 'express';
 import {z} from 'zod';
 import * as jwt from 'jsonwebtoken';
 import {JWT_SECRET} from '../secret';
-import connectDB from "../../config/db";
+import connectDB from "../config/db";
 import BadRequestException from "../exceptions/bad-request";
 import Course from "../../models/course";
 import UnauthorizedException from "../exceptions/unauthorized";
 import InternalException from "../exceptions/internal-exception";
 import Auction from "../../models/auction";
 import Book from "../../models/book";
+import upload, {MulterRequest} from "../config/multer";
+import User from "../../models/user";
 // TODO caricare le immagini e gestirle
 // https://chatgpt.com/share/c6a5221d-83d5-444b-8939-920f39c2d22e
 
@@ -129,4 +131,42 @@ export const newAuctionController = async (req: Request, res: Response) => {
         console.log(err);
         return InternalException(req, res, "Unknkown error while creating listing");
     }
+}
+
+
+
+export const uploadAuctionImagesController = async (req: Request, res: Response) => {
+    if(!req.files){
+        return BadRequestException(req, res, "No images uploaded");
+    }
+
+    console.log(req.files);
+
+    const {auction_id, seller_id} = req.body;
+
+    if(!auction_id || !seller_id){
+        return BadRequestException(req, res, "Missing auction_id or user_id");
+    }
+
+    const auction = await Auction.findById(auction_id);
+    const user = await User.findById(seller_id);
+    if(!auction || !user){
+        return BadRequestException(req, res, "Auction or user not found");
+    }
+
+    const user_id = getUserId(req, res);
+
+    if(auction.seller.toString() !== seller_id){
+        return BadRequestException(req, res, "The seller is not the owner of the auction");
+    }
+
+    if(auction.seller.toString() !== user_id){
+        return UnauthorizedException(req, res, "Unauthorized: You are not the seller of this auction");
+    }
+
+    // TODO aggiungere i path delle immagini alle auction nel db
+
+
+
+    return res.status(201).send("Images uploaded");
 }

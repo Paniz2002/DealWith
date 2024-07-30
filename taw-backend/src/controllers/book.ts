@@ -1,5 +1,5 @@
 import {Request, Response} from 'express';
-import connectDB from "../../config/db";
+import connectDB from "../config/db";
 
 import InternalException from "../exceptions/internal-exception";
 import Book from "../../models/book";

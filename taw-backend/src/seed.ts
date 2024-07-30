@@ -1,17 +1,14 @@
-import connectDB from "../config/db";
+import connectDB from "./config/db";
 import User from "../models/user";
 import Email from "../models/email";
 import City from "../models/city";
 import Course from "../models/course";
 import University from "../models/university";
 import Auction from "../models/auction";
-import PublicComment from "../models/public_comment";
-import PrivateMessage from "../models/private_message";
-import Bid from "../models/bid";
 
 import path from "path";
 import fs from "fs";
-import mongoose, {Schema} from "mongoose";
+import mongoose from "mongoose";
 import Book from "../models/book";
 
 const seedEmails = async () => {
