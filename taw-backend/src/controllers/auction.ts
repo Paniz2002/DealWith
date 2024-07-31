@@ -9,7 +9,6 @@ import UnauthorizedException from "../exceptions/unauthorized";
 import InternalException from "../exceptions/internal-exception";
 import Auction from "../../models/auction";
 import Book from "../../models/book";
-import upload, {MulterRequest} from "../config/multer";
 import User from "../../models/user";
 // TODO caricare le immagini e gestirle
 // https://chatgpt.com/share/c6a5221d-83d5-444b-8939-920f39c2d22e
@@ -163,7 +162,6 @@ export const uploadAuctionImagesController = async (req: Request, res: Response)
     if(auction.seller.toString() !== user_id){
         return UnauthorizedException(req, res, "Unauthorized: You are not the seller of this auction");
     }
-
     // TODO aggiungere i path delle immagini alle auction nel db
 
 
