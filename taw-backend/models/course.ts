@@ -17,6 +17,10 @@ const CourseSchema = new mongoose.Schema({
     auctions: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Auction'
+    }],
+    books: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Book'
     }]
 });
 

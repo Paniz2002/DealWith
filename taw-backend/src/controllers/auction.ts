@@ -22,14 +22,10 @@ const formValidator = z.object({
     starting_price: z.number(),
     reserve_price: z.number(),
     description: z.string().optional(),
-    course_id: z.string()
+    book_id: z.string()
 }).refine(data => data.start_date < data.end_date, {
     message: "End date must be greater than start date", path: ['start_date','end_date']
 });
-
-
-
-
 
 export const newAuctionController = async (req: Request, res: Response) => {
     try{
@@ -52,20 +48,8 @@ export const newAuctionController = async (req: Request, res: Response) => {
         book_id,
     } = req.body;
 
-
-/*
-    const alreadyExistingCourse = await Course.findOne({_id: course_id});
-
-    if (!alreadyExistingCourse) {
-        return BadRequestException(req, res, 'Course does not exist')
-    }
-    */
-
-
     try {
         const user_id = getUserId(req, res);
-
-
 
         const auction = await Auction.create({
             book: book_id,
@@ -121,9 +105,18 @@ export const uploadAuctionImagesController = async (req: Request, res: Response)
     if(auction.seller.toString() !== user_id){
         return UnauthorizedException(req, res, "Unauthorized: You are not the seller of this auction");
     }
-    // TODO aggiungere i path delle immagini alle auction nel db
 
+    const files = req.files as Express.Multer.File[];
+    try{
+        for(const file of files){
+            const path = file.path;
+            auction.images.push(path);
+        }
 
+        await auction.save();
 
-    return res.status(200).send("Images uploaded");
+        return res.status(200).send("Images uploaded");
+    }catch (e){
+        return InternalException(req, res, "Error while saving images");
+    }
 }
