@@ -1,0 +1,32 @@
+<!-- book-modal.component.html -->
+<h2 mat-dialog-title>Add New Course</h2>
+<mat-dialog-content [formGroup]="courseForm">
+  <mat-form-field appearance="fill">
+   Course Name
+    <input matInput formControlName="name" required>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    Starting Year
+    <input matInput formControlName="year1" type="number" required>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    Ending Year
+    <input matInput formControlName="year2" type="number" required>
+  </mat-form-field>
+
+  <!-- select university -->
+  <mat-form-field appearance="fill">
+    University
+    <mat-select formControlName="university" required>
+      <mat-option *ngFor="let university of universities" [value]="university.id">
+       [{{ university.city_name }}] {{ university.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-button [mat-dialog-close]="courseForm.value" [disabled]="courseForm.invalid" (click)="saveCourse()">Save</button>
+</mat-dialog-actions>

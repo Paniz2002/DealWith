@@ -21,10 +21,11 @@ export class AuctionService {
       });
   }
 
+  //region books
   async getBooks(to_search: string) {
     try {
       let res;
-      if (to_search && to_search!=='' && to_search.length > 0) {
+      if (to_search && to_search !== '' && to_search.length > 0) {
         res = await axios.get(`${this.apiUrl}/api/books`, {params: {q: to_search}});
       } else {
         res = await axios.get(`${this.apiUrl}/api/books`);
@@ -36,21 +37,29 @@ export class AuctionService {
     }
   }
 
-  getCourses() {
-    return axios.get(`${this.apiUrl}/api/course`)
-      .then(res => res.data)
-      .catch(err => {
-        console.error('Error fetching courses:', err);
-        return [];
-      });
-  }
-
   async addBook(form_body: object) {
     try {
       const res = await axios.post(`${this.apiUrl}/api/books`, form_body);
       return res.data;
     } catch (err) {
       return null;
+    }
+  }
+  //endregion
+
+  //region courses
+  async getCourses(to_search: string) {
+    try {
+      let res;
+      if (to_search && to_search !== '' && to_search.length > 0) {
+        res = await axios.get(`${this.apiUrl}/api/courses`, {params: {q: to_search}});
+      } else {
+        res = await axios.get(`${this.apiUrl}/api/courses`);
+      }
+      return res.data;
+    } catch (err) {
+      console.error('Error fetching courses:', err);
+      return [];
     }
   }
 
@@ -61,4 +70,7 @@ export class AuctionService {
         return null;
       });
   }
+  //endregion
+
+
 }

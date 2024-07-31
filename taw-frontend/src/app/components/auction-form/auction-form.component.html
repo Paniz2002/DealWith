@@ -4,7 +4,7 @@
     <mat-form-field appearance="fill">
       <mat-label>Book</mat-label>
       <input matInput formControlName="book" [matAutocomplete]="autoBook" required (keyup)="searchBook()">
-      <mat-autocomplete #autoBook="matAutocomplete" [displayWith]="displayBookTitle.bind(this)">
+      <mat-autocomplete #autoBook="matAutocomplete"  [displayWith]="displayBookTitle.bind(this)">
         <mat-option *ngFor="let book of books" [value]="book.id">
           [{{ book.ISBN }}] {{ book.title }}  ({{ book.year }})
         </mat-option>
@@ -17,22 +17,21 @@
       </mat-error>
     </mat-form-field>
 
-    TODO COURSE SELECT<br><br>
-    <!-- Course Select with Text Search and Create Option
+
+    <!-- Course Select with Text Search and Create Option  -->
     <mat-form-field appearance="fill">
       <mat-label>Course</mat-label>
-      <input matInput formControlName="course" [matAutocomplete]="autoCourse" required>
-      <mat-autocomplete #autoCourse="matAutocomplete" (optionSelected)="addCourse($event.option.value)">
-        <mat-option *ngFor="let course of filteredCourses | async" [value]="course.id">{{ course.name }}</mat-option>
-        <mat-option *ngIf="!(filteredCourses | async)?.length"
-                    (click)="addCourse(auctionForm.controls['course'].value)">Add
-          "{{ auctionForm.controls['course'].value }}"
+      <input matInput formControlName="course" [matAutocomplete]="autoCourse" required  (keyup)="searchCourse()">
+      <mat-autocomplete #autoCourse="matAutocomplete" [displayWith]="displayCourseName.bind(this)">
+        <mat-option *ngFor="let course of courses" [value]="course.id">{{ course.name }}</mat-option>
+        <mat-option *ngIf="(!courses || courses.length===0)" (click)="addCourse()">
+          Add "{{ auctionForm.controls['course'].value }}"
         </mat-option>
       </mat-autocomplete>
       <mat-error *ngIf="auctionForm.controls['course'].hasError('required')">
         Course is required.
       </mat-error>
-    </mat-form-field> -->
+    </mat-form-field>
 
 
     <mat-label>Description</mat-label>
