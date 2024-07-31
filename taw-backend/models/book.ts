@@ -9,7 +9,10 @@ const BookSchema = new mongoose.Schema({
     },
     year: {
         type: Number,
-        index: true
+        index: true,
+        validate: {
+            validator: (v: number) => !(v < 1970 && v > new Date().getFullYear())
+        },
     },
     ISBN: {
         type: String,
@@ -20,10 +23,10 @@ const BookSchema = new mongoose.Schema({
         unique: true,
         index: true
     },
-    course: {
+    courses: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Course'
-    },
+    }],
     auctions: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Auction'
