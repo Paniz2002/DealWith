@@ -145,6 +145,9 @@ const searchAuctions = async function (req: Request, res: Response) {
             active
         } = req.query;
 
+        /* If min_condition is provided, get all conditions superior to it
+        *  If not, the default superior_conditions are all conditions
+         */
         let superior_conditions = ['Mint', 'Near Mint', 'Excellent', 'Good', 'Fair', 'Poor'];
         if (min_condition) {
             try {
@@ -154,6 +157,8 @@ const searchAuctions = async function (req: Request, res: Response) {
                 return BadRequestException(req, res, "Invalid condition");
             }
         }
+
+        // If q is provided, search for books and auctions that match the query
         let searchedAuctions = [];
         const allAuctions = await Auction.find();
         if (q) {
@@ -170,6 +175,11 @@ const searchAuctions = async function (req: Request, res: Response) {
                 return BadRequestException(req, res, "No auctions found");
             }
         }
+
+        /* Search for auctions based on the query parameters
+        *  If no query parameters are provided, return all
+        *  If q is provided, return only the auctions that match the query
+        */
         let auctions = await Auction.find(
             {
                 $and: [
