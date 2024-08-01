@@ -1,4 +1,7 @@
 import mongoose, { Model } from 'mongoose';
+import University from "./university";
+import Auction from "./auction";
+import Book from "./book";
 
 const CourseSchema = new mongoose.Schema({
     name: {
@@ -12,15 +15,15 @@ const CourseSchema = new mongoose.Schema({
     },
     university: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'University'
+        ref: University
     },
     auctions: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Auction'
+        ref: Auction
     }],
     books: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Book'
+        ref: Book
     }]
 });
 

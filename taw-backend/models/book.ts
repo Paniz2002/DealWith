@@ -1,5 +1,7 @@
 import mongoose, {Model} from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
+import Course from "./course";
+import Auction from "./auction";
 
 const BookSchema = new mongoose.Schema({
     title: {
@@ -26,11 +28,11 @@ const BookSchema = new mongoose.Schema({
     },
     courses: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Course'
+        ref: Course
     }],
     auctions: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Auction'
+        ref: Auction
     }]
 });
 

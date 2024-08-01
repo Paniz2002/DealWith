@@ -10,6 +10,7 @@ import path from "path";
 import fs from "fs";
 import mongoose from "mongoose";
 import Book from "../models/book";
+import course from "../models/course";
 
 const seedEmails = async () => {
     const emailsFilePath = path.join(__dirname, "data", "emails.json");
@@ -77,8 +78,8 @@ const seedCourses = async (): Promise<void> => {
                 // Create the new course and save it
                 const newCourse = new Course({
                     name: courseData.name,
-                    year: courseData.year,
                     university: university._id,
+                    year: courseData.year,
                 });
                 await newCourse.save();
                 console.log(`Course saved: ${newCourse.name}`);
@@ -243,6 +244,8 @@ const seedAuctions = async (): Promise<void> => {
             //create auction if not present with current book id
             const auction = await Auction.findOne({book: book._id});
 
+
+
             if (!auction) {
                 const randomSeller = await User.aggregate([{$sample: {size: 1}}]);
                 const newAuction = new Auction({
@@ -262,6 +265,12 @@ const seedAuctions = async (): Promise<void> => {
                 //add auction to book
                 book.auctions.push(newAuction);
                 await book.save();
+
+                for (const course_id of book.courses){
+                    const course = await Course.findById(course_id);
+                    course.auctions.push(newAuction);
+                    await course.save();
+                }
             }
         } catch (err) {
             console.error(`Error saving book: ${bookData.title}`, err);

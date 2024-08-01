@@ -1,4 +1,6 @@
 import mongoose, { Model } from 'mongoose';
+import Auction from "./auction";
+import User from "./user";
 
 const PrivateMessageSchema = new mongoose.Schema({
     text: {
@@ -7,17 +9,17 @@ const PrivateMessageSchema = new mongoose.Schema({
     },
     auction: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Auction',
+        ref: Auction,
         required: [true, "can't be blank"]
     },
     sender: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: User,
         required: [true, "can't be blank"]
     },
     receiver: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: User,
         required: [true, "can't be blank"]
     }
 });
