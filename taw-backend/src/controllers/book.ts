@@ -33,7 +33,7 @@ export const searchBooks = async (text: any, req: Request, res: Response) => {
   }
 };
 
-export const getBooks = async (req: Request, res: Response) => {
+export const getBooksController = async (req: Request, res: Response) => {
   try {
     const q = req.query.q;
     if (q) {
@@ -57,7 +57,7 @@ const formValidator = z
     path: ["ISBN"],
   });
 
-export const addBook = async (req: Request, res: Response) => {
+export const postBookController = async (req: Request, res: Response) => {
   try {
     const { title, year, ISBN } = req.body;
     const alreadyExistingBook = await Book.findOne({ ISBN: ISBN });
