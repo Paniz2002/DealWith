@@ -7,3 +7,4 @@ taw-frontend/src/enviroments/
 dbdata/
 initdb.d/
 *.DS_Store
+taw-backend/src/data/images/uploads/*

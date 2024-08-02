@@ -1,17 +1,19 @@
-import {Component, NgModule, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuctionService} from '../../services/bid/auction.service';
 import {Router} from '@angular/router';
-import {Observable, of} from 'rxjs';
+import {Observable} from 'rxjs';
 import {startWith, map} from 'rxjs/operators';
 import {CommonModule} from "@angular/common";
-import {MatFormFieldControl, MatFormFieldModule} from "@angular/material/form-field";
+import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {EditorModule} from '@tinymce/tinymce-angular';
+import {BookModalComponent} from "../book-modal/book-modal.component";
+import {MatDialog} from "@angular/material/dialog";
 
 
 interface Book {
@@ -20,6 +22,7 @@ interface Book {
   year: number;
   ISBN: string;
 }
+
 
 @Component({
   imports: [
@@ -45,14 +48,16 @@ interface Book {
 export class AuctionFormComponent implements OnInit {
   auctionForm!: FormGroup;
   books: Book[] = [];
+  just_added = false;
   courses: any[] = [];
-  filteredBooks!: Observable<any[]>;
-  filteredCourses!: Observable<any[]>;
+
+
 
   constructor(
     private registerFormBuilder: FormBuilder,
     private router: Router,
-    private auctionService: AuctionService
+    private auctionService: AuctionService,
+    private dialog: MatDialog,
   ) {
   }
 
@@ -74,25 +79,9 @@ export class AuctionFormComponent implements OnInit {
     this.auctionService.getCourses().then(data => this.courses = data);
 
 
-    console.log(this.books)
-    // Set up filters
-    this.filteredBooks = this.auctionForm.controls['book'].valueChanges.pipe(
-      startWith(''),
-      map(value => value)
-    );
-    console.log(this.filteredBooks)
 
-    this.filteredCourses = this.auctionForm.controls['course'].valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterCourses(value))
-    );
   }
 
-  private _filterBooks(value: string): any[] {
-    console.log(value)
-    const filterValue = value.toLowerCase();
-    return this.books.filter(option => option.title.toLowerCase().includes(filterValue));
-  }
 
   private _filterCourses(value: string): any[] {
     const filterValue = value.toLowerCase();
@@ -100,25 +89,30 @@ export class AuctionFormComponent implements OnInit {
   }
 
   addBook() {
-    let name = this.auctionForm.controls['book'].value
-    this.auctionService.addBook(name).then(newBook => {
-      if (newBook) {
-        this.books.push(newBook);
-        this.auctionForm.controls['book'].setValue(newBook.id);
+    const dialogRef = this.dialog.open(BookModalComponent, {
+      width: '300pt',
+      height: '350pt',
+      data: {title: this.auctionForm.controls['book'].value} //FIXME: value is undefined, not priority for now just UX to autocomplete the form
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.books.push(result);
+        this.auctionForm.controls['book'].setValue(result.id);
+        this.displayBookTitle(result.id);
+        this.just_added = true;
       }
     });
   }
 
-  addCourse(name: string) {
-    this.auctionService.addCourse(name).then(newCourse => {
-      if (newCourse) {
-        this.courses.push(newCourse);
-        this.auctionForm.controls['course'].setValue(newCourse.id);
-      }
-    });
+  addCourse(name: object) {
+//TODO: implement
   }
 
   onSubmit(): void {
+    //print all form values
+    console.log(this.auctionForm.value);
+    return;
     if (this.auctionForm.valid) {
       this.auctionService.addAuction(this.auctionForm).then(result => {
         if (result) {
@@ -128,15 +122,19 @@ export class AuctionFormComponent implements OnInit {
     }
   }
 
-
   searchBook() {
     //get the value of the input
     const search = this.auctionForm.controls['book'].value;
-    console.log(search);
     //fetch the books from the service
     this.auctionService.getBooks(search).then((data) => {
-      console.log(data);
       this.books = data
     });
   }
+
+  displayBookTitle(bookId: string): string {
+    const book = this.books.find(book => book.id === bookId);
+    return book ? "[" + book.ISBN + "] " + book.title + " (" + book.year + ")" : '';
+  }
+
+
 }

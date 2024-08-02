@@ -1,4 +1,6 @@
 import mongoose, { Model } from 'mongoose';
+import User from "./user";
+import Auction from "./auction";
 
 const PublicCommentSchema = new mongoose.Schema({
     text: {
@@ -7,17 +9,17 @@ const PublicCommentSchema = new mongoose.Schema({
     },
     sender: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: User,
         required: [true, "can't be blank"]
     },
     receiver: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: User,
         required: [true, "can't be blank"]
     },
     auction: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Auction',
+        ref: Auction,
         required: [true, "can't be blank"]
     }
 });

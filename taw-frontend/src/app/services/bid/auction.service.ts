@@ -25,12 +25,9 @@ export class AuctionService {
     try {
       let res;
       if (to_search && to_search!=='' && to_search.length > 0) {
-        res = await axios.get(`${this.apiUrl}/api/books/`+to_search);
-
-        console.log(res.data);
+        res = await axios.get(`${this.apiUrl}/api/books`, {params: {q: to_search}});
       } else {
         res = await axios.get(`${this.apiUrl}/api/books`);
-        console.log(res.data);
       }
       return res.data;
     } catch (err) {
@@ -48,20 +45,19 @@ export class AuctionService {
       });
   }
 
-  addBook(name: string) {
-    return axios.post(`${this.apiUrl}/api/book`, {name})
-      .then(res => res.data)
-      .catch(err => {
-        console.error('Error adding book:', err);
-        return null;
-      });
+  async addBook(form_body: object) {
+    try {
+      const res = await axios.post(`${this.apiUrl}/api/books`, form_body);
+      return res.data;
+    } catch (err) {
+      return null;
+    }
   }
 
-  addCourse(name: string) {
-    return axios.post(`${this.apiUrl}/api/course`, {name})
+  addCourse(form_body: object) {
+    return axios.post(`${this.apiUrl}/api/course`, form_body)
       .then(res => res.data)
       .catch(err => {
-        console.error('Error adding course:', err);
         return null;
       });
   }

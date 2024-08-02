@@ -1,10 +1,12 @@
 import mongoose, { Model } from "mongoose";
+import University from "./university";
+import Auction from "./auction";
+import Book from "./book";
 
 const CourseSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, "can't be blank"],
-    index: true,
   },
   year: {
     type: { year1: Number, year2: Number },
@@ -13,15 +15,22 @@ const CourseSchema = new mongoose.Schema({
   },
   university: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "University",
+    ref: University,
   },
   auctions: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Auction",
+      ref: Auction,
+    },
+  ],
+  books: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: Book,
     },
   ],
 });
-const Course: Model<any> = mongoose.model("Course", CourseSchema);
-export default Course;
 
+const Course: Model<any> = mongoose.model("Course", CourseSchema);
+
+export default Course;

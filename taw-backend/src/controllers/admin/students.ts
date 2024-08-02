@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import connectDB from "../../../config/db";
+import connectDB from "../../config/db";
 import UserModel from "../../../models/user";
 import InternalException from "../../exceptions/internal-exception";
 export const getStudentsController = async (req: Request, res: Response) => {

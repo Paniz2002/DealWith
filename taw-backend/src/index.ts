@@ -1,4 +1,3 @@
-import connectDB from "../config/db";
 import express, { Express } from "express";
 import dotenv from "dotenv";
 import apiRouter from "./routes";
@@ -6,6 +5,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import { whitelistMiddleware } from "./middlewares/whitelist";
+import connectDB from "./config/db";
 
 dotenv.config();
 

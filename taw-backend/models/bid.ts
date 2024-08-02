@@ -1,4 +1,6 @@
 import mongoose, { Model } from 'mongoose';
+import User from "./user";
+import Auction from "./auction";
 
 const BidSchema = new mongoose.Schema({
     price: {
@@ -7,12 +9,12 @@ const BidSchema = new mongoose.Schema({
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: User,
         required: [true, "can't be blank"]
     },
     auction: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Auction',
+        ref: Auction,
         required: [true, "can't be blank"]
     }
 });
