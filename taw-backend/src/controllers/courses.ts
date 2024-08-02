@@ -6,7 +6,7 @@ import City from "../../models/city";
 import BadRequestException from "../exceptions/bad-request";
 import fullTextSearch from "../utils/search";
 interface UniversityResult {
-  _id: string | null;
+  _id: string;
   name: string;
   city: string;
   courses: string[];
@@ -22,11 +22,13 @@ export const getCoursesController = async (req: Request, res: Response) => {
   if (university == undefined && course == undefined) {
     return BadRequestException(req, res, "Bad request: Invalid parameters.");
   }
-  university = university as string;
-  course = course as string;
   await connectDB();
   if (university) {
-    const result = await fullTextSearch(University, university)
+    const result = await fullTextSearch(
+      University,
+      university as string,
+      "-_id -__v",
+    )
       .populate({
         path: "city",
         model: City,
@@ -35,7 +37,7 @@ export const getCoursesController = async (req: Request, res: Response) => {
       .populate({
         path: "courses",
         model: Course,
-        select: "name year1 year2 -_id",
+        select: "name year -_id",
       })
       .exec();
     return res.status(200).json(result);

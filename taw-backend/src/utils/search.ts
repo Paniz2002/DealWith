@@ -7,7 +7,11 @@ function getStringPaths(schema: Schema<any>) {
 }
 
 // Function to search across all string fields of a model
-export default function fullTextSearch(model: Model<any>, searchText: string) {
+export default function fullTextSearch(
+  model: Model<any>,
+  searchText: string,
+  filter: string = "",
+) {
   // Get all string paths from the model's schema
   const stringPaths = getStringPaths(model.schema);
 
@@ -17,5 +21,7 @@ export default function fullTextSearch(model: Model<any>, searchText: string) {
   }));
 
   // Perform the search with $or
+  if (filter) return model.find({ $or: searchConditions }, filter);
+
   return model.find({ $or: searchConditions });
 }
