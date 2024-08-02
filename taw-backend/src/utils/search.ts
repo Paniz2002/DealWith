@@ -7,7 +7,7 @@ function getStringPaths(schema: Schema<any>) {
 }
 
 // Function to search across all string fields of a model
-export function fullTextSearch(model: Model<any>, searchText: string) {
+export default function fullTextSearch(model: Model<any>, searchText: string) {
   // Get all string paths from the model's schema
   const stringPaths = getStringPaths(model.schema);
 
