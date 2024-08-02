@@ -1,18 +1,16 @@
-import connectDB from "../config/db";
+import connectDB from "./config/db";
 import User from "../models/user";
 import Email from "../models/email";
 import City from "../models/city";
 import Course from "../models/course";
 import University from "../models/university";
 import Auction from "../models/auction";
-import PublicComment from "../models/public_comment";
-import PrivateMessage from "../models/private_message";
-import Bid from "../models/bid";
 
 import path from "path";
 import fs from "fs";
-import mongoose, {Schema} from "mongoose";
+import mongoose from "mongoose";
 import Book from "../models/book";
+import course from "../models/course";
 
 const seedEmails = async () => {
     const emailsFilePath = path.join(__dirname, "data", "emails.json");
@@ -80,8 +78,8 @@ const seedCourses = async (): Promise<void> => {
                 // Create the new course and save it
                 const newCourse = new Course({
                     name: courseData.name,
-                    year: courseData.year,
                     university: university._id,
+                    year: courseData.year,
                 });
                 await newCourse.save();
                 console.log(`Course saved: ${newCourse.name}`);
@@ -191,22 +189,16 @@ const seedCities = async (): Promise<void> => {
     }
 };
 
-const seedAuctions = async (): Promise<void> => {
+const seedBooks = async (): Promise<void> => {
     const booksFilePath = path.join(__dirname, "data", "books.json");
     const booksData = JSON.parse(fs.readFileSync(booksFilePath, "utf-8"));
 
-    const imagesPath = path.join(__dirname, "data", "images", "sample");
-    const images = ["sample1.JPG", "sample2.JPG", "sample3.JPG"].map((image) =>
-        path.join(imagesPath, image),
-    );
-
     for (const bookData of booksData) {
-        bookData.images = images;
-
         try {
             // Check if the book already exists
             const existingBook = await Book.findOne({ISBN: bookData.ISBN});
             const randomCourse = await Course.aggregate([{$sample: {size: 1}}]);
+            const course = await Course.findById(randomCourse[0]._id);
 
             let newBook = existingBook;
             if (!existingBook) {
@@ -215,21 +207,48 @@ const seedAuctions = async (): Promise<void> => {
                     title: bookData.title,
                     year: bookData.year,
                     ISBN: bookData.ISBN,
-                    course: randomCourse[0]._id
                 });
                 await newBook.save();
                 console.log(`Book saved: ${newBook.title}`);
+                course.books.push(newBook);
+                course.save();
+                console.log('Course added to book', course.name);
+                newBook.courses.push(course);
+                newBook.save();
+                console.log('Book added to course', newBook.title);
+
             } else {
                 console.log(`Book already exists: ${existingBook.ISBN}`);
             }
+        } catch (err) {
+            console.error(`Error saving book: ${bookData.title}`, err);
+        }
+    }
 
+}
+
+const seedAuctions = async (): Promise<void> => {
+    const imagesPath = path.join(__dirname, "data", "images", "sample");
+    const images = ["sample1.JPG", "sample2.JPG", "sample3.JPG"].map((image) =>
+        path.join(imagesPath, image),
+    );
+
+    const booksFilePath = path.join(__dirname, "data", "books.json");
+    const booksData = JSON.parse(fs.readFileSync(booksFilePath, "utf-8"));
+
+    for (const bookData of booksData) {
+        bookData.images = images;
+
+        try {
+            const book = await Book.findOne({ISBN: bookData.ISBN});
             //create auction if not present with current book id
-            let newAuction = null;
-            const existingAuction = await Auction.findOne({book: newBook._id});
-            newAuction = existingAuction;
-            if (!existingAuction) {
+            const auction = await Auction.findOne({book: book._id});
+
+
+
+            if (!auction) {
                 const randomSeller = await User.aggregate([{$sample: {size: 1}}]);
-                newAuction = new Auction({
+                const newAuction = new Auction({
                     images: bookData.images,
                     condition: bookData.condition,
                     start_date: bookData.start_date,
@@ -238,31 +257,21 @@ const seedAuctions = async (): Promise<void> => {
                     reserve_price: bookData.reserve_price,
                     description: bookData.description,
                     seller: randomSeller[0]._id,
-                    book: newBook._id
+                    book: book._id
                 });
                 await newAuction.save();
                 console.log(`Auction saved: ${newAuction.book}`);
 
                 //add auction to book
-                newBook.auctions.push(newAuction);
-                await newBook.save();
-            }
+                book.auctions.push(newAuction);
+                await book.save();
 
-
-            // Add the Book to the Course
-            const course = await Course.findById(newBook.course);
-            if (!course) {
-                console.log(`Course not found for book: ${newBook.title}`);
-            } else {
-                if (!course.auctions.includes(newBook)) {
-                    course.auctions.push(newBook);
+                for (const course_id of book.courses){
+                    const course = await Course.findById(course_id);
+                    course.auctions.push(newAuction);
                     await course.save();
-                    console.log(`Book added to course: ${newBook.title}`);
-                } else {
-                    console.log(`Book already in course: ${newBook.title}`);
                 }
             }
-
         } catch (err) {
             console.error(`Error saving book: ${bookData.title}`, err);
         }
@@ -301,6 +310,12 @@ const seedData = async () => {
         await seedCourses();
     } catch (err) {
         console.error("Error seeding Courses", err);
+    }
+
+    try{
+        await seedBooks();
+    } catch (err) {
+        console.error("Error seeding Books", err);
     }
 
     try {

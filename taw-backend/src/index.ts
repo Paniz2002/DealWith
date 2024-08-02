@@ -1,5 +1,5 @@
-import connectDB from "../config/db";
-import express, { Express } from "express";
+
+import express, {Express, Request, Response} from "express";
 import dotenv from "dotenv";
 import apiRouter from "./routes";
 import cors from "cors";
@@ -7,6 +7,13 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import { whitelistMiddleware } from "./middlewares/whitelist";
 import {Model, Schema} from "mongoose";
+import connectDB from "./config/db";
+import BadRequestException from "./exceptions/bad-request";
+import * as jwt from "jsonwebtoken";
+import {JWT_SECRET} from "./secret";
+import UnauthorizedException from "./exceptions/unauthorized";
+import {z} from "zod";
+import {ZodObject} from "zod/lib/types";
 
 dotenv.config();
 
@@ -55,4 +62,33 @@ export function fullTextSearch(model: Model<any>, searchText: string) {
 
     // Perform the search with $or
     return model.find({ $or: searchConditions });
+}
+
+
+export const getUserId = (req: Request, res: Response) => {
+    const token = req.cookies.jwt;
+    if (!token) {
+        return BadRequestException(req, res, "Bad Request: Missing JWT");
+    }
+    try {
+        const payload = jwt.verify(token, JWT_SECRET) as any;
+        return payload._id;
+    } catch (e) {
+        return UnauthorizedException(req, res, "Unauthorized: Invalid JWT");
+    }
+}
+
+
+export const validateForm = (req: Request, res: Response, input: unknown, formValidator:any) => {
+    try {
+        formValidator.parse(input);
+        return true;
+    } catch (e) {
+        if (e instanceof z.ZodError){
+            let errors = e.errors.map(err => err.message);
+            return BadRequestException(req, res, errors.join("; "));
+        }
+        else
+            return BadRequestException(req, res, "Invalid input");
+    }
 }

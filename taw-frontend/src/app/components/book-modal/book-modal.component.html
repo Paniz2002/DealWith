@@ -1,0 +1,22 @@
+<!-- book-modal.component.html -->
+<h2 mat-dialog-title>Add New Book</h2>
+<mat-dialog-content [formGroup]="bookForm">
+  <mat-form-field appearance="fill">
+    Title
+    <input matInput formControlName="title" required>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    Year
+    <input matInput formControlName="year" type="number" required>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    ISBN
+    <input matInput formControlName="ISBN" required>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-button [mat-dialog-close]="bookForm.value" [disabled]="bookForm.invalid" (click)="saveBook()">Save</button>
+</mat-dialog-actions>

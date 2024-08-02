@@ -1,5 +1,7 @@
 import mongoose, {Model} from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
+import Course from "./course";
+import Auction from "./auction";
 
 const BookSchema = new mongoose.Schema({
     title: {
@@ -9,7 +11,11 @@ const BookSchema = new mongoose.Schema({
     },
     year: {
         type: Number,
-        index: true
+        required: [true, "can't be blank"],
+        index: true,
+        validate: {
+            validator: (v: number) => !(v < 1970 && v > new Date().getFullYear())
+        }
     },
     ISBN: {
         type: String,
@@ -20,13 +26,13 @@ const BookSchema = new mongoose.Schema({
         unique: true,
         index: true
     },
-    course: {
+    courses: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Course'
-    },
+        ref: Course
+    }],
     auctions: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Auction'
+        ref: Auction
     }]
 });
 

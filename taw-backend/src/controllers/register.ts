@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
 import {z} from "zod";
 import BadRequestException from "../exceptions/bad-request";
-import connectDB from "../../config/db";
+import connectDB from "../config/db";
 import Email from "../../models/email";
 import User from "../../models/user";
 import InternalException from "../exceptions/internal-exception";

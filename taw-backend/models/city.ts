@@ -7,6 +7,7 @@
 
 import mongoose, { Model } from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
+import University from "./university";
 
 const CitySchema = new mongoose.Schema({
     name:{
@@ -26,7 +27,7 @@ const CitySchema = new mongoose.Schema({
     },
     universities: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'University'
+        ref: University
     }]
 });
 

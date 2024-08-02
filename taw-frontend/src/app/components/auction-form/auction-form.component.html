@@ -3,19 +3,22 @@
     <!-- Book Select with Text Search and Create Option -->
     <mat-form-field appearance="fill">
       <mat-label>Book</mat-label>
-      <input matInput formControlName="book" (keyup)="searchBook()" [matAutocomplete]="autoBook" required>
-      <mat-autocomplete #autoBook="matAutocomplete" >
-        <mat-option *ngFor="let book of this.books" [value]="book.id">[{{book.ISBN}}] {{ book.title }} ({{book.year}})</mat-option>
-        @if(this.books.length<=0){
-          <mat-option (click)="addBook()">Add "{{ auctionForm.controls['book'].value }}" </mat-option>
-        }
+      <input matInput formControlName="book" [matAutocomplete]="autoBook" required (keyup)="searchBook()">
+      <mat-autocomplete #autoBook="matAutocomplete" [displayWith]="displayBookTitle.bind(this)">
+        <mat-option *ngFor="let book of books" [value]="book.id">
+          [{{ book.ISBN }}] {{ book.title }}  ({{ book.year }})
+        </mat-option>
+        <mat-option  *ngIf="(!books || books.length === 0 )" (click)="addBook()">
+          Add "{{ auctionForm.controls['book'].value }}"
+        </mat-option>
       </mat-autocomplete>
       <mat-error *ngIf="auctionForm.controls['book'].hasError('required')">
         Book is required.
       </mat-error>
     </mat-form-field>
 
-    <!-- Course Select with Text Search and Create Option -->
+    TODO COURSE SELECT<br><br>
+    <!-- Course Select with Text Search and Create Option
     <mat-form-field appearance="fill">
       <mat-label>Course</mat-label>
       <input matInput formControlName="course" [matAutocomplete]="autoCourse" required>
@@ -29,12 +32,12 @@
       <mat-error *ngIf="auctionForm.controls['course'].hasError('required')">
         Course is required.
       </mat-error>
-    </mat-form-field>
+    </mat-form-field> -->
 
 
     <mat-label>Description</mat-label>
-    <editor  apiKey="b73mxp10yh8wgoa1ishnuyp449aujc1fl7lahnis43mp1vrk"
-      formControlName="description" [init]="{
+    <editor apiKey="b73mxp10yh8wgoa1ishnuyp449aujc1fl7lahnis43mp1vrk"
+            formControlName="description" [init]="{
           height: 300,
           menubar: false,
           plugins: [
