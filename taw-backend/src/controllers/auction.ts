@@ -212,7 +212,7 @@ const searchAuctions = async function (req: Request, res: Response) {
         }).populate({
             path: 'seller',
             select: '-__v -_id -password -email -role'
-        }).select('-_id -__v');
+        }).select('-_id -__v -images');
 
         if (!auctions) {
             return BadRequestException(req, res, "No auctions found");
@@ -247,4 +247,38 @@ export const getAuctionController = async (req: Request, res: Response) => {
         return InternalException(req, res, "Error while returning auctions");
     }
 
+}
+
+export const getAuctionDetailsController = async (req: Request, res: Response) => {
+    const auction_id = req.params.id;
+
+    if (!auction_id) {
+        return BadRequestException(req, res, "Not a valid parameter");
+    }
+
+    try {
+        const auction = await Auction.findById(auction_id).populate({
+            path: 'book',
+            populate: {
+                path: 'courses', select: '-_id -__v -auctions -books -year._id',
+                populate: {
+                    path: 'university', select: '-_id -__v -courses ',
+                    populate: {path: 'city', select: '-_id -__v -universities -courses'}
+                }
+            },
+            select: '-_id -__v -auctions'
+        }).populate({
+            path: 'seller',
+            select: '-__v -_id -password -email -role'
+        }).select('-__v ');
+
+        if (!auction) {
+            return BadRequestException(req, res, "Auction not found");
+        }
+
+        return res.status(200).json(auction);
+
+    }catch(err){
+        return InternalException(req, res, "Error while getting auction details");
+    }
 }
