@@ -4,7 +4,7 @@ import connectDB from "../../config/db";
 import InternalException from "../exceptions/internal-exception";
 import Book from "../../models/book";
 import NotFoundException from "../exceptions/not-found";
-import { fullTextSearch } from "../utils/search";
+import fullTextSearch from "../utils/search";
 import { QueryWithHelpers } from "mongoose";
 
 /*
