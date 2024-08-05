@@ -9,6 +9,7 @@ import { AuctionFormComponent } from './components/auction-form/auction-form.com
 import { AdminGuard } from './guards/admin/adminGuard';
 import { AuctionListComponent } from './components/auction-list/auction-list.component';
 import { StudentGuard } from './guards/student/student.guard';
+import { RouteNotFoundComponent } from './components/route-not-found/route-not-found.component';
 export const routes: Routes = [
   {
     path: 'register',
@@ -43,13 +44,14 @@ export const routes: Routes = [
     path: 'auction',
     pathMatch: 'full',
     component: AuctionListComponent,
-    canActivateChild: [StudentGuard],
-    children: [
-      {
-        path: 'create',
-        component: AuctionFormComponent,
-        pathMatch: 'full',
-      },
-    ],
   },
+  {
+    // Ideally we'd have auction and then {path: create...} children
+    // but it's not possibile.
+    path: 'auction/create',
+    component: AuctionFormComponent,
+    pathMatch: 'full',
+    canActivate: [StudentGuard],
+  },
+  { path: '*', pathMatch: 'full', component: RouteNotFoundComponent },
 ];
