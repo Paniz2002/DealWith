@@ -347,4 +347,3 @@ export const getAuctionDetailsController = async (
     return InternalException(req, res, "Error while getting auction details");
   }
 };
-
