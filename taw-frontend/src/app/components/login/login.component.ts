@@ -78,8 +78,8 @@ export class LoginComponent implements OnInit {
       if (res.status !== 200) {
         return;
       }
-      localStorage.setItem('isUserLoggedIn', 'true');
-      localStorage.setItem(
+      this.localStorage.set('isUserLoggedIn', 'true');
+      this.localStorage.set(
         'userType',
         res.data.is_moderator ? 'admin' : 'student',
       );
