@@ -1,12 +1,14 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
-import { UpdatepasswordComponent } from './components/update-password/updatepassword.component';
+import { UpdatePasswordComponent } from './components/update-password/updatepassword.component';
 import { RegisterComponent } from './components/register/register.component';
 import { AuthenticationGuard } from './guards/auth/authentication.guard';
 import { LogoutGuard } from './guards/logout/logout.guard';
 import { AdminHomepageComponent } from './components/admin-homepage/admin-homepage.component';
-import {AuctionFormComponent} from "./components/auction-form/auction-form.component";
+import { AuctionFormComponent } from './components/auction-form/auction-form.component';
 import { AdminGuard } from './guards/admin/adminGuard';
+import { AuctionListComponent } from './components/auction-list/auction-list.component';
+import { StudentGuard } from './guards/student/student.guard';
 export const routes: Routes = [
   {
     path: 'register',
@@ -21,7 +23,7 @@ export const routes: Routes = [
   {
     path: 'updatepassword',
     canActivate: [AuthenticationGuard],
-    component: UpdatepasswordComponent,
+    component: UpdatePasswordComponent,
     pathMatch: 'full',
   },
   {
@@ -32,16 +34,22 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    canActivate: [AuthenticationGuard, AdminGuard],
+    canActivate: [AdminGuard],
     pathMatch: 'full',
     component: AdminHomepageComponent,
     children: [],
-  }, {
-    path: 'auction/create',
-    canActivate: [AuthenticationGuard],
+  },
+  {
+    path: 'auction',
     pathMatch: 'full',
-    component: AuctionFormComponent,
-    children: [],
-  }
+    component: AuctionListComponent,
+    canActivateChild: [StudentGuard],
+    children: [
+      {
+        path: 'create',
+        component: AuctionFormComponent,
+        pathMatch: 'full',
+      },
+    ],
+  },
 ];
-

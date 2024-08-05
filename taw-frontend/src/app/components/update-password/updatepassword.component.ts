@@ -34,7 +34,7 @@ import { RegisterComponent } from '../register/register.component';
   templateUrl: './updatepassword.html',
   styleUrl: '../register/register.component.css',
 })
-export class UpdatepasswordComponent implements OnInit {
+export class UpdatePasswordComponent implements OnInit {
   form!: FormGroup;
   isFormValid!: Boolean;
   id!: string | null;
