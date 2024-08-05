@@ -1,7 +1,7 @@
-import {CanActivateFn, Router} from '@angular/router';
-import {inject} from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+import { inject } from '@angular/core';
 import axios from 'axios';
-import {enviroments} from '../../../enviroments/enviroments';
+import { enviroments } from '../../../enviroments/enviroments';
 
 export const AuthenticationGuard: CanActivateFn = async () => {
   // Simplest way possible:
@@ -14,9 +14,7 @@ export const AuthenticationGuard: CanActivateFn = async () => {
 
   try {
     const res = await axios.get(enviroments.BACKEND_URL + '/api/auth/me');
-    if (res.status == 200) {
-      return true
-    }
+    return res.status === 200;
   } catch (e) {}
   return router.createUrlTree(['/login']);
 };
