@@ -78,6 +78,11 @@ export class LoginComponent implements OnInit {
       if (res.status !== 200) {
         return;
       }
+      localStorage.setItem('isUserLoggedIn', 'true');
+      localStorage.setItem(
+        'userType',
+        res.data.is_moderator ? 'admin' : 'student',
+      );
       if (!res.data.is_moderator) {
         return await this.router.navigate(['/']);
       }
