@@ -1,24 +1,21 @@
-<div class="row d-inline">
-  <app-auction-card
-    auctionID="ID"
-    bookTitle="La bella e la bestia"
-    bookAuthor="Simone Giannelli"
-    bookDescription="Lorem ipsum"
-    base64Image=""
-  ></app-auction-card>
-  <app-auction-card
-    auctionID="ID"
-    bookTitle="La bella e la bestia"
-    bookAuthor="Simone Giannelli"
-    bookDescription="Lorem ipsum"
-    base64Image=""
-  ></app-auction-card>
-
-  <app-auction-card
-    auctionID="ID"
-    bookTitle="La bella e la bestia"
-    bookAuthor="Simone Giannelli"
-    bookDescription="Lorem ipsum"
-    base64Image=""
-  ></app-auction-card>
+<div class="d-flex justify-content-between align-items-center">
+  <div class="filters">
+    <form></form>
+  </div>
+  <div class="row">
+    @for (auction of auctions; track auction.ID) {
+      <app-auction-card
+        auctionID="{{ auction.ID }}"
+        bookTitle="{{ auction.bookTitle }}"
+        bookAuthor="{{ auction.bookAuthor }}"
+        bookDescription="{{ auction.bookDescription }}"
+        base64Image="{{ auction.base64Image }}"
+      ></app-auction-card>
+    } @empty {
+      <p>
+        There are currently no available auctions matching your filters, please
+        try again later.
+      </p>
+    }
+  </div>
 </div>

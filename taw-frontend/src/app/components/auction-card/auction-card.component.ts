@@ -2,6 +2,15 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
+
+export interface AuctionCard {
+  ID: string;
+  bookTitle: string;
+  bookAuthor: string;
+  bookDescription: string;
+  base64Image: string;
+}
+
 @Component({
   selector: 'app-auction-card',
   standalone: true,

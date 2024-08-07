@@ -1,24 +1,15 @@
-<mat-card class="example-card" appearance="outlined">
+<mat-card class="auction-card" appearance="outlined">
   <mat-card-header>
-    <div mat-card-avatar class="example-header-image"></div>
     <mat-card-title>{{ this.bookTitle }}</mat-card-title>
     <mat-card-subtitle>{{ this.bookAuthor }}</mat-card-subtitle>
   </mat-card-header>
-  @if (this.base64Image !== "") {
-    <img
-      mat-card-image
-      src="'{{ this.base64Image }}'"
-      alt="Picture of a book"
-    />
-  }
+  <img mat-card-image src=" this.base64Image " alt="Picture of a book" />
   <mat-card-content>
     <p>
       {{ this.bookDescription }}
     </p>
   </mat-card-content>
   <mat-card-actions>
-    <button mat-button [routerLink]="['/auction', '{{this.auctionID}}']">
-      View
-    </button>
+    <button mat-button [routerLink]="['/auction', this.auctionID]">View</button>
   </mat-card-actions>
 </mat-card>
