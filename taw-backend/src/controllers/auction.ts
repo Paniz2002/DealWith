@@ -284,7 +284,10 @@ const searchAuctions = async function (req: Request, res: Response) {
 
 export const getAuctionController = async (req: Request, res: Response) => {
   if (Object.keys(req.query).length === 0) {
-    const auctions = await Auction.find().select("-_id");
+    const auctions = await Auction.find()
+      .select("-__v")
+      .populate({ path: "book", select: "-_id title" })
+      .populate({ path: "seller", select: "-_id username" });
     return res.status(200).json(auctions);
   }
 
