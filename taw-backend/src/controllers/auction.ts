@@ -189,19 +189,13 @@ const searchAuctions = async function (req: Request, res: Response) {
 
     // If q is provided, search for books and auctions that match the query
     let searchedAuctions = [];
+    let books = [];
     const allAuctions = await Auction.find();
     if (q) {
-      const books = await fullTextSearch(Book, q.toString());
+      books = (await fullTextSearch(Book, q.toString())).flatMap(
+        (book) => book.auctions,
+      );
       searchedAuctions = await fullTextSearch(Auction, q.toString());
-      for (let auction of allAuctions) {
-        const exists = books.find(
-          (book) => book._id.toString() === auction.book.toString(),
-        );
-
-        if (exists && !searchedAuctions.includes(auction)) {
-          searchedAuctions.push(auction);
-        }
-      }
       if (!searchedAuctions) {
         return BadRequestException(req, res, "No auctions found");
       }
@@ -245,7 +239,11 @@ const searchAuctions = async function (req: Request, res: Response) {
         },
         {
           _id: q
-            ? { $in: searchedAuctions.map((auction) => auction._id) }
+            ? {
+                $in: searchedAuctions
+                  .map((auction) => auction._id)
+                  .concat(books),
+              }
             : { $in: allAuctions.map((auction) => auction._id) },
         },
       ],
