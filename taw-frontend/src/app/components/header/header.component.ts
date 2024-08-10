@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, SimpleChanges } from '@angular/core';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
@@ -12,13 +12,13 @@ import { LocalStorageService } from '../../services/localStorage/localStorage.se
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })
-export class HeaderComponent implements OnInit {
-  userType: string | null;
-  isUserLoggedIn: string | null;
-  constructor(protected localStorage: LocalStorageService) {
-    this.userType = localStorage.get('userType');
-    this.isUserLoggedIn = localStorage.get('isUserLoggedIn');
-  }
+export class HeaderComponent implements OnChanges {
+  userType: string | null = this.localStorage.get('userType');
+  isUserLoggedIn: string | null = this.localStorage.get('isUserLoggedIn');
+  constructor(protected localStorage: LocalStorageService) {}
 
-  ngOnInit(): void {}
+  ngOnChanges(changes: SimpleChanges): void {
+    this.userType = this.localStorage.get('userType');
+    this.isUserLoggedIn = this.localStorage.get('isUserLoggedIn');
+  }
 }

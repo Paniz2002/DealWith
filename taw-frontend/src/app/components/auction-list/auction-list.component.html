@@ -1,21 +1,39 @@
-<div class="d-flex justify-content-between align-items-center">
-  <div class="filters">
-    <form></form>
-  </div>
-  <div class="row">
-    @for (auction of auctions; track auction.ID) {
-      <app-auction-card
-        auctionID="{{ auction.ID }}"
-        bookTitle="{{ auction.bookTitle }}"
-        bookAuthor="{{ auction.bookAuthor }}"
-        bookDescription="{{ auction.bookDescription }}"
-        base64Image="{{ auction.base64Image }}"
-      ></app-auction-card>
-    } @empty {
-      <p>
-        There are currently no available auctions matching your filters, please
-        try again later.
-      </p>
-    }
-  </div>
-</div>
+<mat-card>
+  <mat-form-field appearance="outline">
+    <mat-label>Book name</mat-label>
+    <input matInput [(ngModel)]="searchText" />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Minimum condition</mat-label>
+    <mat-select [(ngModel)]="condition">
+      <mat-option value="Mint">Mint</mat-option>
+      <mat-option value="Near Mint">Near Mint</mat-option>
+      <mat-option value="Excellent">Excellent</mat-option>
+      <mat-option value="Good">Good</mat-option>
+      <mat-option value="Fair">Fair</mat-option>
+      <mat-option value="Poor">Poor</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-label>Price range</mat-label>
+  <mat-slider discrete showTickMarks min="0" max="">
+    <input matSliderStartThumb [(ngModel)]="minPrice" />
+    <input matSliderEndThumb [(ngModel)]="maxPrice" />
+  </mat-slider>
+  <mat-checkbox (click)="toggleActive()">Show also done auctions</mat-checkbox>
+  <button type="button" (click)="searchWithFilters()">Filter</button>
+</mat-card>
+@for (auction of availableAuctions; track auction.ID) {
+  <app-auction-card
+    auctionID="{{ auction.ID }}"
+    bookTitle="{{ auction.bookTitle }}"
+    bookAuthor="{{ auction.bookAuthor }}"
+    bookDescription="{{ auction.bookDescription }}"
+    base64Image="{{ auction.base64Image }}"
+    currentPrice="1"
+  ></app-auction-card>
+} @empty {
+  <p>
+    There are currently no available auctions matching your filters, please try
+    again later.
+  </p>
+}

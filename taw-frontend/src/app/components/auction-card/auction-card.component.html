@@ -8,6 +8,7 @@
     <p>
       {{ this.bookDescription }}
     </p>
+    <mat-chip>{{ this.currentPrice }}</mat-chip>
   </mat-card-content>
   <mat-card-actions>
     <button mat-button [routerLink]="['/auction', this.auctionID]">View</button>

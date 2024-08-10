@@ -12,6 +12,10 @@
       <button mat-button [routerLink]="'/register'" class="header-button">
         Register
       </button>
+    } @else {
+      <button mat-button [routerLink]="'/logout'" class="header-button">
+        Logout
+      </button>
     }
     @if (this.userType === "student") {
       <button mat-button [routerLink]="'/auction/create'" class="header-button">
