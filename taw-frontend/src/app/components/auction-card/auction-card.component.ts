@@ -7,8 +7,8 @@ export interface AuctionCard {
   ID: string;
   bookTitle: string;
   bookAuthor: string;
-  bookDescription: string;
-  base64Image: string;
+  bidDescription: string;
+  base64Images: string[];
   currentPrice: Number;
 }
 
@@ -25,6 +25,6 @@ export class AuctionCardComponent {
   @Input({ required: true }) currentPrice!: string;
   @Input({ required: true }) bookTitle!: string;
   @Input({ required: true }) bookAuthor!: string;
-  @Input({ required: true }) bookDescription!: string;
-  @Input() base64Image?: string;
+  @Input({ required: true }) bidDescription!: string;
+  @Input() base64Images?: string[];
 }

@@ -3,10 +3,13 @@
     <mat-card-title>{{ this.bookTitle }}</mat-card-title>
     <mat-card-subtitle>{{ this.bookAuthor }}</mat-card-subtitle>
   </mat-card-header>
-  <img mat-card-image src=" this.base64Image " alt="Picture of a book" />
+  <!-- TODO: carousel of images -->
+  @for (image of this.base64Images; track image) {
+    <img mat-card-image [src]="image" alt="Carousel pictures of book" />
+  }
   <mat-card-content>
     <p>
-      {{ this.bookDescription }}
+      {{ this.bidDescription }}
     </p>
     <mat-chip>{{ this.currentPrice }}</mat-chip>
   </mat-card-content>

@@ -44,7 +44,7 @@ interface Filter {
  * Add filters (you find them in backend)
  * NOTE:
  * When selecting filters, if you click search the app-auction-list
- * fetches again the data.
+ * fetches again the data and reloads the component.
  */
 export class AuctionListComponent implements OnInit {
   availableAuctions: Array<AuctionCard> = Array<AuctionCard>();
@@ -63,12 +63,13 @@ export class AuctionListComponent implements OnInit {
           this.availableAuctions.push(<AuctionCard>{
             ID: auction._id,
             bookTitle: auction.book.title,
-            bookDescription: auction.description,
-            base64Image: auction.images[0],
+            bidDescription: auction.description,
+            base64Images: auction.images as string[],
             bookAuthor: 'ciano',
-            currentPrice: auction.bids
-              ? this.getLastBidPrice(auction.bids)
-              : auction.starting_price,
+            currentPrice:
+              auction.bids.length > 0
+                ? this.getLastBidPrice(auction.bids, auction.starting_price)
+                : auction.starting_price,
           });
         });
       })
@@ -76,18 +77,17 @@ export class AuctionListComponent implements OnInit {
         this.snackBar.notify(err.message);
       });
   }
-  private getLastBidPrice(bids: any): Number {
-    let currMax = -1;
+  private getLastBidPrice(bids: any, startingPrice: Number): Number {
+    let currMax: Number = -1;
     // There might be a "functional" way of doing it,
     // don't care though.
     bids.forEach((bid: any) => {
       currMax = bid.price > currMax ? bid.price : currMax;
     });
-    return currMax;
+    return currMax >= startingPrice ? currMax : startingPrice;
   }
 
   searchWithFilters(): void {
-    this.snackBar.notify(this.condition);
     // Funny javascript moment
     // Clears the array.
     this.availableAuctions.length = 0;
@@ -106,13 +106,17 @@ export class AuctionListComponent implements OnInit {
       .get(enviroments.BACKEND_URL + '/api/auctions', { params })
       .then((auctions: any) => {
         auctions.data.forEach((auction: any) => {
-          console.log(auction);
           // FIXME:
           this.availableAuctions.push(<AuctionCard>{
             ID: auction._id,
             bookTitle: auction.book.title,
-            bookDescription: auction.description,
-            base64Image: auction.images[0],
+            bookAuthor: auction.book.author,
+            bidDescription: auction.description,
+            currentPrice:
+              auction.bids.length > 0
+                ? this.getLastBidPrice(auction.bids, auction.starting_price)
+                : auction.starting_price,
+            base64Images: auction.images,
           });
         });
       })
