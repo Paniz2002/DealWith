@@ -268,7 +268,7 @@ const searchAuctions = async function (req: Request, res: Response) {
         path: "seller",
         select: "-__v -_id -password -email -role",
       })
-      .select("-_id -__v -images");
+      .select("-__v");
 
     if (!auctions) {
       return BadRequestException(req, res, "No auctions found");
@@ -348,3 +348,5 @@ export const getAuctionDetailsController = async (
     return InternalException(req, res, "Error while getting auction details");
   }
 };
+
+export const postAuctionBidController = (req: Request, res: Response) => {};

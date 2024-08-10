@@ -205,6 +205,7 @@ const seedBooks = async (): Promise<void> => {
           title: bookData.title,
           year: bookData.year,
           ISBN: bookData.ISBN,
+          author: bookData.author,
         });
         await newBook.save();
         console.log(`Book saved: ${newBook.title}`);
