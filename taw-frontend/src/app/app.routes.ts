@@ -42,9 +42,12 @@ export const routes: Routes = [
     children: [],
   },
   {
-    path: 'auction',
-    component: AuctionListComponent,
+    // Ideally we'd have auction and then {path: create...} children
+    // but it's not possibile.
+    path: 'auction/create',
+    component: AuctionFormComponent,
     pathMatch: 'full',
+    canActivate: [StudentGuard],
   },
   {
     path: 'auction/:id',
@@ -52,12 +55,9 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    // Ideally we'd have auction and then {path: create...} children
-    // but it's not possibile.
-    path: 'auction/create',
-    component: AuctionFormComponent,
+    path: 'auction',
+    component: AuctionListComponent,
     pathMatch: 'full',
-    canActivate: [StudentGuard],
   },
   { path: '*', pathMatch: 'full', component: RouteNotFoundComponent },
 ];
