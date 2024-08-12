@@ -365,6 +365,9 @@ export const postAuctionBidController = async (req: Request, res: Response) => {
   const { auctionID, price } = req.body;
   const userID = getUserId(req, res);
   const auction = await Auction.findById(auctionID).exec();
+  if (!auction) {
+    return BadRequestException(req, res, "Bad request: invalid auction.");
+  }
   if (price <= getLastBidPrice(auction.bids, auction.starting_price)) {
     return BadRequestException(req, res, "Bad request: invalid price.");
   }
