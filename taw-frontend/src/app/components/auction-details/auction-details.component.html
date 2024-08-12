@@ -7,10 +7,6 @@
         this.auctionDetails.book.author
       }}</mat-card-subtitle>
     </mat-card-header>
-    <!-- TODO: carousel of images -->
-    @for (image of this.auctionDetails.images; track image) {
-      <img mat-card-image [src]="image" alt="Carousel pictures of book" />
-    }
     <mat-card-content>
       @for (
         courseUniversity of this.coursesUniversities;
@@ -28,7 +24,7 @@
       @if (this.localStorage.get("userType") === "student") {
         <form [formGroup]="form">
           <mat-form-field appearance="fill">
-            <mat-label>Bid price</mat-label>
+            <mat-label>Bid new price</mat-label>
             <input type="number" required matInput formControlName="bidPrice" />
             @if (form.invalid) {
               <mat-error>Please insert a price.</mat-error>
@@ -41,8 +37,25 @@
   </mat-card>
 </div>
 <!-- TODO: buttarlo a destra -->
-<div class="col-6">
-  <mat-card>
-    <mat-card-header>Messages</mat-card-header>
-  </mat-card>
-</div>
+
+@if (this.localStorage.get("userType") === "student") {
+  <div class="col-6">
+    <mat-card>
+      <mat-card-header>Messages</mat-card-header>
+      <mat-tab-group>
+        <mat-tab label="Private">
+          <form [formGroup]="commentForm" (submit)="submitComment()">
+            <textarea required matInput formControlName="comment"></textarea>
+            <button mat-raised-button>Send</button>
+          </form>
+        </mat-tab>
+        <mat-tab label="Public">
+          <form [formGroup]="commentForm" (submit)="submitComment(false)">
+            <textarea required matInput formControlName="comment"></textarea>
+            <button mat-raised-button>Send</button>
+          </form>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card>
+  </div>
+}
