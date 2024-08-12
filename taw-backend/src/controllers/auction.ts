@@ -7,6 +7,7 @@ import InternalException from "../exceptions/internal-exception";
 import Auction from "../../models/auction";
 import Book from "../../models/book";
 import User from "../../models/user";
+import Comment from "../../models/comment";
 import { validateForm } from "../utils/validate";
 import fullTextSearch from "../utils/search";
 import { getUserId } from "../utils/userID";
@@ -350,3 +351,14 @@ export const getAuctionDetailsController = async (
 };
 
 export const postAuctionBidController = (req: Request, res: Response) => {};
+
+export const getAuctionCommentsController = async (
+  req: Request,
+  res: Response,
+) => {
+  await connectDB();
+
+  // const userID = getUserId(req, res);
+  // const sentComments = await Comment.find().populate().select().exec();
+  // const recievedComments = await Comment.find().populate().select().exec();
+};
