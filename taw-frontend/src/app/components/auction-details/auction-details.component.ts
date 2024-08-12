@@ -15,6 +15,7 @@ import {
 } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatTabsModule } from '@angular/material/tabs';
 @Component({
   selector: 'app-auction-details',
   standalone: true,
@@ -25,6 +26,7 @@ import { MatChipsModule } from '@angular/material/chips';
     MatButtonModule,
     FormsModule,
     ReactiveFormsModule,
+    MatTabsModule,
   ],
   templateUrl: './auction-details.component.html',
   styleUrl: './auction-details.component.css',
@@ -32,9 +34,14 @@ import { MatChipsModule } from '@angular/material/chips';
 export class AuctionDetailsComponent implements OnInit {
   auctionID: string;
   auctionDetails!: any;
+  publicComments!: any;
+  privateComments!: any;
   auctionPrice: Number = -1;
   form: FormGroup = new FormGroup({
     bidPrice: new FormControl('', [Validators.required]),
+  });
+  commentForm: FormGroup = new FormGroup({
+    comment: new FormControl('', [Validators.required]),
   });
   coursesUniversities: Array<string> = Array<string>();
   constructor(
@@ -53,6 +60,10 @@ export class AuctionDetailsComponent implements OnInit {
     });
     return currMax >= startingPrice ? currMax : startingPrice;
   }
+
+  // TODO: ERROR TypeError: ctx.auctionDetails is undefined
+  // this happens because fetching from mongo web is slow as fuck.
+  // (fix even if you use mongo docker)
   ngOnInit(): void {
     axios
       .get(enviroments.BACKEND_URL + '/api/auctions/' + this.auctionID)
@@ -71,9 +82,29 @@ export class AuctionDetailsComponent implements OnInit {
       .catch((err) => {
         this.snackBar.notify(err.message);
       });
+
+    axios
+      .get(enviroments.BACKEND_URL + '/api/auctions/comments', {
+        params: {
+          isPrivate: true,
+          auctionID: this.auctionID,
+        },
+      })
+      .then((res: any) => {
+        console.log(res.data);
+      });
   }
   protected async submitBid(): Promise<void> {
+    const params = {
+      auctionID: this.auctionID,
+      price: this.form.value.bidPrice,
+    };
+    const res = await axios.post(
+      enviroments.BACKEND_URL + '/api/auctions/' + this.auctionID,
+      params,
+    );
+  }
+  protected async submitComment(isPublic: boolean = true): Promise<void> {
     const params = {};
-    await axios.post(enviroments.BACKEND_URL + '/api/auctions/', { params });
   }
 }

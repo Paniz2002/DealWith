@@ -393,22 +393,20 @@ export const getAuctionCommentsController = async (
     $or: [{ sender: userID }, { reciever: userID }],
     auction: auctionID,
   };
+  const publicComments = await Comment.find(filter)
+    .populate("sender reciever")
+    .sort({ createdAt: 1 })
+    .exec();
+  let privateComments;
   if (isPrivate) {
     filter.private = true;
-    const privateComments = await Comment.find(filter)
+    privateComments = await Comment.find(filter)
       .populate("sender reciever")
-      .select("-_id")
       .sort({ createdAt: 1 })
       .exec();
   }
-  const publicSentComments = await Comment.find(filter)
-    .populate("")
-    .select("")
-    .sort({ createdAt: 1 })
-    .exec();
-  const publicComments = await Comment.find(filter)
-    .populate("")
-    .select("")
-    .sort({ createdAt: 1 })
-    .exec();
+  return res.status(200).json({
+    private_comments: privateComments,
+    public_comments: publicComments,
+  });
 };
