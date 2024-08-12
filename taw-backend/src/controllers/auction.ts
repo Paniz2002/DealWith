@@ -11,6 +11,8 @@ import Comment from "../../models/comment";
 import { validateForm } from "../utils/validate";
 import fullTextSearch from "../utils/search";
 import { getUserId } from "../utils/userID";
+import Bid from "../../models/bid";
+import mongoose from "mongoose";
 
 const formValidator = z
   .object({
@@ -350,15 +352,60 @@ export const getAuctionDetailsController = async (
   }
 };
 
-export const postAuctionBidController = (req: Request, res: Response) => {};
+const getLastBidPrice = (bids: any, startingPrice: Number): Number => {
+  let currMax: Number = -1;
+  bids.forEach((bid: any) => {
+    currMax = bid.price > currMax ? bid.price : currMax;
+  });
+  return currMax >= startingPrice ? currMax : startingPrice;
+};
+
+export const postAuctionBidController = async (req: Request, res: Response) => {
+  await connectDB();
+  const { auctionID, price } = req.body;
+  const userID = getUserId(req, res);
+  const auction = await Auction.findById(auctionID).exec();
+  if (price <= getLastBidPrice(auction.bids, auction.starting_price)) {
+    return BadRequestException(req, res, "Bad request: invalid price.");
+  }
+  const now = Date.now();
+  if (now > auction.end_date) {
+    return BadRequestException(req, res, "Bad request: auction ended.");
+  }
+  auction.bids.push(new Bid({ price: price, user: userID }));
+  await auction.save();
+  return res.sendStatus(200);
+};
 
 export const getAuctionCommentsController = async (
   req: Request,
   res: Response,
 ) => {
+  const { isPrivate, auctionID } = req.query;
   await connectDB();
 
-  // const userID = getUserId(req, res);
-  // const sentComments = await Comment.find().populate().select().exec();
-  // const recievedComments = await Comment.find().populate().select().exec();
+  const userID = getUserId(req, res);
+  const filter = {
+    private: false,
+    $or: [{ sender: userID }, { reciever: userID }],
+    auction: auctionID,
+  };
+  if (isPrivate) {
+    filter.private = true;
+    const privateComments = await Comment.find(filter)
+      .populate("sender reciever")
+      .select("-_id")
+      .sort({ createdAt: 1 })
+      .exec();
+  }
+  const publicSentComments = await Comment.find(filter)
+    .populate("")
+    .select("")
+    .sort({ createdAt: 1 })
+    .exec();
+  const publicComments = await Comment.find(filter)
+    .populate("")
+    .select("")
+    .sort({ createdAt: 1 })
+    .exec();
 };

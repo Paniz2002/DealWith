@@ -9,7 +9,6 @@ import {
   getAuctionCommentsController,
 } from "../controllers/auction";
 import upload from "../config/multer";
-import authMiddleware from "../middlewares/auth";
 
 // students only
 const auctionRoutes: Router = Router();
@@ -21,6 +20,6 @@ auctionRoutes.post(
 );
 auctionRoutes.get("/", getAuctionController);
 auctionRoutes.get("/:id", getAuctionDetailsController);
-auctionRoutes.post("/:id", postAuctionBidController);
-auctionRoutes.get("/comments", [authMiddleware], getAuctionCommentsController);
+auctionRoutes.post("/:id", [studentMiddleware], postAuctionBidController);
+auctionRoutes.get("/comments", getAuctionCommentsController);
 export default auctionRoutes;
