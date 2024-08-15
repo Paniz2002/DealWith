@@ -284,6 +284,11 @@ export const getAuctionController = async (req: Request, res: Response) => {
   try {
     let auctions = await searchAuctions(req, res);
 
+    if(auctions instanceof Array) {
+      if (auctions.length === 0)
+        return BadRequestException(req, res, "No auctions found");
+    }
+
     if (!auctions) {
       return BadRequestException(req, res, "No auctions found");
     }
