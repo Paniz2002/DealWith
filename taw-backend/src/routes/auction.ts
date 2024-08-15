@@ -6,7 +6,7 @@ import {
   newAuctionController,
   uploadAuctionImagesController,
   postAuctionBidController,
-  getAuctionCommentsController,
+  getAuctionCommentsController, getAuctionImagesController,
 } from "../controllers/auction";
 import upload from "../config/multer";
 
@@ -18,6 +18,7 @@ auctionRoutes.post(
   [studentMiddleware, upload.array("images", 5)],
   uploadAuctionImagesController,
 );
+auctionRoutes.get("/:id/images", getAuctionImagesController);
 auctionRoutes.get("/", getAuctionController);
 auctionRoutes.get("/:id", getAuctionDetailsController);
 auctionRoutes.post("/:id", [studentMiddleware], postAuctionBidController);

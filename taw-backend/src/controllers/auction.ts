@@ -13,6 +13,8 @@ import fullTextSearch from "../utils/search";
 import { getUserId } from "../utils/userID";
 import Bid from "../../models/bid";
 import mongoose from "mongoose";
+import path from "path";
+import fs from "fs";
 
 const formValidator = z
   .object({
@@ -138,6 +140,26 @@ export const uploadAuctionImagesController = async (
     return InternalException(req, res, "Error while saving images");
   }
 };
+
+export const getAuctionImagesController = async (req: Request, res: Response) => {
+  try{
+    const auction_id = req.params.id;
+
+    const auction = await Auction.findById(auction_id);
+    if (!auction) {
+      return BadRequestException(req, res, "Auction not found");
+    }
+
+    const imagesBase64 = auction.images.map((imagePath: string) => {
+      const image = fs.readFileSync(path.resolve(imagePath));
+      return image.toString('base64');
+    });
+
+    res.json({images: imagesBase64});
+  }catch(e){
+    return InternalException(req, res, "Error while getting images");
+  }
+}
 
 const queryValidator = z.object({
   q: z.string().optional(),
