@@ -6,7 +6,7 @@ import {
   newAuctionController,
   uploadAuctionImagesController,
   postAuctionBidController,
-  getAuctionCommentsController, getAuctionImagesController, patchAuctionController,
+  getAuctionCommentsController, getAuctionImagesController, patchAuctionController, deleteAuctionController,
 } from "../controllers/auction";
 import upload from "../config/multer";
 import {adminMiddleware} from "../middlewares/admin";
@@ -25,4 +25,6 @@ auctionRoutes.get("/:id", getAuctionDetailsController);
 auctionRoutes.post("/:id", [studentMiddleware], postAuctionBidController);
 auctionRoutes.get("/comments", getAuctionCommentsController);
 auctionRoutes.patch("/:id", [adminMiddleware], patchAuctionController);
+auctionRoutes.delete("/:id", [adminMiddleware], deleteAuctionController);
 export default auctionRoutes;
+

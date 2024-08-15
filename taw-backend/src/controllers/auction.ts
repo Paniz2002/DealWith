@@ -462,3 +462,24 @@ export const patchAuctionController = async (req: Request, res: Response) => {
   }
 
 }
+
+export const deleteAuctionController = async (req: Request, res: Response) => {
+  try{
+    const auction_id = req.params.id;
+
+    await connectDB();
+
+    const auction = await Auction.findById(auction_id);
+
+    if (!auction) {
+        return BadRequestException(req, res, "Auction not found");
+    }
+
+    await Auction.deleteOne({_id: auction_id});
+    return res.status(200).send("Auction deleted");
+
+  }catch(e){
+    return InternalException(req, res, "Error while deleting auction");
+  }
+
+}
