@@ -14,7 +14,7 @@ const BidSchema = new mongoose.Schema({
     },
     auction: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: Auction,
+        ref: 'Auction',
         required: [true, "can't be blank"]
     }
 });

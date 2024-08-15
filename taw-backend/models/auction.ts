@@ -1,4 +1,5 @@
 import mongoose, { Model } from 'mongoose';
+import Bid from "./bid";
 
 const AuctionSchema = new mongoose.Schema({
     images:{
@@ -50,6 +51,14 @@ AuctionSchema.methods.isActive = function(){
 
 AuctionSchema.methods.isOwner = function(user_id: string){
     return this.seller.toString() === user_id;
+}
+
+AuctionSchema.methods.currentPrice = async function () {
+    let bid = await Bid.findOne({auction: this._id}).sort({createdAt: -1});
+    if(bid)
+        return bid.price;
+    else
+        return this.starting_price;
 }
 
 const Auction: Model<any> = mongoose.model('Auction', AuctionSchema);

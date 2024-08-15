@@ -138,8 +138,8 @@ export const uploadAuctionImagesController = async (
 
 const queryValidator = z.object({
   q: z.string().optional(),
-  starting_price: z.number().optional(),
-  reserve_price: z.number().optional(),
+  // min_price: z.number().optional(),
+  // max_price: z.number().optional(),
   condition: z
     .enum(["Mint", "Near Mint", "Excellent", "Good", "Fair", "Poor"])
     .optional(),
@@ -157,15 +157,15 @@ const getSuperiorConditions = function (currentCondition: string) {
 
 const searchAuctions = async function (req: Request, res: Response) {
   try {
-    const {
+
+    let {
       q,
-      min_starting_price,
-      max_starting_price,
-      min_reserve_price,
-      max_reserve_price,
+      min_price,
+      max_price,
       min_condition,
       active,
     } = req.query;
+
 
     /* If min_condition is provided, get all conditions superior to it
      *  If not, the default superior_conditions are all conditions
@@ -211,32 +211,9 @@ const searchAuctions = async function (req: Request, res: Response) {
      *  If no query parameters are provided, return all
      *  If q is provided, return only the auctions that match the query
      */
+
     let auctions = await Auction.find({
       $and: [
-        {
-          starting_price: min_starting_price
-            ? { $gte: min_starting_price }
-            : max_starting_price
-              ? { $lte: max_starting_price }
-              : min_starting_price && max_starting_price
-                ? {
-                    $gte: min_starting_price,
-                    $lte: max_starting_price,
-                  }
-                : { $gte: 0 },
-        },
-        {
-          reserve_price: min_reserve_price
-            ? { $gte: min_reserve_price }
-            : max_reserve_price
-              ? { $lte: max_reserve_price }
-              : min_reserve_price && max_reserve_price
-                ? {
-                    $gte: min_reserve_price,
-                    $lte: max_reserve_price,
-                  }
-                : { $gte: 0 },
-        },
         { condition: { $in: superior_conditions } },
         {
           end_date: active
@@ -270,12 +247,30 @@ const searchAuctions = async function (req: Request, res: Response) {
         path: "seller",
         select: "-__v -_id -password -email -role",
       })
-      .select("-_id -__v -images");
+      .select("-_id -__v -images -reserve_price");
 
-    if (!auctions) {
+      let min, max;
+      if(min_price)
+        min = min_price;
+      else
+        min = 0;
+
+      if(max_price)
+        max = max_price;
+      else
+        max = Number.MAX_VALUE;
+
+      let priceFilteredAuctions = [];
+      for(let auction of auctions){
+          let currentPrice = await auction.currentPrice();
+          if(currentPrice >= min && currentPrice <= max)
+          priceFilteredAuctions.push(auction);
+      }
+
+    if (!priceFilteredAuctions) {
       return BadRequestException(req, res, "No auctions found");
     } else {
-      return auctions;
+      return priceFilteredAuctions;
     }
   } catch (err) {
     return InternalException(req, res, "Error while searching auctions");
@@ -336,7 +331,7 @@ export const getAuctionDetailsController = async (
         path: "seller",
         select: "-__v -_id -password -email -role",
       })
-      .select("-__v ");
+      .select("-__v -reserve_price");
 
     if (!auction) {
       return BadRequestException(req, res, "Auction not found");
