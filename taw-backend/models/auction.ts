@@ -58,6 +58,13 @@ AuctionSchema.methods.isOwner = function (user_id: string) {
   return this.seller.toString() === user_id;
 };
 
+AuctionSchema.methods.currentPrice = function (){
+    if (this.bids.length === 0) {
+        return this.starting_price;
+    }
+    return this.bids[this.bids.length - 1].price;
+}
+
 const Auction: Model<any> = mongoose.model("Auction", AuctionSchema);
 
 export default Auction;
