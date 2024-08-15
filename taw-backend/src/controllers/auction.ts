@@ -16,6 +16,8 @@ import mongoose from "mongoose";
 import path from "path";
 import fs from "fs";
 
+const conditions = ["Mint", "Near Mint", "Excellent", "Good", "Fair", "Poor"];
+
 const formValidator = z
   .object({
     condition: z.enum([
@@ -169,7 +171,6 @@ const queryValidator = z.object({
 });
 
 const getSuperiorConditions = function (currentCondition: string) {
-  const conditions = ["Mint", "Near Mint", "Excellent", "Good", "Fair", "Poor"];
 
   const index = conditions.indexOf(currentCondition);
   if (index === -1) {
@@ -404,11 +405,11 @@ export const getAuctionCommentsController = async (
   const userID = getUserId(req, res);
   const filter = {
     private: false,
-    $or: [{ sender: userID }, { reciever: userID }],
+    $or: [{ sender: userID }, { receiver: userID }],
     auction: auctionID,
   };
   const publicComments = await Comment.find(filter)
-    .populate("sender reciever")
+    .populate("sender receiver")
     .sort({ createdAt: 1 })
     .exec();
   let privateComments;
@@ -424,3 +425,40 @@ export const getAuctionCommentsController = async (
     public_comments: publicComments,
   });
 };
+
+export const patchAuctionController = async (req: Request, res: Response) => {
+  try{
+    const auction_id = req.params.id;
+    const {description, condition, book_id} = req.body;
+
+    await connectDB();
+    const auction = await Auction.findById(auction_id);
+    if (!auction) {
+      return BadRequestException(req, res, "Auction not found");
+    }
+
+    if (description)
+      auction.description = description;
+
+    if (condition) {
+      if (!conditions.includes(condition))
+        return BadRequestException(req, res, "Invalid condition");
+      auction.condition = condition;
+    }
+
+    if (book_id) {
+      const book = await Book.findById(book_id);
+      if (!book)
+        return BadRequestException(req, res, "Book not found");
+      auction.book = book_id;
+    }
+
+    await auction.save();
+
+    return res.status(200).send("Auction updated");
+
+  }catch(e){
+    return InternalException(req, res, "Error while updating auction");
+  }
+
+}

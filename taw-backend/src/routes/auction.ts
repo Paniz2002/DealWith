@@ -6,9 +6,10 @@ import {
   newAuctionController,
   uploadAuctionImagesController,
   postAuctionBidController,
-  getAuctionCommentsController, getAuctionImagesController,
+  getAuctionCommentsController, getAuctionImagesController, patchAuctionController,
 } from "../controllers/auction";
 import upload from "../config/multer";
+import {adminMiddleware} from "../middlewares/admin";
 
 // students only
 const auctionRoutes: Router = Router();
@@ -23,4 +24,5 @@ auctionRoutes.get("/", getAuctionController);
 auctionRoutes.get("/:id", getAuctionDetailsController);
 auctionRoutes.post("/:id", [studentMiddleware], postAuctionBidController);
 auctionRoutes.get("/comments", getAuctionCommentsController);
+auctionRoutes.patch("/:id", [adminMiddleware], patchAuctionController);
 export default auctionRoutes;
