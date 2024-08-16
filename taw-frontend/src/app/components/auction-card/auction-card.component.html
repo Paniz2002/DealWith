@@ -3,7 +3,7 @@
 <div class="col-6 mx-auto">
 <mat-card class="auction-card" appearance="outlined">
   <mat-card-header>
-    <mat-card-title>{{ this.bookTitle }}</mat-card-title>
+    <mat-card-title [routerLink]="['/auction',this.auctionID]"> <span class = "title"> {{ this.bookTitle }} </span> </mat-card-title>
     <mat-card-subtitle>{{ this.bookAuthor }}</mat-card-subtitle>
   </mat-card-header>
   <!-- TODO: carousel of images -->
@@ -14,10 +14,10 @@
     <p>
       {{ this.bidDescription }}
     </p>
-    <mat-chip>{{ this.currentPrice }}</mat-chip>
+    Bid: <span class="price"> {{ this.currentPrice }} EUR </span>
   </mat-card-content>
   <mat-card-actions>
-    <button mat-button [routerLink]="['/auction', this.auctionID]">View</button>
+    <button mat-raised-button color="primary" [routerLink]="['/auction', this.auctionID]">View details</button>
   </mat-card-actions>
 </mat-card>
 </div>

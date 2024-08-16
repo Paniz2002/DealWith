@@ -12,11 +12,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import {MatPaginator, MatPaginatorModule} from "@angular/material/paginator";
 
 interface Filter {
   q: string | null;
-  min_starting_price: Number | null;
-  max_starting_price: Number | null;
+  min_price: Number | null;
+  max_price: Number | null;
   min_condition: string;
   active: boolean | null;
 }
@@ -35,6 +36,7 @@ interface Filter {
     FormsModule,
     MatCardModule,
     MatCheckboxModule,
+    MatPaginatorModule,
   ],
   templateUrl: './auction-list.component.html',
   styleUrl: './auction-list.component.css',
@@ -76,6 +78,7 @@ export class AuctionListComponent implements OnInit {
       .catch((err) => {
         this.snackBar.notify(err.message);
       });
+
   }
   private getLastBidPrice(bids: any, startingPrice: Number): Number {
     let currMax: Number = -1;
@@ -92,16 +95,21 @@ export class AuctionListComponent implements OnInit {
     // Clears the array.
     this.availableAuctions.length = 0;
     const params = <Filter>{
-      min_starting_price: this.minPrice,
-      max_starting_price: this.maxPrice,
-      active: this.showOnlyActive,
+      min_price: this.minPrice,
+      max_price: this.maxPrice,
     };
+
+    if(this.showOnlyActive){
+      params.active = true;
+    }
+
     if (this.searchText) {
       params.q = this.searchText;
     }
     if (this.condition) {
       params.min_condition = this.condition;
     }
+    console.log(params);
     axios
       .get(enviroments.BACKEND_URL + '/api/auctions', { params })
       .then((auctions: any) => {
@@ -129,3 +137,5 @@ export class AuctionListComponent implements OnInit {
     this.showOnlyActive = !this.showOnlyActive;
   }
 }
+
+
