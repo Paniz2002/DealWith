@@ -31,6 +31,13 @@ const UserSchema = new mongoose.Schema(
       enum: ["student", "moderator"],
       default: "student",
     },
+    notifications:[{
+        text: String,
+        auction: mongoose.Schema.ObjectId,
+        isRead: {type: Boolean, default: false},
+        isVisible: {type: Boolean, default: true},
+        code: {type: String, enum: ["AUCTION_END", "AUCTION_WIN", "AUCTION_LOSE", "AUCTION_NO_BIDS"]}
+    }]
   },
   {
     timestamps: true,
