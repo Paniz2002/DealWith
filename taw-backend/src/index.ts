@@ -4,8 +4,10 @@ import apiRouter from "./routes";
 import cors from "cors";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
+import cron from "node-cron";
 import { whitelistMiddleware } from "./middlewares/whitelist";
 import connectDB from "./config/db";
+import {checkAuctionsEnd} from "./controllers/notification";
 
 dotenv.config();
 
@@ -35,3 +37,11 @@ app.use("/api", whitelistMiddleware, apiRouter);
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
+
+// Schedule cron job to check auctions every 1 minute
+const job = cron.schedule("*/1 * * * *", () => {
+  console.log("Checking auctions...");
+  checkAuctionsEnd().then(r => console.log("Auctions checked"));
+});
+
+job.start();

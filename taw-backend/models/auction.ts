@@ -41,10 +41,6 @@ const AuctionSchema = new mongoose.Schema(
     },
     bids: {
       type: [BidSchema],
-    },
-    is_active: {
-        type: Boolean,
-        default: true
     }
   },
   {
