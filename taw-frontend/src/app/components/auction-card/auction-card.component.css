@@ -1,4 +1,13 @@
 .auction-card {
-  max-width: 300px;
+  width: 100%;
   border-radius: 15px;
+  margin-bottom: 8px;
+  margin-top: 8px;
+  padding: 20px;
+}
+
+.auction-card:hover {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transform: scale(1.02);
+  transition: 0.3s;
 }

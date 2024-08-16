@@ -296,9 +296,27 @@ const searchAuctions = async function (req: Request, res: Response) {
 export const getAuctionController = async (req: Request, res: Response) => {
   if (Object.keys(req.query).length === 0) {
     const auctions = await Auction.find()
-      .select("-__v")
-      .populate({ path: "book", select: "-_id title" })
-      .populate({ path: "seller", select: "-_id username" });
+        .populate({
+          path: "book",
+          populate: {
+            path: "courses",
+            select: "-_id -__v -auctions -books -year._id",
+            populate: {
+              path: "university",
+              select: "-_id -__v -courses ",
+              populate: {
+                path: "city",
+                select: "-_id -__v -universities -courses",
+              },
+            },
+          },
+          select: "-_id -__v -auctions",
+        })
+        .populate({
+          path: "seller",
+          select: "-__v -_id -password -email -role",
+        })
+        .select("-__v -reserve_price");
     return res.status(200).json(auctions);
   }
 

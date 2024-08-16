@@ -65,7 +65,7 @@ export class AuctionListComponent implements OnInit {
             bookTitle: auction.book.title,
             bidDescription: auction.description,
             base64Images: auction.images as string[],
-            bookAuthor: 'ciano',
+            bookAuthor: auction.book.author,
             currentPrice:
               auction.bids.length > 0
                 ? this.getLastBidPrice(auction.bids, auction.starting_price)
