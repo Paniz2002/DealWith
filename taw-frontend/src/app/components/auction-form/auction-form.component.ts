@@ -2,8 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuctionService} from '../../services/bid/auction.service';
 import {Router} from '@angular/router';
-import {Observable} from 'rxjs';
-import {startWith, map} from 'rxjs/operators';
 import {CommonModule} from "@angular/common";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
@@ -21,6 +19,11 @@ interface Book {
   title: string;
   year: number;
   ISBN: string;
+} interface Course {
+  id: string;
+  name: string;
+  university: string;
+  city: string;
 }
 
 
@@ -49,7 +52,7 @@ export class AuctionFormComponent implements OnInit {
   auctionForm!: FormGroup;
   books: Book[] = [];
   just_added = false;
-  courses: any[] = [];
+  courses: Course[] = [];
 
 
 
@@ -76,23 +79,14 @@ export class AuctionFormComponent implements OnInit {
 
     // Fetch books and courses from the service
     this.auctionService.getBooks('').then(data => this.books = data);
-    this.auctionService.getCourses().then(data => this.courses = data);
-
-
-
-  }
-
-
-  private _filterCourses(value: string): any[] {
-    const filterValue = value.toLowerCase();
-    return this.courses.filter(option => option.name.toLowerCase().includes(filterValue));
+    this.auctionService.getCourses('').then(data => this.courses = data);
   }
 
   addBook() {
     const dialogRef = this.dialog.open(BookModalComponent, {
       width: '300pt',
       height: '350pt',
-      data: {title: this.auctionForm.controls['book'].value} //FIXME: value is undefined, not priority for now just UX to autocomplete the form
+      data: {title: this.auctionForm.controls['book'].value} //FIXME: value is undefined, not priority for now, just UX to autocomplete the form
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -105,13 +99,11 @@ export class AuctionFormComponent implements OnInit {
     });
   }
 
-  addCourse(name: object) {
-//TODO: implement
-  }
+
 
   onSubmit(): void {
     //print all form values
-    console.log(this.auctionForm.value);
+    console.log(this.courses);
     return;
     if (this.auctionForm.valid) {
       this.auctionService.addAuction(this.auctionForm).then(result => {
@@ -128,6 +120,15 @@ export class AuctionFormComponent implements OnInit {
     //fetch the books from the service
     this.auctionService.getBooks(search).then((data) => {
       this.books = data
+    });
+  }
+
+  searchCourse() {
+    //get the value of the input
+    const search = this.auctionForm.controls['course'].value;
+    //fetch the books from the service
+    this.auctionService.getCourses(search).then((data) => {
+      this.courses = data
     });
   }
 

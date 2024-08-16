@@ -1,27 +1,79 @@
-import { Schema, Model } from "mongoose";
-// Function to get all string paths from a schema
-function getStringPaths(schema: Schema<any>) {
-  return Object.keys(schema.paths).filter(
-    (path) => schema.paths[path].instance === "String",
-  );
+import {Schema, Model, Query, models} from "mongoose";
+
+function getStringAndReferencePaths(schema: Schema<any>, prefix = ""): { stringPaths: string[], refPaths: { path: string, model: string }[] } {
+    let stringPaths: string[] = [];
+    let refPaths: { path: string, model: string }[] = [];
+
+    for (const path in schema.paths) {
+        const fullPath = prefix ? `${prefix}.${path}` : path;
+        const schemaType = schema.paths[path];
+
+        if (schemaType.instance === "String") {
+            stringPaths.push(fullPath);
+        } else if (schemaType.instance === "ObjectId") {
+            if (schemaType.options.ref) {
+                refPaths.push({ path: fullPath, model: schemaType.options.ref });
+            }
+        } else if (schemaType.instance === "Embedded" || schemaType.instance === "Object") {
+            const subPaths = getStringAndReferencePaths(schemaType.schema, fullPath);
+            stringPaths.push(...subPaths.stringPaths);
+            refPaths.push(...subPaths.refPaths);
+        } else if (schemaType.instance === "Array" && schemaType.schema) {
+            const subPaths = getStringAndReferencePaths(schemaType.schema, fullPath);
+            stringPaths.push(...subPaths.stringPaths);
+            refPaths.push(...subPaths.refPaths);
+        }
+    }
+
+    return { stringPaths, refPaths };
 }
 
-// Function to search across all string fields of a model
-export default function fullTextSearch(
-  model: Model<any>,
-  searchText: string,
-  filter: string = "",
+async function buildReferenceConditions(refPaths: { path: string, model: string }[], searchText: string) {
+    const refConditions = [];
+
+    for (const { path, model } of refPaths) {
+        if (typeof models[model] !== 'undefined') {
+            const referencedModel = models[model];
+            const { stringPaths } = getStringAndReferencePaths(referencedModel.schema);
+            const subSearchConditions = stringPaths.map(subPath => ({
+                [subPath]: { $regex: searchText, $options: "i" }
+            }));
+
+            const results = await referencedModel.find({
+                $or: subSearchConditions
+            }).select("_id");
+
+            const matchingIds = results.map(result => result._id);
+            if (matchingIds.length > 0) {
+                refConditions.push({ [path]: { $in: matchingIds } });
+            }
+        }
+    }
+
+    return refConditions;
+}
+
+// Function to search across all string fields of a model, including sub-documents and references
+export default async function fullTextSearch(
+    model: Model<any>,
+    searchText: string,
+    filter: string = "",
 ) {
-  // Get all string paths from the model's schema
-  const stringPaths = getStringPaths(model.schema);
+    const { stringPaths, refPaths } = getStringAndReferencePaths(model.schema);
 
-  // Build the search conditions
-  const searchConditions = stringPaths.map((path) => ({
-    [path]: { $regex: searchText, $options: "i" },
-  }));
+    const searchConditions = stringPaths.map((path) => ({
+        [path]: { $regex: searchText, $options: "i" },
+    }));
 
-  // Perform the search with $or
-  if (filter) return model.find({ $or: searchConditions }, filter);
+    const query: Query<any, any, any, any, any, any> = model.find({});
 
-  return model.find({ $or: searchConditions });
+    if (filter) query.select(filter);
+
+    if (searchText) {
+        query.or(searchConditions);
+        const refConditions = await buildReferenceConditions(refPaths, searchText);
+        query.or(refConditions);
+    }
+
+    return query.exec();
 }
