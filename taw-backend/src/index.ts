@@ -7,7 +7,7 @@ import cookieParser from "cookie-parser";
 import cron from "node-cron";
 import { whitelistMiddleware } from "./middlewares/whitelist";
 import connectDB from "./config/db";
-import {checkAuctionsEnd} from "./controllers/notification";
+import { checkAuctionsEnd } from "./utils/notifications";
 
 dotenv.config();
 
