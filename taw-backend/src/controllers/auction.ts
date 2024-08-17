@@ -13,6 +13,10 @@ import fullTextSearch from "../utils/search";
 import { getUserId } from "../utils/userID";
 import Bid from "../../models/bid";
 import mongoose from "mongoose";
+import path from "path";
+import fs from "fs";
+
+const conditions = ["Mint", "Near Mint", "Excellent", "Good", "Fair", "Poor"];
 
 const formValidator = z
   .object({
@@ -139,17 +143,34 @@ export const uploadAuctionImagesController = async (
   }
 };
 
+export const getAuctionImagesController = async (req: Request, res: Response) => {
+  try{
+    const auction_id = req.params.id;
+
+    const auction = await Auction.findById(auction_id);
+    if (!auction) {
+      return BadRequestException(req, res, "Auction not found");
+    }
+
+    const imagesBase64 = auction.images.map((imagePath: string) => {
+      const image = fs.readFileSync(path.resolve(imagePath));
+      return image.toString('base64');
+    });
+
+    res.json({images: imagesBase64});
+  }catch(e){
+    return InternalException(req, res, "Error while getting images");
+  }
+}
+
 const queryValidator = z.object({
   q: z.string().optional(),
-  starting_price: z.number().optional(),
-  reserve_price: z.number().optional(),
   condition: z
     .enum(["Mint", "Near Mint", "Excellent", "Good", "Fair", "Poor"])
     .optional(),
 });
 
 const getSuperiorConditions = function (currentCondition: string) {
-  const conditions = ["Mint", "Near Mint", "Excellent", "Good", "Fair", "Poor"];
 
   const index = conditions.indexOf(currentCondition);
   if (index === -1) {
@@ -162,10 +183,8 @@ const searchAuctions = async function (req: Request, res: Response) {
   try {
     const {
       q,
-      min_starting_price,
-      max_starting_price,
-      min_reserve_price,
-      max_reserve_price,
+      min_price,
+      max_price,
       min_condition,
       active,
     } = req.query;
@@ -210,30 +229,6 @@ const searchAuctions = async function (req: Request, res: Response) {
      */
     let auctions = await Auction.find({
       $and: [
-        {
-          starting_price: min_starting_price
-            ? { $gte: min_starting_price }
-            : max_starting_price
-              ? { $lte: max_starting_price }
-              : min_starting_price && max_starting_price
-                ? {
-                    $gte: min_starting_price,
-                    $lte: max_starting_price,
-                  }
-                : { $gte: 0 },
-        },
-        {
-          reserve_price: min_reserve_price
-            ? { $gte: min_reserve_price }
-            : max_reserve_price
-              ? { $lte: max_reserve_price }
-              : min_reserve_price && max_reserve_price
-                ? {
-                    $gte: min_reserve_price,
-                    $lte: max_reserve_price,
-                  }
-                : { $gte: 0 },
-        },
         { condition: { $in: superior_conditions } },
         {
           end_date: active
@@ -271,12 +266,27 @@ const searchAuctions = async function (req: Request, res: Response) {
         path: "seller",
         select: "-__v -_id -password -email -role",
       })
-      .select("-__v");
+      .select("-__v -reserve_price");
 
-    if (!auctions) {
+    let min = 0, max = Number.MAX_VALUE;
+    if(min_price)
+      min = parseInt(min_price.toString());
+    if(max_price)
+      max = parseInt(max_price.toString());
+
+    let  priceFilteredAuctions = [];
+
+    for (let auction of auctions) {
+      let currentPrice = auction.currentPrice();
+      if (currentPrice >= min && currentPrice <= max) {
+        priceFilteredAuctions.push(auction);
+      }
+    }
+
+    if (!priceFilteredAuctions) {
       return BadRequestException(req, res, "No auctions found");
     } else {
-      return auctions;
+      return priceFilteredAuctions;
     }
   } catch (err) {
     return InternalException(req, res, "Error while searching auctions");
@@ -286,9 +296,27 @@ const searchAuctions = async function (req: Request, res: Response) {
 export const getAuctionController = async (req: Request, res: Response) => {
   if (Object.keys(req.query).length === 0) {
     const auctions = await Auction.find()
-      .select("-__v")
-      .populate({ path: "book", select: "-_id title" })
-      .populate({ path: "seller", select: "-_id username" });
+        .populate({
+          path: "book",
+          populate: {
+            path: "courses",
+            select: "-_id -__v -auctions -books -year._id",
+            populate: {
+              path: "university",
+              select: "-_id -__v -courses ",
+              populate: {
+                path: "city",
+                select: "-_id -__v -universities -courses",
+              },
+            },
+          },
+          select: "-_id -__v -auctions",
+        })
+        .populate({
+          path: "seller",
+          select: "-__v -_id -password -email -role",
+        })
+        .select("-__v -reserve_price");
     return res.status(200).json(auctions);
   }
 
@@ -296,6 +324,11 @@ export const getAuctionController = async (req: Request, res: Response) => {
 
   try {
     let auctions = await searchAuctions(req, res);
+
+    if(auctions instanceof Array) {
+      if (auctions.length === 0)
+        return BadRequestException(req, res, "No auctions found");
+    }
 
     if (!auctions) {
       return BadRequestException(req, res, "No auctions found");
@@ -340,7 +373,7 @@ export const getAuctionDetailsController = async (
         path: "seller",
         select: "-__v -_id -password -email -role",
       })
-      .select("-__v ");
+      .select("-__v -reserve_price");
 
     if (!auction) {
       return BadRequestException(req, res, "Auction not found");
@@ -390,11 +423,11 @@ export const getAuctionCommentsController = async (
   const userID = getUserId(req, res);
   const filter = {
     private: false,
-    $or: [{ sender: userID }, { reciever: userID }],
+    $or: [{ sender: userID }, { receiver: userID }],
     auction: auctionID,
   };
   const publicComments = await Comment.find(filter)
-    .populate("sender reciever")
+    .populate("sender receiver")
     .sort({ createdAt: 1 })
     .exec();
   let privateComments;
@@ -410,3 +443,63 @@ export const getAuctionCommentsController = async (
     public_comments: publicComments,
   });
 };
+
+export const patchAuctionController = async (req: Request, res: Response) => {
+  try{
+    const auction_id = req.params.id;
+    const {description, condition, book_id} = req.body;
+
+    await connectDB();
+    const auction = await Auction.findById(auction_id);
+    if (!auction) {
+      return BadRequestException(req, res, "Auction not found");
+    }
+
+    if (description)
+      auction.description = description;
+
+    if (condition) {
+      if (!conditions.includes(condition))
+        return BadRequestException(req, res, "Invalid condition");
+      auction.condition = condition;
+    }
+
+    if (book_id) {
+      const book = await Book.findById(book_id);
+      if (!book)
+        return BadRequestException(req, res, "Book not found");
+      auction.book = book_id;
+    }
+
+    await auction.save();
+
+    return res.status(200).send("Auction updated");
+
+  }catch(e){
+    return InternalException(req, res, "Error while updating auction");
+  }
+
+}
+
+export const deleteAuctionController = async (req: Request, res: Response) => {
+  try{
+    const auction_id = req.params.id;
+
+    await connectDB();
+
+    const auction = await Auction.findById(auction_id);
+
+    if (!auction) {
+        return BadRequestException(req, res, "Auction not found");
+    }
+
+    await Auction.deleteOne({_id: auction_id});
+    return res.status(200).send("Auction deleted");
+
+  }catch(e){
+    return InternalException(req, res, "Error while deleting auction");
+  }
+
+}
+
+
