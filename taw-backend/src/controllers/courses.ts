@@ -19,6 +19,7 @@ export const getCoursesController = async (req: Request, res: Response) => {
         } else {
             result = result = await fullTextSearch(Course, "", "-_id -__v")
         }
+
         if (result.length) { //map the result to the required format
             result = result.map((course: any) => {
                 return {
