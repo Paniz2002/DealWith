@@ -1,11 +1,29 @@
 import {Model, models, PopulateOptions, Query, Schema} from "mongoose";
 import {capitalizeFirstLetter} from "../index";
 
+type RefPath = {
+    path: string;
+    model: string;
+    populatePath: string;
+};
 
-function getStringAndReferencePaths(schema: Schema<any>, prefix = ""): {
+function uniqueAndSortByPopulatePath(arr: RefPath[]): RefPath[] {
+    const uniqueMap = new Map<string, RefPath>();
+
+    // Remove duplicates based on populatePath
+    arr.forEach((item) => {
+        if (!uniqueMap.has(item.populatePath)) {
+            uniqueMap.set(item.populatePath, item);
+        }
+    });
+
+    // Convert the map back to an array and sort alphabetically by populatePath
+    return Array.from(uniqueMap.values()).sort((a, b) => a.populatePath.localeCompare(b.populatePath));
+}
+async function getStringAndReferencePaths(schema: Schema<any>, prefix = "", split_prefix: boolean | string = false): Promise<{
     stringPaths: string[],
-    refPaths: { path: string, model: string, populatePath: string }[]
-} {
+    refPaths: RefPath[]
+}> {
     let stringPaths: string[] = [];
     let refPaths: { path: string, model: string, populatePath: string }[] = [];
 
@@ -13,17 +31,22 @@ function getStringAndReferencePaths(schema: Schema<any>, prefix = ""): {
 
         const fullPath = prefix ? `${prefix}.${path}` : path;
         const schemaType = schema.paths[path];
+        let temp_prefix = fullPath.split('.').at(-2);
         if (schemaType.instance === "String") {
             stringPaths.push(fullPath);
             if (prefix) { //keep penultimate prefix
-                let temp_prefix = fullPath.split('.').at(-2);
-
                 //remove last part of the path
                 let populate_path = fullPath.split('.').slice(0, -1).join('.');
                 if (!temp_prefix) {
                     temp_prefix = '';
                 }
-                refPaths.push({path: path, model: temp_prefix, populatePath: populate_path});
+
+                if (!split_prefix) {
+                    refPaths.push({path: path, model: temp_prefix, populatePath: populate_path});
+                } else {
+                    console.log('ssspl', path, temp_prefix, populate_path, split_prefix + '.' + populate_path)
+                    refPaths.push({path: path, model: temp_prefix, populatePath: populate_path});
+                }
             }
 
         } else if (schemaType.instance === "ObjectId") {
@@ -31,44 +54,43 @@ function getStringAndReferencePaths(schema: Schema<any>, prefix = ""): {
                 const referencedModelName = schemaType.options.ref;
                 let subPaths;
                 if (typeof referencedModelName === 'string' && models[referencedModelName]) {
-                    subPaths = getStringAndReferencePaths(models[referencedModelName].schema, fullPath)
-                } else {
-                    subPaths = getStringAndReferencePaths(referencedModelName().schema, fullPath)
+                    subPaths = await getStringAndReferencePaths(models[referencedModelName].schema, fullPath)
                     stringPaths.push(...subPaths.stringPaths);
                     refPaths.push(...subPaths.refPaths);
-
+                } else {
+                    subPaths = await getStringAndReferencePaths(referencedModelName().schema, fullPath)
+                    stringPaths.push(...subPaths.stringPaths);
+                    refPaths.push(...subPaths.refPaths);
                 }
             }
         } else if (schemaType.instance === "Embedded" || schemaType.instance === "Object") {
-            const subPaths = getStringAndReferencePaths(schemaType.schema, fullPath);
+            const subPaths = await getStringAndReferencePaths(schemaType.schema, fullPath);
             stringPaths.push(...subPaths.stringPaths);
             refPaths.push(...subPaths.refPaths);
         } else if (schemaType.instance === "Array" && schemaType.schema) {
-            const subPaths = getStringAndReferencePaths(schemaType.schema, fullPath);
+            const subPaths = await getStringAndReferencePaths(schemaType.schema, fullPath);
             stringPaths.push(...subPaths.stringPaths);
             refPaths.push(...subPaths.refPaths);
         } else if (schemaType.instance === "Array") {
-             console.log(path);
-            let model_ref = (schemaType as any).caster.options.ref;
+            let model_ref = await (schemaType as any).caster.options.ref;
             if (model_ref && model_ref.schema) {
-                const subPaths = getStringAndReferencePaths(model_ref.schema, fullPath);
+                const subPaths = await getStringAndReferencePaths(model_ref.schema, fullPath, temp_prefix);
                 refPaths.push(...subPaths.refPaths);
                 stringPaths.push(...subPaths.stringPaths);
             }
         }
     }
 
-
     return {stringPaths, refPaths};
 }
 
-async function buildReferenceConditions(refPaths: { path: string, model: string }[], searchText: string) {
+async function buildReferenceConditions(refPaths: RefPath[], searchText: string) {
     const refConditions = [];
     for (let {path, model} of refPaths) {
         model = capitalizeFirstLetter(model);
         if (typeof models[model] !== 'undefined') {
             const referencedModel = models[model];
-            const {stringPaths} = getStringAndReferencePaths(referencedModel.schema);
+            const {stringPaths} = await getStringAndReferencePaths(referencedModel.schema);
             const subSearchConditions = stringPaths.map(subPath => ({
                 [subPath]: {$regex: searchText, $options: "i"}
             }));
@@ -87,42 +109,51 @@ async function buildReferenceConditions(refPaths: { path: string, model: string 
     return refConditions;
 }
 
-function recursivePopulate(refPaths: { path: string, model: string, populatePath: string }[]) {
-    let populatePaths = {};
+async function recursivePopulate(refPaths: RefPath[]): Promise<any> {
+    let populatePaths: any[] = [];
+
     for (const ref of refPaths) {
-        if (!ref.populatePath.includes('.')) {
-            let temp_populate = {
-                model: models[capitalizeFirstLetter(ref.model)],
-                path: ref.model,
-                populate: {}
-            };
-            let new_refs = [];
-            for (const subPath of refPaths) {
-                if (subPath != ref && subPath.populatePath.includes(ref.model)) {
-                    subPath.populatePath = subPath.populatePath.replace(ref.model + '.', '');
-                    new_refs.push(subPath);
+        const pathSegments = ref.populatePath.split('.');
+        let currentLevel = populatePaths;
+
+        for (let i = 0; i < pathSegments.length; i++) {
+            const segment = pathSegments[i];
+
+            // Find existing path entry if it exists
+            let existingPath = currentLevel.find((p: any) => p.path === segment);
+
+            if (!existingPath) {
+                // Create new path entry
+                existingPath = {
+                    path: segment,
+                    model: i === pathSegments.length - 1 ? models[capitalizeFirstLetter(ref.model)] : undefined
+                };
+                currentLevel.push(existingPath);
+            }
+
+            // If we are at the last segment, assign model and prepare for possible nested populate
+            if (i === pathSegments.length - 1) {
+                const newRefs = refPaths.filter(subRef =>
+                    subRef.populatePath.startsWith(ref.populatePath + '.')
+                ).map(subRef => ({
+                    ...subRef,
+                    populatePath: subRef.populatePath.replace(ref.populatePath + '.', '')
+                }));
+
+                const nestedPopulate = await recursivePopulate(newRefs);
+                if (nestedPopulate.length > 0) {
+                    existingPath.populate = nestedPopulate;
                 }
-            }
-
-            let new_popo = recursivePopulate(new_refs);
-            if (Object.keys(new_popo).length > 0) {
-                for (const [temp_key, temp_value] of Object.entries(new_popo)) {
-                    for (const [key, value] of Object.entries(temp_value as Object)) {
-                        (temp_populate['populate'] as any)[key] = value;
-                    }
+            } else {
+                // Move deeper into the structure for nested populates
+                if (!existingPath.populate) {
+                    existingPath.populate = [];
                 }
+                currentLevel = existingPath.populate;
             }
-
-            //delete if populate is empty
-            if (Object.keys(temp_populate['populate']).length === 0) {
-                // @ts-ignore
-                delete temp_populate['populate'];
-            }
-
-            // @ts-ignore
-            populatePaths[ref.populatePath] = temp_populate;
         }
     }
+
     return populatePaths;
 }
 
@@ -134,7 +165,7 @@ export default async function fullTextSearch(
 ) {
 
     //region build query
-    const {stringPaths, refPaths} = getStringAndReferencePaths(model.schema);
+    let {stringPaths, refPaths} = await getStringAndReferencePaths(model.schema);
     let searchConditions = null
     if (searchText) {
         searchConditions = stringPaths.map((path) => ({
@@ -147,16 +178,16 @@ export default async function fullTextSearch(
 
 
     //region populate
-    let temp_refPaths = refPaths.filter((v, i, a) => a.findIndex(t => (t.model === v.model)) === i);
-    //sort them by model name
-    temp_refPaths.sort((a, b) => a.populatePath.localeCompare(b.populatePath));
-    let pop = recursivePopulate(temp_refPaths);
-    for (const [key, value] of Object.entries(pop)) {
-        if (model.schema.paths.hasOwnProperty(key)) {
-            query = query.populate(value as PopulateOptions);
-        }
+    refPaths=  uniqueAndSortByPopulatePath(refPaths);
+    let pop = await recursivePopulate(refPaths);
+    console.log('pop', pop);
+
+    for (const populateOption of pop) {
+        query = query.populate(populateOption);
     }
+
     //endregion
+
 
 
     //region search on model
@@ -164,8 +195,10 @@ export default async function fullTextSearch(
     let query_copy = query.clone();
     const refConditions_res = await buildReferenceConditions(refPaths, searchText);
     if (searchConditions) {
+        console.log('searchConditions',searchConditions)
         query_copy.or(searchConditions);
     }
+        console.log('refConditions_res',refConditions_res)
     query_copy.or(refConditions_res);
     results = await query_copy.exec();
     if (results.length > 0) {
