@@ -14,11 +14,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { NavigationExtras, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { NotificationService } from '../../services/popup/notification.service';
 import { RegisterComponent } from '../register/register.component';
 import { LocalStorageService } from '../../services/localStorage/localStorage.service';
-import { JwtPayload } from 'jsonwebtoken';
+import { EventManagerService } from '../../services/eventManager/event-manager.service';
 
 @Component({
   selector: 'app-register',
@@ -45,6 +45,7 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private snackBar: NotificationService,
     private localStorage: LocalStorageService,
+    private eventManager: EventManagerService,
   ) {}
 
   ngOnInit() {
@@ -83,6 +84,7 @@ export class LoginComponent implements OnInit {
         'userType',
         res.data.is_moderator ? 'admin' : 'student',
       );
+      this.eventManager.loginOk.emit();
       if (!res.data.is_moderator) {
         return await this.router.navigate(['/']);
       }
