@@ -56,11 +56,11 @@
             <span class="visually-hidden">Next</span>
           </button>
         </div>
+
         <p>
           {{ this.bidDescription }}
         </p>
-        <label for="price">Bid:</label>
-        <span class="price"> {{ this.currentPrice }} EUR </span>
+        Bid: <span class="price"> {{ this.currentPrice }} EUR </span>
       </mat-card-content>
       <mat-card-actions>
         <button
@@ -75,3 +75,11 @@
   </div>
   <div class="col-auto"></div>
 </div>
+<mat-card class="auction-card" appearance="outlined">
+  <mat-card-header>
+    <mat-card-title [routerLink]="['/auction', this.auctionID]">
+      <span class="title"> {{ this.bookTitle }} </span>
+    </mat-card-title>
+    <mat-card-subtitle>{{ this.bookAuthor }}</mat-card-subtitle>
+  </mat-card-header>
+</mat-card>

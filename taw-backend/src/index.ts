@@ -38,6 +38,10 @@ app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
 
+export function capitalizeFirstLetter(string:string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 // Schedule cron job to check auctions every 1 minute
 const job = cron.schedule("*/1 * * * *", () => {
   console.log("Checking auctions...");
@@ -45,3 +49,4 @@ const job = cron.schedule("*/1 * * * *", () => {
 });
 
 job.start();
+

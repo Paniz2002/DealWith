@@ -32,7 +32,7 @@ const CitySchema = new mongoose.Schema({
 });
 
 CitySchema.plugin(uniqueValidator, { message: 'already exists' });
-
+CitySchema.index({ "$**": "text" });
 const City: Model<any> = mongoose.model('City', CitySchema);
 
 export default City;

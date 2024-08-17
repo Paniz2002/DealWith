@@ -23,7 +23,7 @@ const UniversitySchema = new mongoose.Schema({
 });
 
 UniversitySchema.plugin(uniqueValidator, { message: "already exists" });
-
+UniversitySchema.index({ "$**": "text" });
 const University: Model<any> = mongoose.model("University", UniversitySchema);
 
 export default University;

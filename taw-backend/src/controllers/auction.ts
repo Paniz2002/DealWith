@@ -212,7 +212,7 @@ const searchAuctions = async function (req: Request, res: Response) {
     const allAuctions = await Auction.find();
     if (q) {
       books = (await fullTextSearch(Book, q.toString())).flatMap(
-        (book) => book.auctions,
+        (book: { auctions: any; }) => book.auctions,
       );
       searchedAuctions = await fullTextSearch(Auction, q.toString());
       if (!searchedAuctions) {
@@ -236,7 +236,7 @@ const searchAuctions = async function (req: Request, res: Response) {
           _id: q
             ? {
                 $in: searchedAuctions
-                  .map((auction) => auction._id)
+                  .map((auction: { _id: any; }) => auction._id)
                   .concat(books),
               }
             : { $in: allAuctions.map((auction) => auction._id) },
