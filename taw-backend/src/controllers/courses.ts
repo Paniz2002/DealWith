@@ -8,8 +8,7 @@ import fullTextSearch from "../utils/search";
 
 /*
  * GET /api/courses
- * @params university: String University to be searched.
- * @params course: String Course to be searched.
+ * @params q: String to be searched.
  */
 export const getCoursesController = async (req: Request, res: Response) => {
     try {
