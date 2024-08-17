@@ -35,3 +35,7 @@ app.use("/api", whitelistMiddleware, apiRouter);
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
+
+export function capitalizeFirstLetter(string:string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}

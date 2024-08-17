@@ -16,29 +16,10 @@ export const getCoursesController = async (req: Request, res: Response) => {
         await connectDB();
         let result = [];
         if (req.query && req.query.q) { //search by name of course and university and city
-            result = await fullTextSearch(Course, req.query.q as string, "-_id -__v").populate({
-                path: "university",
-                model: University,
-                select: "name city -_id",
-                populate: {
-                    path: "city",
-                    model: City,
-                    select: "name province country -_id",
-                },
-            }).exec();
+            result = await fullTextSearch(Course, req.query.q as string )
 
         } else {
-            result = await Course.find({}, "-_id -__v")
-                .populate({
-                    path: "university",
-                    model: University,
-                    select: "name city -_id",
-                    populate: {
-                        path: "city",
-                        model: City,
-                        select: "name province country -_id",
-                    },
-                }).exec();
+            result = result = await fullTextSearch(Course, "" )
         }
         if (result.length) { //map the result to the required format
             result = result.map((course: any) => {
@@ -54,85 +35,9 @@ export const getCoursesController = async (req: Request, res: Response) => {
         }
         return res.status(200).json(result);
     } catch (e) {
-        console.log(e);
+        console.error(e);
         return res.status(500).send("Internal Server Error");
     }
-    /*
-        let {university, course} = req.query;
-        if (university == undefined && course == undefined) { //get all courses with universities
-            const result = await Course.find({}, "-_id -__v")
-                .populate({
-                    path: "university",
-                    model: University,
-                    select: "name city -_id",
-                });
-            return res.status(200).json(result);
-        }
-        if (university && !course) {
-            const result = await fullTextSearch(
-                University,
-                university as string,
-                "-_id -__v",
-            )
-                .populate({
-                    path: "city",
-                    model: City,
-                    select: "name province country -_id",
-                })
-                .populate({
-                    path: "courses",
-                    model: Course,
-                    select: "name year -_id",
-                })
-                .exec();
-            return res.status(200).json(result);
-        }
-        if (course && !university) {
-            const result = await fullTextSearch(
-                Course,
-                course as string,
-                "-_id -__v",
-            )
-                .populate({
-                    path: "university",
-                    model: University,
-                    select: "name city -_id",
-                }).populate({
-                    path: "city",
-                    model: City,
-                    select: "name province country -_id",
-                })
-                .exec()
-            return res.status(200).json(result);
-        }
-        //create 2 queries and merge them in and using fullTextSearch
-        const universities = await fullTextSearch(
-            University,
-            university as string,
-            "-_id -__v",
-        )
-            .populate({
-                path: "city",
-                model: City,
-                select: "name province country -_id",
-            });
-        const courses = await fullTextSearch(
-            Course,
-            course as string,
-            "-_id -__v",
-        )
-            .populate({
-                path: "university",
-                model: University,
-                select: "name city -_id",
-            }).populate({
-                path: "city",
-                model: City,
-                select: "name province country -_id",
-            });
-        const result = universities.concat(courses);
-        return res.status(200).json(result); */
-
 
 };
 export const postCoursesController = (req: Request, res: Response) => {
