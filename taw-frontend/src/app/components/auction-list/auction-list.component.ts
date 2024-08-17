@@ -12,7 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import {MatPaginator, MatPaginatorModule} from "@angular/material/paginator";
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 interface Filter {
   q: string | null;
@@ -66,7 +66,6 @@ export class AuctionListComponent implements OnInit {
             ID: auction._id,
             bookTitle: auction.book.title,
             bidDescription: auction.description,
-            base64Images: auction.images as string[],
             bookAuthor: auction.book.author,
             currentPrice:
               auction.bids.length > 0
@@ -78,12 +77,9 @@ export class AuctionListComponent implements OnInit {
       .catch((err) => {
         this.snackBar.notify(err.message);
       });
-
   }
   private getLastBidPrice(bids: any, startingPrice: Number): Number {
     let currMax: Number = -1;
-    // There might be a "functional" way of doing it,
-    // don't care though.
     bids.forEach((bid: any) => {
       currMax = bid.price > currMax ? bid.price : currMax;
     });
@@ -99,7 +95,7 @@ export class AuctionListComponent implements OnInit {
       max_price: this.maxPrice,
     };
 
-    if(this.showOnlyActive){
+    if (this.showOnlyActive) {
       params.active = true;
     }
 
@@ -124,7 +120,6 @@ export class AuctionListComponent implements OnInit {
               auction.bids.length > 0
                 ? this.getLastBidPrice(auction.bids, auction.starting_price)
                 : auction.starting_price,
-            base64Images: auction.images,
           });
         });
       })
@@ -137,5 +132,3 @@ export class AuctionListComponent implements OnInit {
     this.showOnlyActive = !this.showOnlyActive;
   }
 }
-
-

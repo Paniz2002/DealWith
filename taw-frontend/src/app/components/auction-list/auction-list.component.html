@@ -19,7 +19,9 @@
     <input matSliderStartThumb [(ngModel)]="minPrice" />
     <input matSliderEndThumb [(ngModel)]="maxPrice" />
   </mat-slider>
-  <mat-checkbox (click)="toggleActive()">Show only active auctions</mat-checkbox>
+  <mat-checkbox (click)="toggleActive()"
+    >Show only active auctions</mat-checkbox
+  >
   <button type="button" (click)="searchWithFilters()">Filter</button>
 </mat-card>
 @for (auction of availableAuctions; track auction.ID) {
@@ -28,7 +30,6 @@
     bookTitle="{{ auction.bookTitle }}"
     bookAuthor="{{ auction.bookAuthor }}"
     bidDescription="{{ auction.bidDescription }}"
-    [base64Images]="auction.base64Images"
     currentPrice="{{ auction.currentPrice }}"
   ></app-auction-card>
 } @empty {
@@ -37,5 +38,3 @@
     again later.
   </p>
 }
-
-

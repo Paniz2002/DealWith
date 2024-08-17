@@ -143,8 +143,11 @@ export const uploadAuctionImagesController = async (
   }
 };
 
-export const getAuctionImagesController = async (req: Request, res: Response) => {
-  try{
+export const getAuctionImagesController = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
     const auction_id = req.params.id;
 
     const auction = await Auction.findById(auction_id);
@@ -154,14 +157,15 @@ export const getAuctionImagesController = async (req: Request, res: Response) =>
 
     const imagesBase64 = auction.images.map((imagePath: string) => {
       const image = fs.readFileSync(path.resolve(imagePath));
-      return image.toString('base64');
+      return image.toString("base64");
     });
 
-    res.json({images: imagesBase64});
-  }catch(e){
+    return res.json({ images: imagesBase64 });
+  } catch (e) {
+    console.error(e);
     return InternalException(req, res, "Error while getting images");
   }
-}
+};
 
 const queryValidator = z.object({
   q: z.string().optional(),
@@ -171,7 +175,6 @@ const queryValidator = z.object({
 });
 
 const getSuperiorConditions = function (currentCondition: string) {
-
   const index = conditions.indexOf(currentCondition);
   if (index === -1) {
     throw new Error("Invalid condition");
@@ -181,13 +184,7 @@ const getSuperiorConditions = function (currentCondition: string) {
 
 const searchAuctions = async function (req: Request, res: Response) {
   try {
-    const {
-      q,
-      min_price,
-      max_price,
-      min_condition,
-      active,
-    } = req.query;
+    const { q, min_price, max_price, min_condition, active } = req.query;
 
     /* If min_condition is provided, get all conditions superior to it
      *  If not, the default superior_conditions are all conditions
@@ -268,13 +265,12 @@ const searchAuctions = async function (req: Request, res: Response) {
       })
       .select("-__v -reserve_price");
 
-    let min = 0, max = Number.MAX_VALUE;
-    if(min_price)
-      min = parseInt(min_price.toString());
-    if(max_price)
-      max = parseInt(max_price.toString());
+    let min = 0,
+      max = Number.MAX_VALUE;
+    if (min_price) min = parseInt(min_price.toString());
+    if (max_price) max = parseInt(max_price.toString());
 
-    let  priceFilteredAuctions = [];
+    let priceFilteredAuctions = [];
 
     for (let auction of auctions) {
       let currentPrice = auction.currentPrice();
@@ -296,27 +292,27 @@ const searchAuctions = async function (req: Request, res: Response) {
 export const getAuctionController = async (req: Request, res: Response) => {
   if (Object.keys(req.query).length === 0) {
     const auctions = await Auction.find()
-        .populate({
-          path: "book",
+      .populate({
+        path: "book",
+        populate: {
+          path: "courses",
+          select: "-_id -__v -auctions -books -year._id",
           populate: {
-            path: "courses",
-            select: "-_id -__v -auctions -books -year._id",
+            path: "university",
+            select: "-_id -__v -courses ",
             populate: {
-              path: "university",
-              select: "-_id -__v -courses ",
-              populate: {
-                path: "city",
-                select: "-_id -__v -universities -courses",
-              },
+              path: "city",
+              select: "-_id -__v -universities -courses",
             },
           },
-          select: "-_id -__v -auctions",
-        })
-        .populate({
-          path: "seller",
-          select: "-__v -_id -password -email -role",
-        })
-        .select("-__v -reserve_price");
+        },
+        select: "-_id -__v -auctions",
+      })
+      .populate({
+        path: "seller",
+        select: "-__v -_id -password -email -role",
+      })
+      .select("-__v -reserve_price");
     return res.status(200).json(auctions);
   }
 
@@ -325,7 +321,7 @@ export const getAuctionController = async (req: Request, res: Response) => {
   try {
     let auctions = await searchAuctions(req, res);
 
-    if(auctions instanceof Array) {
+    if (auctions instanceof Array) {
       if (auctions.length === 0)
         return BadRequestException(req, res, "No auctions found");
     }
@@ -445,9 +441,9 @@ export const getAuctionCommentsController = async (
 };
 
 export const patchAuctionController = async (req: Request, res: Response) => {
-  try{
+  try {
     const auction_id = req.params.id;
-    const {description, condition, book_id} = req.body;
+    const { description, condition, book_id } = req.body;
 
     await connectDB();
     const auction = await Auction.findById(auction_id);
@@ -455,8 +451,7 @@ export const patchAuctionController = async (req: Request, res: Response) => {
       return BadRequestException(req, res, "Auction not found");
     }
 
-    if (description)
-      auction.description = description;
+    if (description) auction.description = description;
 
     if (condition) {
       if (!conditions.includes(condition))
@@ -466,23 +461,20 @@ export const patchAuctionController = async (req: Request, res: Response) => {
 
     if (book_id) {
       const book = await Book.findById(book_id);
-      if (!book)
-        return BadRequestException(req, res, "Book not found");
+      if (!book) return BadRequestException(req, res, "Book not found");
       auction.book = book_id;
     }
 
     await auction.save();
 
     return res.status(200).send("Auction updated");
-
-  }catch(e){
+  } catch (e) {
     return InternalException(req, res, "Error while updating auction");
   }
-
-}
+};
 
 export const deleteAuctionController = async (req: Request, res: Response) => {
-  try{
+  try {
     const auction_id = req.params.id;
 
     await connectDB();
@@ -490,16 +482,12 @@ export const deleteAuctionController = async (req: Request, res: Response) => {
     const auction = await Auction.findById(auction_id);
 
     if (!auction) {
-        return BadRequestException(req, res, "Auction not found");
+      return BadRequestException(req, res, "Auction not found");
     }
 
-    await Auction.deleteOne({_id: auction_id});
+    await Auction.deleteOne({ _id: auction_id });
     return res.status(200).send("Auction deleted");
-
-  }catch(e){
+  } catch (e) {
     return InternalException(req, res, "Error while deleting auction");
   }
-
-}
-
-
+};
