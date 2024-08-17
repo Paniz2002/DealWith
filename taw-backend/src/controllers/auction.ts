@@ -204,7 +204,6 @@ const searchAuctions = async function (req: Request, res: Response) {
             try {
                 superior_conditions = getSuperiorConditions(min_condition.toString());
             } catch (e) {
-                console.log(e);
                 return BadRequestException(req, res, "Invalid condition");
             }
         }
@@ -214,18 +213,11 @@ const searchAuctions = async function (req: Request, res: Response) {
         //  let books = [];
         const allAuctions = await Auction.find();
         if (q) {
-            /*   books = (await fullTextSearch(Book, q.toString())).flatMap(
-                 (book: { auctions: any; }) => book.auctions,
-               ); */
             searchedAuctions = await fullTextSearch(Auction, q.toString());
             if (!searchedAuctions) {
                 return BadRequestException(req, res, "No auctions found");
             }
         }
-
-
-
-        console.log('searchedAuctions',searchedAuctions);
 
         /* Search for auctions based on the query parameters
          *  If no query parameters are provided, return all
@@ -268,7 +260,7 @@ const searchAuctions = async function (req: Request, res: Response) {
             })
             .populate({
                 path: "seller",
-                select: "-__v -_id -password -email -role",
+                select: "-__v -_id -password -email -role -notifications",
             })
             .select("-__v -reserve_price");
 
