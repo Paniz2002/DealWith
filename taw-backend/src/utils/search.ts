@@ -122,7 +122,7 @@ function recursivePopulate(refPaths: { path: string, model: string, populatePath
 export default async function fullTextSearch(
     model: Model<any>,
     searchText: string = "",
-    filter: string = "-_id -__v",
+    filter: string = "",
 ) {
 
     //region build query

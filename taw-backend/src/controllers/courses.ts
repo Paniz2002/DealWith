@@ -14,10 +14,10 @@ export const getCoursesController = async (req: Request, res: Response) => {
         await connectDB();
         let result = [];
         if (req.query && req.query.q) { //search by name of course and university and city
-            result = await fullTextSearch(Course, req.query.q as string )
+            result = await fullTextSearch(Course, req.query.q as string , "-_id -__v")
 
         } else {
-            result = result = await fullTextSearch(Course, "" )
+            result = result = await fullTextSearch(Course, "", "-_id -__v")
         }
         if (result.length) { //map the result to the required format
             result = result.map((course: any) => {
@@ -27,7 +27,7 @@ export const getCoursesController = async (req: Request, res: Response) => {
                     year1: course.year.year1,
                     year2: course.year.year2,
                     university: course.university.name,
-                    city: course.university.city,
+                    city: course.university.city.name,
                 };
             });
         }
