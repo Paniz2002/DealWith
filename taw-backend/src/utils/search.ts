@@ -121,44 +121,52 @@ function recursivePopulate(refPaths: { path: string, model: string, populatePath
 
 export default async function fullTextSearch(
     model: Model<any>,
-    searchText: string,
-    filter: string = "",
+    searchText: string = "",
+    filter: string = "-_id -__v",
 ) {
+
+    //region build query
     const {stringPaths, refPaths} = getStringAndReferencePaths(model.schema);
-
-    const searchConditions = stringPaths.map((path) => ({
-        [path]: {$regex: searchText, $options: "i"},
-    }));
-
-    let query: Query<any, any, any, any, any, any> = model.find({});
-
-    if (filter) query.select(filter);
-
-
+    let searchConditions = null
     if (searchText) {
-        let temp_refPaths = refPaths.filter((v, i, a) => a.findIndex(t => (t.model === v.model)) === i);
-        //sort them by model name
-        temp_refPaths.sort((a, b) => a.populatePath.localeCompare(b.populatePath));
-        let pop = recursivePopulate(temp_refPaths);
-        for (const [key, value] of Object.entries(pop)) {
-            if (model.schema.paths.hasOwnProperty(key)) {
-                query = query.populate(value as PopulateOptions);
-            }
+        searchConditions = stringPaths.map((path) => ({
+            [path]: {$regex: searchText, $options: "i"},
+        }));
+    }
+    let query: Query<any, any, any, any, any, any> = model.find({});
+    if (filter) query.select(filter);
+    //endregion
+
+
+    //region populate
+    let temp_refPaths = refPaths.filter((v, i, a) => a.findIndex(t => (t.model === v.model)) === i);
+    //sort them by model name
+    temp_refPaths.sort((a, b) => a.populatePath.localeCompare(b.populatePath));
+    let pop = recursivePopulate(temp_refPaths);
+    for (const [key, value] of Object.entries(pop)) {
+        if (model.schema.paths.hasOwnProperty(key)) {
+            query = query.populate(value as PopulateOptions);
         }
     }
+    //endregion
 
 
+    //region search on model
     let results;
     let query_copy = query.clone();
     const refConditions_res = await buildReferenceConditions(refPaths, searchText);
-    query_copy.or(searchConditions);
+    if (searchConditions) {
+        query_copy.or(searchConditions);
+    }
     query_copy.or(refConditions_res);
     results = await query_copy.exec();
-
     if (results.length > 0) {
         return results;
     }
+    //endregion
 
+
+    //region search on referenced models
     results = await query.exec();
     // Apply additional filtering based on populated fields
     return results.filter((result: any) => {
@@ -171,4 +179,5 @@ export default async function fullTextSearch(
             return value && value.toString().match(new RegExp(searchText, 'i'));
         });
     });
+    //endregion
 }
