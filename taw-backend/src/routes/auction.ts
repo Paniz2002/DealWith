@@ -19,7 +19,7 @@ auctionRoutes.post(
   uploadAuctionImagesController,
 );
 auctionRoutes.get("/", getAuctionController);
+auctionRoutes.get("/:id/comments", getAuctionCommentsController);
 auctionRoutes.get("/:id", getAuctionDetailsController);
 auctionRoutes.post("/:id", [studentMiddleware], postAuctionBidController);
-auctionRoutes.get("/comments", getAuctionCommentsController);
 export default auctionRoutes;
