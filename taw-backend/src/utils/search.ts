@@ -10,9 +10,9 @@ function getStringAndReferencePaths(schema: Schema<any>, prefix = ""): {
     let refPaths: { path: string, model: string, populatePath: string }[] = [];
 
     for (const path in schema.paths) {
+
         const fullPath = prefix ? `${prefix}.${path}` : path;
         const schemaType = schema.paths[path];
-
         if (schemaType.instance === "String") {
             stringPaths.push(fullPath);
             if (prefix) { //keep penultimate prefix
@@ -47,6 +47,14 @@ function getStringAndReferencePaths(schema: Schema<any>, prefix = ""): {
             const subPaths = getStringAndReferencePaths(schemaType.schema, fullPath);
             stringPaths.push(...subPaths.stringPaths);
             refPaths.push(...subPaths.refPaths);
+        } else if (schemaType.instance === "Array") {
+             console.log(path);
+            let model_ref = (schemaType as any).caster.options.ref;
+            if (model_ref && model_ref.schema) {
+                const subPaths = getStringAndReferencePaths(model_ref.schema, fullPath);
+                refPaths.push(...subPaths.refPaths);
+                stringPaths.push(...subPaths.stringPaths);
+            }
         }
     }
 

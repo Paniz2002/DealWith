@@ -211,12 +211,12 @@ const searchAuctions = async function (req: Request, res: Response) {
 
     // If q is provided, search for books and auctions that match the query
     let searchedAuctions = [];
-    let books = [];
+  //  let books = [];
     const allAuctions = await Auction.find();
     if (q) {
-      books = (await fullTextSearch(Book, q.toString())).flatMap(
+   /*   books = (await fullTextSearch(Book, q.toString())).flatMap(
         (book: { auctions: any; }) => book.auctions,
-      );
+      ); */
       searchedAuctions = await fullTextSearch(Auction, q.toString());
       if (!searchedAuctions) {
         return BadRequestException(req, res, "No auctions found");
@@ -240,7 +240,7 @@ const searchAuctions = async function (req: Request, res: Response) {
             ? {
                 $in: searchedAuctions
                   .map((auction: { _id: any; }) => auction._id)
-                  .concat(books),
+                 // .concat(books),
               }
             : { $in: allAuctions.map((auction) => auction._id) },
         },
