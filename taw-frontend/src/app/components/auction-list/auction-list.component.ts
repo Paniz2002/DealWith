@@ -13,6 +13,8 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import {MatPaginator, MatPaginatorModule} from "@angular/material/paginator";
+import {MatGridList, MatGridTile} from "@angular/material/grid-list";
+import {MatButton} from "@angular/material/button";
 
 interface Filter {
   q: string | null;
@@ -37,6 +39,9 @@ interface Filter {
     MatCardModule,
     MatCheckboxModule,
     MatPaginatorModule,
+    MatGridList,
+    MatGridTile,
+    MatButton,
   ],
   templateUrl: './auction-list.component.html',
   styleUrl: './auction-list.component.css',
