@@ -31,6 +31,13 @@ const UserSchema = new mongoose.Schema(
       enum: ["student", "moderator"],
       default: "student",
     },
+    notifications:[{
+        text: String,
+        auction: mongoose.Schema.ObjectId,
+        isRead: {type: Boolean, default: false},
+        isVisible: {type: Boolean, default: true},
+        code: {type: String, enum: ["AUCTION_END", "AUCTION_WIN", "AUCTION_LOSE", "AUCTION_NO_BIDS","AUCTION_RESERVE"]}
+    }]
   },
   {
     timestamps: true,
@@ -54,6 +61,10 @@ UserSchema.methods.comparePassword = function (plaintext: string) {
 UserSchema.methods.isModerator = function () {
   return this.role === "moderator";
 };
+
+UserSchema.methods.existingNotification = function (auction_id: mongoose.Types.ObjectId, code: string){
+    return this.notifications.find((notification: { auction: { toString: () => string; }; code: string; }) => notification.auction.toString() === auction_id.toString() && notification.code === code);
+}
 
 const User: Model<any> = mongoose.model("User", UserSchema);
 

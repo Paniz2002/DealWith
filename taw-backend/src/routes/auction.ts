@@ -7,10 +7,13 @@ import {
   uploadAuctionImagesController,
   postAuctionBidController,
   getAuctionCommentsController,
+  getAuctionImagesController,
+  patchAuctionController,
+  deleteAuctionController,
 } from "../controllers/auction";
 import upload from "../config/multer";
+import { adminMiddleware } from "../middlewares/admin";
 
-// students only
 const auctionRoutes: Router = Router();
 auctionRoutes.post("/", [studentMiddleware], newAuctionController); // middleware per verificare che ci acceda solo uno studente
 auctionRoutes.post(
@@ -19,7 +22,10 @@ auctionRoutes.post(
   uploadAuctionImagesController,
 );
 auctionRoutes.get("/", getAuctionController);
+auctionRoutes.get("/:id/images", getAuctionImagesController);
+auctionRoutes.get("/:id/comments", getAuctionCommentsController);
 auctionRoutes.get("/:id", getAuctionDetailsController);
 auctionRoutes.post("/:id", [studentMiddleware], postAuctionBidController);
-auctionRoutes.get("/comments", getAuctionCommentsController);
+auctionRoutes.patch("/:id", [adminMiddleware], patchAuctionController);
+auctionRoutes.delete("/:id", [adminMiddleware], deleteAuctionController);
 export default auctionRoutes;

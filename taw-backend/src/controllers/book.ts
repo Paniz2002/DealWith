@@ -11,10 +11,11 @@ import BadRequestException from "../exceptions/bad-request";
 function mapBooks(
   books: QueryWithHelpers<Array<any>, any, any, any, "find", any>,
 ) {
-  return books.map((book: { _id: any; title: any; year: any; ISBN: any }) => {
+  return books.map((book: { _id: any; title: any; author: any; year: any; ISBN: any }) => {
     return {
       id: book._id,
       title: book.title,
+      author: book.author,
       year: book.year,
       ISBN: book.ISBN,
     };
