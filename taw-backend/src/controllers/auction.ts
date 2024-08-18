@@ -16,6 +16,7 @@ import mongoose from "mongoose";
 import path from "path";
 import fs from "fs";
 import sharp from "sharp";
+import Course from "../../models/course";
 
 const conditions = ["Mint", "Near Mint", "Excellent", "Good", "Fair", "Poor"];
 
@@ -36,6 +37,7 @@ const formValidator = z
         reserve_price: z.number(),
         description: z.string().optional(),
         book_id: z.string(),
+        course_id: z.string(),
     })
     .refine((data) => data.start_date < data.end_date, {
         message: "End date must be greater than start date",
@@ -49,8 +51,11 @@ export const newAuctionController = async (req: Request, res: Response) => {
     } catch (e) {
         return BadRequestException(req, res, "Invalid date format");
     }
-    validateForm(req, res, req.body, formValidator);
+    let test=validateForm(req, res, req.body, formValidator);
+    if(test!==true){
 
+        return test;
+    }
     await connectDB();
 
     const {
@@ -61,14 +66,34 @@ export const newAuctionController = async (req: Request, res: Response) => {
         reserve_price,
         description,
         book_id,
+        course_id,
     } = req.body;
-
     try {
         const user_id = getUserId(req, res);
         const book = await Book.findById(book_id);
         if (!book) {
             return BadRequestException(req, res, "Book not found");
         }
+
+        let alreadyExistingCourse = await Course.findById(course_id);
+        if(!alreadyExistingCourse){
+            return BadRequestException(req, res, "Course not found");
+        }
+
+        //check if course exists in the book
+        let courseExists = false;
+        for(let course of book.courses){
+            if(course.toString() === course_id){
+                courseExists = true;
+                break;
+            }
+        }
+        if(!courseExists){
+            book.courses.push(alreadyExistingCourse);
+            book.save();
+        }
+
+
         const auction = await Auction.create({
             book: book_id,
             condition,
@@ -82,13 +107,11 @@ export const newAuctionController = async (req: Request, res: Response) => {
 
         await auction.save();
 
-        /* alreadyExistingCourse.auctions.push(auction);
-            await alreadyExistingCourse.save(); */
 
-        res.sendStatus(201);
+        res.sendStatus(200);
     } catch (err) {
         console.log(err);
-        return InternalException(req, res, "Unknkown error while creating listing");
+        return InternalException(req, res, "Unknown error while creating listing");
     }
 };
 

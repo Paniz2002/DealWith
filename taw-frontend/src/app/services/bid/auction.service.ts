@@ -3,6 +3,7 @@ import axios from 'axios';
 import {environments} from "../../../environments/environments";
 import {FormGroup} from '@angular/forms';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -13,10 +14,21 @@ export class AuctionService {
   }
 
   addAuction(auctionForm: FormGroup) {
-    return axios.post(`${this.apiUrl}/api/auction`, auctionForm.value)
+    return axios.post(`${this.apiUrl}/api/auctions`, auctionForm.value)
       .then(res => res.data)
       .catch(err => {
         console.error('Error adding auction:', err);
+        return false;
+      });
+  }
+
+  uploadImages(auctionId: string, files: File[]) {
+    const formData = new FormData();
+    files.forEach(file => formData.append('images', file));
+    return axios.post(`${this.apiUrl}/api/auctions/images/${auctionId}`, formData)
+      .then(res => res.data)
+      .catch(err => {
+        console.error('Error uploading images:', err);
         return false;
       });
   }
@@ -60,11 +72,4 @@ export class AuctionService {
     }
   }
 
-  addCourse(form_body: object) {
-    return axios.post(`${this.apiUrl}/api/courses`, form_body)
-      .then(res => res.data)
-      .catch(err => {
-        return null;
-      });
-  }
 }
