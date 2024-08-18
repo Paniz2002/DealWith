@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import {environments} from '../../../enviroments/environments';
+import {environments} from '../../../environments/environments';
 import axios from 'axios';
 import {MatSelectModule} from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';

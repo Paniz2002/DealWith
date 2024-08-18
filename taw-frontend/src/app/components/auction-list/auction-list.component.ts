@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuctionCardComponent } from '../auction-card/auction-card.component';
 import axios from 'axios';
-import { environments } from '../../../enviroments/environments';
+import { environments } from '../../../environments/environments';
 import { AuctionCard } from '../auction-card/auction-card.component';
 import { NotificationService } from '../../services/popup/notification.service';
 import { MatSliderModule } from '@angular/material/slider';

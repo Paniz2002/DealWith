@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import axios from 'axios';
-import {environments} from "../../../enviroments/environments";
+import {environments} from "../../../environments/environments";
 import {FormGroup} from '@angular/forms';
 
 @Injectable({
