@@ -1,28 +1,4 @@
 <mat-card>
-  <mat-form-field appearance="outline">
-    <mat-label>Book name</mat-label>
-    <input matInput [(ngModel)]="searchText" />
-  </mat-form-field>
-  <mat-form-field>
-    <mat-label>Minimum condition</mat-label>
-    <mat-select [(ngModel)]="condition">
-      <mat-option value="Mint">Mint</mat-option>
-      <mat-option value="Near Mint">Near Mint</mat-option>
-      <mat-option value="Excellent">Excellent</mat-option>
-      <mat-option value="Good">Good</mat-option>
-      <mat-option value="Fair">Fair</mat-option>
-      <mat-option value="Poor">Poor</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-label>Price range</mat-label>
-  <mat-slider discrete showTickMarks min="0" max="">
-    <input matSliderStartThumb [(ngModel)]="minPrice" />
-    <input matSliderEndThumb [(ngModel)]="maxPrice" />
-  </mat-slider>
-  <mat-checkbox (click)="toggleActive()"
-    >Show only active auctions</mat-checkbox
-  >
-  <button type="button" (click)="searchWithFilters()">Filter</button>
   <div class="row">
     <div class="col-lg-auto col-0"></div>
     <div
@@ -82,6 +58,7 @@
         bookTitle="{{ auction.bookTitle }}"
         bookAuthor="{{ auction.bookAuthor }}"
         bidDescription="{{ auction.bidDescription }}"
+        [base64Images]="auction.base64Images"
         currentPrice="{{ auction.currentPrice }}"
       ></app-auction-card>
     </div>

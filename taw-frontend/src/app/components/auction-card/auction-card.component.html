@@ -11,19 +11,18 @@
     data-bs-ride="carousel"
   >
     <div class="carousel-indicators">
-      @for (image of this.base64Images; track image; let i = $index) {
-        <button
-          type="button"
-          [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
-          [attr.data-bs-slide-to]="i"
-          [ngClass]="{ active: i === 0 }"
-          [attr.aria-label]="'Slide ' + (i + 1)"
-        ></button>
-      }
+      <button
+        *ngFor="let image of base64Images; let i = index"
+        type="button"
+        [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
+        [attr.data-bs-slide-to]="i"
+        [ngClass]="{ active: i === 0 }"
+        [attr.aria-label]="'Slide ' + (i + 1)"
+      ></button>
     </div>
     <div class="carousel-inner">
-      @for(image of base64Images; track image; let i = $index) {
       <div
+        *ngFor="let image of base64Images; let i = index"
         class="carousel-item"
         [ngClass]="{ active: i === 0 }"
       >
@@ -33,8 +32,9 @@
           alt="Auction Image"
         />
       </div>
-      }
-    <a class="carousel-control-prev"
+    </div>
+    <a
+      class="carousel-control-prev"
       type="button"
       [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
       data-bs-slide="prev"
