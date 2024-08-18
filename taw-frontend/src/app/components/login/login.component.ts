@@ -19,8 +19,7 @@ import {NotificationService} from '../../services/popup/notification.service';
 import {RegisterComponent} from '../register/register.component';
 import {LocalStorageService} from '../../services/localStorage/localStorage.service';
 import {EventManagerService} from '../../services/eventManager/event-manager.service';
-// import {socket} from "../../../socket";
-import {io} from "socket.io-client";
+
 import {SocketService} from "../../socket.service";
 
 @Component({

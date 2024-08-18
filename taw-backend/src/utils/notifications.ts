@@ -27,34 +27,45 @@ export const checkAuctionsEnd = async () => {
                         for(const bid of auction.bids){
                             let bidder = await User.findById(bid.user);
                             if(bid.user !== lastBid.user && !bidder.existingNotification(auction._id, "AUCTION_LOSE")){
-                                bidder.notifications.push(await AuctionLoseNotification(auction._id));
+                                const notification = await AuctionLoseNotification(auction._id);
+                                bidder.notifications.push(notification);
                                 await bidder.save();
+                                io.to(bidder._id).emit("notification", notification);
                             }
+
                         }
 
                         if (!buyer.existingNotification(auction._id, "AUCTION_WIN")) {
-                            buyer.notifications.push(await AuctionWinNotification(auction._id));
+                            const notification = await AuctionWinNotification(auction._id);
+                            buyer.notifications.push(notification);
                             await buyer.save();
+                            io.to(buyer._id).emit("notification", notification);
                         }
 
                     } else {
                         if (!seller.existingNotification(auction._id, "AUCTION_RESERVE")) {
-                            seller.notifications.push(await AuctionReserveNotification(auction._id));
+                            const notification = await AuctionReserveNotification(auction._id);
+                            seller.notifications.push(notification);
                             await seller.save();
+                            io.to(seller._id).emit("notification", notification);
                         }
 
                         for (const bid of auction.bids) {
                             let bidder = await User.findById(bid.user);
                             if (!bidder.existingNotification(auction._id, "AUCTION_LOSE")) {
-                                bidder.notifications.push(await AuctionLoseNotification(auction._id));
+                                const notification = await AuctionLoseNotification(auction._id);
+                                bidder.notifications.push(notification);
                                 await bidder.save();
+                                io.to(bidder._id).emit("notification", notification);
                             }
                         }
                     }
                 } else {
                     if (!seller.existingNotification(auction._id, "AUCTION_NO_BIDS")) {
-                        seller.notifications.push(await AuctionNoBidsNotification(auction._id));
+                        const notification = await AuctionNoBidsNotification(auction._id);
+                        seller.notifications.push(notification);
                         await seller.save();
+                        io.to(seller._id).emit("notification", notification);
                     }
                 }
                 await auction.save();

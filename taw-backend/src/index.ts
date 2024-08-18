@@ -10,10 +10,6 @@ import connectDB from "./config/db";
 import { checkAuctionsEnd } from "./utils/notifications";
 import http from "http"
 import {Server} from "socket.io"
-import {getUserId} from "./utils/userID";
-import * as jwt from "jsonwebtoken";
-import {JWT_SECRET} from "./secret";
-import User from "../models/user";
 
 dotenv.config();
 
@@ -84,8 +80,7 @@ export function capitalizeFirstLetter(string:string) {
 
 // Schedule cron job to check auctions every 1 minute
 const job = cron.schedule("*/1 * * * *", () => {
-  console.log("Checking auctions...");
-  checkAuctionsEnd().then(r => console.log("Auctions checked"));
+  checkAuctionsEnd().then(() => {});
 });
 
 job.start();
