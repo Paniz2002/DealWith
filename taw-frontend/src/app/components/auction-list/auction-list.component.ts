@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuctionCardComponent } from '../auction-card/auction-card.component';
 import axios from 'axios';
-import { enviroments } from '../../../enviroments/environments';
+import { environments } from '../../../environments/environments';
 import { AuctionCard } from '../auction-card/auction-card.component';
 import { NotificationService } from '../../services/popup/notification.service';
 import { MatSliderModule } from '@angular/material/slider';
@@ -12,7 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
 import { MatButton } from '@angular/material/button';
 

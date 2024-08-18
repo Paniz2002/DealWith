@@ -3,7 +3,6 @@ out/
 .env
 Session.vim
 *.env*
-taw-frontend/src/enviroments/
 dbdata/
 initdb.d/
 *.DS_Store

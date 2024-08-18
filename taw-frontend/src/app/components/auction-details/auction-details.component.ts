@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import axios from 'axios';
-import { environments } from '../../../enviroments/environments';
+import { environments } from '../../../environments/environments';
 import { NotificationService } from '../../services/popup/notification.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';

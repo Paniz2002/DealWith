@@ -1,6 +1,6 @@
 import { CanActivateFn } from '@angular/router';
 import axios from 'axios';
-import { environments } from '../../../enviroments/environments';
+import { environments } from '../../../environments/environments';
 export const AdminGuard: CanActivateFn = async () => {
   try {
     const res = await axios.get(environments.BACKEND_URL + '/api/auth/me');

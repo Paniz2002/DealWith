@@ -1,7 +1,7 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import axios from 'axios';
-import { environments } from '../../../enviroments/environments';
+import { environments } from '../../../environments/environments';
 
 export const AuthenticationGuard: CanActivateFn = async () => {
   // Simplest way possible:
