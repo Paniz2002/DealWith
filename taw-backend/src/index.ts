@@ -29,10 +29,10 @@ export const  io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
-    console.log('New client connected');
+    console.log('New client connected (no room yet)');
 
     // When a user joins a room
-    socket.on('joinRoom', (room) => {
+    socket.on('joinRoom', (room) => { //REMEMBER: room is the user id so be careful when you use ._id (it could be type ObjectId), make sure to convert it to string
         socket.join(room);
         console.log(`User joined room: ${room}`);
     });
@@ -80,7 +80,7 @@ export function capitalizeFirstLetter(string:string) {
 
 // Schedule cron job to check auctions every 1 minute
 const job = cron.schedule("*/1 * * * *", () => {
-  checkAuctionsEnd().then(() => {});
+  checkAuctionsEnd().then((r) => {console.log("Auction checked")}).catch((e) => {console.error("Auction checking Error",e)});
 });
 
 job.start();

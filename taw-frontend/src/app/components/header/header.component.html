@@ -12,20 +12,31 @@
       <button mat-button [routerLink]="'/register'" class="header-button">
         Register
       </button>
+
     } @else {
       <button mat-button [routerLink]="'/logout'" class="header-button">
         Logout
       </button>
-    }
-    @if (this.userType === "student") {
-      <button mat-button [routerLink]="'/auction/create'" class="header-button">
-        Create Auction
-      </button>
-    }
-    @if (this.userType !== "admin") {
-      <button mat-button [routerLink]="'/auction'" class="header-button">
-        List Auction(s)
-      </button>
+      @if (this.userType === "student") {
+        <button mat-button [routerLink]="'/auction/create'" class="header-button">
+          Create Auction
+        </button>
+      }
+      @if (this.userType !== "admin") {
+        <button mat-button [routerLink]="'/auction'" class="header-button">
+          List Auction(s)
+        </button>
+      }
+      <!-- Notification icon with counter -->
+      @if (this.notificationCount > 0) {
+        <button mat-button class="header-button">
+          <mat-icon>notifications</mat-icon>
+          <span class="notification-counter"> <!-- FIXME: needs css to properly show the red badge -->
+            {{ notificationCount }}
+          </span>
+        </button>
+      }
+
     }
   </div>
 </mat-toolbar>

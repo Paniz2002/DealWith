@@ -120,4 +120,10 @@ export class LoginComponent implements OnInit {
       password: '',
     });
   }
+
+
+}
+
+export function requestLogin(){
+
 }

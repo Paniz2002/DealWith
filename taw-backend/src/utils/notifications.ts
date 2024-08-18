@@ -21,7 +21,7 @@ export const checkAuctionsEnd = async () => {
                             const notification = await AuctionEndNotification(auction._id);
                             seller.notifications.push(notification);
                             await seller.save();
-                            io.to(seller._id).emit("notification", notification);
+                            io.to(seller._id.toString()).emit("notification", notification);
                         }
 
                         for(const bid of auction.bids){
@@ -30,7 +30,7 @@ export const checkAuctionsEnd = async () => {
                                 const notification = await AuctionLoseNotification(auction._id);
                                 bidder.notifications.push(notification);
                                 await bidder.save();
-                                io.to(bidder._id).emit("notification", notification);
+                                io.to(bidder._id.toString()).emit("notification", notification);
                             }
 
                         }
@@ -39,7 +39,7 @@ export const checkAuctionsEnd = async () => {
                             const notification = await AuctionWinNotification(auction._id);
                             buyer.notifications.push(notification);
                             await buyer.save();
-                            io.to(buyer._id).emit("notification", notification);
+                            io.to(buyer._id.toString()).emit("notification", notification);
                         }
 
                     } else {
@@ -47,7 +47,7 @@ export const checkAuctionsEnd = async () => {
                             const notification = await AuctionReserveNotification(auction._id);
                             seller.notifications.push(notification);
                             await seller.save();
-                            io.to(seller._id).emit("notification", notification);
+                            io.to(seller._id.toString()).emit("notification", notification);
                         }
 
                         for (const bid of auction.bids) {
@@ -56,7 +56,7 @@ export const checkAuctionsEnd = async () => {
                                 const notification = await AuctionLoseNotification(auction._id);
                                 bidder.notifications.push(notification);
                                 await bidder.save();
-                                io.to(bidder._id).emit("notification", notification);
+                                io.to(bidder._id.toString()).emit("notification", notification);
                             }
                         }
                     }
@@ -65,7 +65,7 @@ export const checkAuctionsEnd = async () => {
                         const notification = await AuctionNoBidsNotification(auction._id);
                         seller.notifications.push(notification);
                         await seller.save();
-                        io.to(seller._id).emit("notification", notification);
+                        io.to(seller._id.toString()).emit("notification", notification);
                     }
                 }
                 await auction.save();
