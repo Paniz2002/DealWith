@@ -16,7 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import axios from 'axios';
-import { enviroments } from '../../../enviroments/enviroments';
+import { environments } from '../../../enviroments/environments';
 import { RegisterComponent } from '../register/register.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DialogComponent } from '../dialog/dialog.component';
@@ -68,7 +68,7 @@ export class AdminHomepageComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     axios
-      .get(enviroments.BACKEND_URL + '/api/admin/students')
+      .get(environments.BACKEND_URL + '/api/admin/students')
       .then((res) => {
         const studentsData = res.data.map((student: any) => ({
           _id: student._id,
@@ -131,7 +131,7 @@ export class AdminHomepageComponent implements AfterViewInit {
     component.afterClosed().subscribe(async (dialogResult) => {
       if (!dialogResult) return;
       const res = await axios.delete(
-        enviroments.BACKEND_URL + '/api/admin/students',
+        environments.BACKEND_URL + '/api/admin/students',
         { data: { users: this.selection.selected } },
       );
       if (res.status === 200) {
@@ -140,7 +140,7 @@ export class AdminHomepageComponent implements AfterViewInit {
         // This way if we have a new student registering we find it immediatly
         // instead of waiting for a page reload.
         const res = await axios.get(
-          enviroments.BACKEND_URL + '/api/admin/students',
+          environments.BACKEND_URL + '/api/admin/students',
         );
         this.students.data = res.data.map((student: any) => ({
           _id: student._id,

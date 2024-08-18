@@ -49,10 +49,10 @@ export class BookModalComponent {
 
     //get the data from the form
     const title = data.title ? data.title : '';
-    console.log(data);
 
     this.bookForm = this.fb.group({
       title: [title, [Validators.required]],
+      author: ['', [Validators.required]],
       year: ['', [Validators.required, Validators.min(1970), Validators.max(new Date().getFullYear())]],
       //ISBN must be 10 or 13 characters long
       ISBN: ['', [Validators.required, isbnLengthValidator()]]

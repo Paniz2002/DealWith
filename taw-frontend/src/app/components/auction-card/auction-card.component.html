@@ -1,80 +1,3 @@
-<div class="row">
-  <div class="col-auto"></div>
-  <div class="col-6 mx-auto">
-    <mat-card class="auction-card" appearance="outlined">
-      <mat-card-header>
-        <mat-card-title [routerLink]="['/auction', this.auctionID]">
-          <span class="title"> {{ this.bookTitle }} </span>
-        </mat-card-title>
-        <mat-card-subtitle>{{ this.bookAuthor }}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <div
-          id="carouselExampleAutoplaying"
-          class="carousel slide"
-          data-bs-ride="carousel"
-        >
-          <div class="carousel-inner">
-            @for (image of this.images; track image; let i = $index) {
-              @if (i === 0) {
-                <div class="carousel-item active">
-                  <img
-                    class="d-block w-100"
-                    loading="lazy"
-                    src="{{ image }}"
-                    alt="Image of book"
-                  />
-                </div>
-              } @else {
-                <div class="carousel-item">
-                  <img
-                    class="d-block w-100"
-                    loading="lazy"
-                    src="{{ image }}"
-                    alt="Image of book"
-                  />
-                </div>
-              }
-            }
-          </div>
-          <button
-            class="carousel-control-prev"
-            type="button"
-            data-bs-target="#carouselExampleAutoplaying"
-            data-bs-slide="prev"
-          >
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button
-            class="carousel-control-next"
-            type="button"
-            data-bs-target="#carouselExampleAutoplaying"
-            data-bs-slide="next"
-          >
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-          </button>
-        </div>
-
-        <p>
-          {{ this.bidDescription }}
-        </p>
-        Bid: <span class="price"> {{ this.currentPrice }} EUR </span>
-      </mat-card-content>
-      <mat-card-actions>
-        <button
-          mat-raised-button
-          color="primary"
-          [routerLink]="['/auction', this.auctionID]"
-        >
-          View details
-        </button>
-      </mat-card-actions>
-    </mat-card>
-  </div>
-  <div class="col-auto"></div>
-</div>
 <mat-card class="auction-card" appearance="outlined">
   <mat-card-header>
     <mat-card-title [routerLink]="['/auction', this.auctionID]">
@@ -82,4 +5,72 @@
     </mat-card-title>
     <mat-card-subtitle>{{ this.bookAuthor }}</mat-card-subtitle>
   </mat-card-header>
+  <div
+    [id]="'auctionCarousel' + this.auctionID"
+    class="carousel slide"
+    data-bs-ride="carousel"
+  >
+    <div class="carousel-indicators">
+      @for (image of this.base64Images; track image; let i = $index) {
+        <button
+          type="button"
+          [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
+          [attr.data-bs-slide-to]="i"
+          [ngClass]="{ active: i === 0 }"
+          [attr.aria-label]="'Slide ' + (i + 1)"
+        ></button>
+      }
+    </div>
+    <div class="carousel-inner">
+      @for(image of base64Images; track image; let i = $index) {
+      <div
+        class="carousel-item"
+        [ngClass]="{ active: i === 0 }"
+      >
+        <img
+          [src]="'data:image/webp;base64,' + image"
+          class="carousel-image d-block w-100"
+          alt="Auction Image"
+        />
+      </div>
+      }
+    <a class="carousel-control-prev"
+      type="button"
+      [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
+      data-bs-slide="prev"
+    >
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </a>
+    <a
+      class="carousel-control-next"
+      type="button"
+      [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
+      data-bs-slide="next"
+    >
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </a>
+  </div>
+  <!-- <img *ngFor="let image of this.base64Images" [src]="'data:image/webp;base64,' + image" loading="lazy" alt="Auction Image"> -->
+
+  <!--@for (image of this.base64Images; track image) {
+        <img mat-card-image [src]="'data:image/webp;base64,' + image" alt="Carousel pictures of book" />
+      }-->
+  <mat-card-content>
+    <p>
+      {{ this.bidDescription }}
+    </p>
+    <label for="price">Bid:</label>
+    <span class="price"> {{ this.currentPrice }} EUR </span>
+  </mat-card-content>
+  <mat-card-actions>
+    <button
+      mat-raised-button
+      color="primary"
+      [routerLink]="['/auction', this.auctionID]"
+    >
+      View details
+    </button>
+  </mat-card-actions>
 </mat-card>

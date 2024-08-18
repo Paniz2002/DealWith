@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { enviroments } from '../../../enviroments/enviroments';
+import { environments } from '../../../enviroments/environments';
 import axios from 'axios';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
@@ -71,7 +71,7 @@ export class LoginComponent implements OnInit {
     ) {
       return;
     }
-    const url = enviroments.BACKEND_URL + '/api/auth/login';
+    const url = environments.BACKEND_URL + '/api/auth/login';
     try {
       const res = await axios.post(url, this.form.value, {
         withCredentials: true,

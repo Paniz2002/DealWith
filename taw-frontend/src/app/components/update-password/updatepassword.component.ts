@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { enviroments } from '../../../enviroments/enviroments';
+import { environments } from '../../../enviroments/environments';
 import axios from 'axios';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
@@ -69,7 +69,7 @@ export class UpdatePasswordComponent implements OnInit {
       return;
     }
     axios
-      .patch(enviroments.BACKEND_URL + '/api/auth/me', this.form.value)
+      .patch(environments.BACKEND_URL + '/api/auth/me', this.form.value)
       .then((res) => {
         if (res.status === 200) {
           return this.router.navigate(['/login']);

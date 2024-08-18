@@ -1,19 +1,19 @@
 import {Injectable} from '@angular/core';
 import axios from 'axios';
-import {enviroments} from "../../../enviroments/enviroments";
+import {environments} from "../../../enviroments/environments";
 import {FormGroup} from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuctionService {
-  private apiUrl = enviroments.BACKEND_URL;
+  private apiUrl = environments.BACKEND_URL;
 
   constructor() {
   }
 
   addAuction(auctionForm: FormGroup) {
-    return axios.post(`${this.apiUrl}/api/listing`, auctionForm.value)
+    return axios.post(`${this.apiUrl}/api/auction`, auctionForm.value)
       .then(res => res.data)
       .catch(err => {
         console.error('Error adding auction:', err);

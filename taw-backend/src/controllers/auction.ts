@@ -12,9 +12,9 @@ import { validateForm } from "../utils/validate";
 import fullTextSearch from "../utils/search";
 import { getUserId } from "../utils/userID";
 import Bid from "../../models/bid";
-import mongoose from "mongoose";
 import path from "path";
 import fs from "fs";
+import sharp from "sharp";
 
 const conditions = ["Mint", "Near Mint", "Excellent", "Good", "Fair", "Poor"];
 
@@ -64,7 +64,10 @@ export const newAuctionController = async (req: Request, res: Response) => {
 
   try {
     const user_id = getUserId(req, res);
-
+    const book = await Book.findById(book_id);
+    if (!book) {
+      return BadRequestException(req, res, "Book not found");
+    }
     const auction = await Auction.create({
       book: book_id,
       condition,
@@ -79,7 +82,7 @@ export const newAuctionController = async (req: Request, res: Response) => {
     await auction.save();
 
     /* alreadyExistingCourse.auctions.push(auction);
-        await alreadyExistingCourse.save(); */
+            await alreadyExistingCourse.save(); */
 
     res.sendStatus(201);
   } catch (err) {
@@ -88,57 +91,125 @@ export const newAuctionController = async (req: Request, res: Response) => {
   }
 };
 
+/*export const uploadAuctionImagesController = async (
+    req: Request,
+    res: Response,
+) => {
+    if (!req.files) {
+        return BadRequestException(req, res, "No images uploaded");
+    }
+
+    console.log(req.files);
+
+    const {auction_id, seller_id} = req.body;
+
+    if (!auction_id || !seller_id) {
+        return BadRequestException(req, res, "Missing auction_id or user_id");
+    }
+
+    const auction = await Auction.findById(auction_id);
+    const user = await User.findById(seller_id);
+    if (!auction || !user) {
+        return BadRequestException(req, res, "Auction or user not found");
+    }
+
+    const user_id = getUserId(req, res);
+
+    if (auction.isOwner(user_id)) {
+        return BadRequestException(
+            req,
+            res,
+            "The seller is not the owner of the auction",
+        );
+    }
+
+    if (auction.seller.toString() !== user_id) {
+        return UnauthorizedException(
+            req,
+            res,
+            "Unauthorized: You are not the seller of this auction",
+        );
+    }
+
+    const files = req.files as Express.Multer.File[];
+    try {
+        for (const file of files) {
+            const path = file.path;
+            auction.images.push(path);
+        }
+
+        await auction.save();
+
+        return res.status(200).send("Images uploaded");
+    } catch (e) {
+        return InternalException(req, res, "Error while saving images");
+    }
+};*/
+
 export const uploadAuctionImagesController = async (
   req: Request,
   res: Response,
 ) => {
-  if (!req.files) {
-    return BadRequestException(req, res, "No images uploaded");
-  }
-
-  console.log(req.files);
-
-  const { auction_id, seller_id } = req.body;
-
-  if (!auction_id || !seller_id) {
-    return BadRequestException(req, res, "Missing auction_id or user_id");
-  }
-
-  const auction = await Auction.findById(auction_id);
-  const user = await User.findById(seller_id);
-  if (!auction || !user) {
-    return BadRequestException(req, res, "Auction or user not found");
-  }
-
-  const user_id = getUserId(req, res);
-
-  if (auction.isOwner(user_id)) {
-    return BadRequestException(
-      req,
-      res,
-      "The seller is not the owner of the auction",
-    );
-  }
-
-  if (auction.seller.toString() !== user_id) {
-    return UnauthorizedException(
-      req,
-      res,
-      "Unauthorized: You are not the seller of this auction",
-    );
-  }
-
-  const files = req.files as Express.Multer.File[];
   try {
+    if (!req.files) {
+      return BadRequestException(req, res, "No images uploaded");
+    }
+
+    const { auction_id, seller_id } = req.body;
+
+    if (!auction_id || !seller_id) {
+      return BadRequestException(req, res, "Missing auction_id or user_id");
+    }
+
+    const auction = await Auction.findById(auction_id);
+    const user = await User.findById(seller_id);
+    if (!auction || !user) {
+      return BadRequestException(req, res, "Auction or user not found");
+    }
+
+    const user_id = getUserId(req, res);
+
+    if (!auction.isOwner(user_id)) {
+      return BadRequestException(
+        req,
+        res,
+        "The seller is not the owner of the auction",
+      );
+    }
+
+    if (auction.seller.toString() !== user_id) {
+      return UnauthorizedException(
+        req,
+        res,
+        "Unauthorized: You are not the seller of this auction",
+      );
+    }
+
+    const files = req.files as Express.Multer.File[];
+
     for (const file of files) {
-      const path = file.path;
-      auction.images.push(path);
+      // Genera un percorso temporaneo per l'output del file convertito ( workaround per un errore )
+      const tempOutputPath = path.join(
+        file.destination,
+        `temp-${file.filename}`,
+      );
+
+      // Converti l'immagine in .webp
+      await sharp(file.path).webp().toFile(tempOutputPath);
+
+      fs.unlinkSync(file.path);
+
+      const finalOutputPath = path.join(file.destination, file.filename);
+      fs.renameSync(tempOutputPath, finalOutputPath);
+
+      auction.images.push(finalOutputPath);
     }
 
     await auction.save();
 
-    return res.status(200).send("Images uploaded");
+    return res.status(200).send("Images uploaded and converted to .webp");
   } catch (e) {
+    console.log(e);
     return InternalException(req, res, "Error while saving images");
   }
 };
@@ -160,9 +231,8 @@ export const getAuctionImagesController = async (
       return image.toString("base64");
     });
 
-    return res.json({ images: imagesBase64 });
+    res.json({ images: imagesBase64 });
   } catch (e) {
-    console.error(e);
     return InternalException(req, res, "Error while getting images");
   }
 };
@@ -201,19 +271,15 @@ const searchAuctions = async function (req: Request, res: Response) {
       try {
         superior_conditions = getSuperiorConditions(min_condition.toString());
       } catch (e) {
-        console.log(e);
         return BadRequestException(req, res, "Invalid condition");
       }
     }
 
     // If q is provided, search for books and auctions that match the query
     let searchedAuctions = [];
-    let books = [];
+    //  let books = [];
     const allAuctions = await Auction.find();
     if (q) {
-      books = (await fullTextSearch(Book, q.toString())).flatMap(
-        (book: { auctions: any; }) => book.auctions,
-      );
       searchedAuctions = await fullTextSearch(Auction, q.toString());
       if (!searchedAuctions) {
         return BadRequestException(req, res, "No auctions found");
@@ -235,9 +301,10 @@ const searchAuctions = async function (req: Request, res: Response) {
         {
           _id: q
             ? {
-                $in: searchedAuctions
-                  .map((auction: { _id: any; }) => auction._id)
-                  .concat(books),
+                $in: searchedAuctions.map(
+                  (auction: { _id: any }) => auction._id,
+                ),
+                // .concat(books),
               }
             : { $in: allAuctions.map((auction) => auction._id) },
         },
@@ -261,7 +328,7 @@ const searchAuctions = async function (req: Request, res: Response) {
       })
       .populate({
         path: "seller",
-        select: "-__v -_id -password -email -role",
+        select: "-__v -_id -password -email -role -notifications",
       })
       .select("-__v -reserve_price");
 

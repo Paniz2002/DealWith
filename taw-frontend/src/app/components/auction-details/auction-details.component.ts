@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import axios from 'axios';
-import { enviroments } from '../../../enviroments/enviroments';
+import { environments } from '../../../enviroments/environments';
 import { NotificationService } from '../../services/popup/notification.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -66,7 +66,7 @@ export class AuctionDetailsComponent implements OnInit {
   // (fix even if you use mongo docker)
   ngOnInit(): void {
     axios
-      .get(enviroments.BACKEND_URL + '/api/auctions/' + this.auctionID)
+      .get(environments.BACKEND_URL + '/api/auctions/' + this.auctionID)
       .then((details: any) => {
         this.auctionDetails = details.data;
         this.auctionPrice = this.getLastBidPrice(
@@ -84,7 +84,7 @@ export class AuctionDetailsComponent implements OnInit {
       });
 
     axios
-      .get(enviroments.BACKEND_URL + '/api/auctions/comments', {
+      .get(environments.BACKEND_URL + '/api/auctions/comments', {
         params: {
           isPrivate: true,
           auctionID: this.auctionID,
@@ -100,7 +100,7 @@ export class AuctionDetailsComponent implements OnInit {
       price: this.form.value.bidPrice,
     };
     const res = await axios.post(
-      enviroments.BACKEND_URL + '/api/auctions/' + this.auctionID,
+      environments.BACKEND_URL + '/api/auctions/' + this.auctionID,
       params,
     );
   }

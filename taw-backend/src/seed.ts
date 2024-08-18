@@ -10,6 +10,7 @@ import University from "../models/university";
 import User from "../models/user";
 import connectDB from "./config/db";
 
+
 const seedEmails = async () => {
   const emailsFilePath = path.join(__dirname, "data", "emails.json");
   const emailsData = JSON.parse(fs.readFileSync(emailsFilePath, "utf-8"));
@@ -87,7 +88,7 @@ const seedCourses = async (): Promise<void> => {
 
       const newExistingCourse = await Course.findOne({ name: courseData.name });
       // Add the Course to the University
-      const university = await University.findOne({
+     /* const university = await University.findOne({
         name: courseData.university,
       });
       if (!university) {
@@ -101,7 +102,7 @@ const seedCourses = async (): Promise<void> => {
         } else {
           console.log(`Course already in university: ${existingCourse.name}`);
         }
-      }
+      } */
     } catch (err) {
       console.error(`Error saving course: ${courseData.name}`, err);
     }
@@ -142,7 +143,7 @@ const seedUniversities = async (): Promise<void> => {
         name: universityData.name,
       });
       // Add the University to the City
-      const city = await City.findOne({ name: universityData.city });
+      /*const city = await City.findOne({ name: universityData.city });
       if (!city) {
         console.log(`City not found for university: ${universityData.name}`);
       } else {
@@ -158,7 +159,7 @@ const seedUniversities = async (): Promise<void> => {
             `University already in city: ${newExistingUniversity.name}`,
           );
         }
-      }
+      } */
     } catch (err) {
       console.error(`Error saving university: ${universityData.name}`, err);
     }
@@ -209,7 +210,7 @@ const seedBooks = async (): Promise<void> => {
         });
         await newBook.save();
         console.log(`Book saved: ${newBook.title}`);
-        course.books.push(newBook);
+       // course.books.push(newBook);
         course.save();
         console.log("Course added to book", course.name);
         newBook.courses.push(course);
@@ -226,7 +227,7 @@ const seedBooks = async (): Promise<void> => {
 
 const seedAuctions = async (): Promise<void> => {
   const imagesPath = path.join(__dirname, "data", "images", "sample");
-  const images = ["sample1.JPG", "sample2.JPG", "sample3.JPG"].map((image) =>
+  const images = ["sample1.webp", "sample2.webp", "sample3.webp"].map((image) =>
     path.join(imagesPath, image),
   );
 
@@ -258,14 +259,8 @@ const seedAuctions = async (): Promise<void> => {
         console.log(`Auction saved: ${newAuction.book}`);
 
         //add auction to book
-        book.auctions.push(newAuction);
+       // book.auctions.push(newAuction);
         await book.save();
-
-        for (const course_id of book.courses) {
-          const course = await Course.findById(course_id);
-          course.auctions.push(newAuction);
-          await course.save();
-        }
       }
     } catch (err) {
       console.error(`Error saving book: ${bookData.title}`, err);

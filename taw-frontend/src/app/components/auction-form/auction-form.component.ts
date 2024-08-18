@@ -19,7 +19,9 @@ interface Book {
   title: string;
   year: number;
   ISBN: string;
-} interface Course {
+}
+
+interface Course {
   id: string;
   name: string;
   university: string;
@@ -38,8 +40,7 @@ interface Book {
     MatButtonModule,
     MatIconModule,
     MatAutocompleteModule,
-    EditorModule,
-    //MatFormFieldControl
+    EditorModule
   ],
   selector: 'app-auction-form',
   standalone: true,
@@ -51,9 +52,7 @@ interface Book {
 export class AuctionFormComponent implements OnInit {
   auctionForm!: FormGroup;
   books: Book[] = [];
-  just_added = false;
   courses: Course[] = [];
-
 
 
   constructor(
@@ -94,17 +93,12 @@ export class AuctionFormComponent implements OnInit {
         this.books.push(result);
         this.auctionForm.controls['book'].setValue(result.id);
         this.displayBookTitle(result.id);
-        this.just_added = true;
       }
     });
   }
 
 
-
   onSubmit(): void {
-    //print all form values
-    console.log(this.courses);
-    return;
     if (this.auctionForm.valid) {
       this.auctionService.addAuction(this.auctionForm).then(result => {
         if (result) {
@@ -126,7 +120,7 @@ export class AuctionFormComponent implements OnInit {
   searchCourse() {
     //get the value of the input
     const search = this.auctionForm.controls['course'].value;
-    //fetch the books from the service
+    //fetch the course from the service
     this.auctionService.getCourses(search).then((data) => {
       this.courses = data
     });
@@ -135,6 +129,11 @@ export class AuctionFormComponent implements OnInit {
   displayBookTitle(bookId: string): string {
     const book = this.books.find(book => book.id === bookId);
     return book ? "[" + book.ISBN + "] " + book.title + " (" + book.year + ")" : '';
+  }
+
+  displayCourseName(courseId: string): string {
+    const course = this.courses.find(course => course.id === courseId);
+    return course ? `[${course.university}] ${course.name}` : '';
   }
 
 
