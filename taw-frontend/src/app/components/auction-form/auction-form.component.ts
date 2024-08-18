@@ -91,7 +91,7 @@ export class AuctionFormComponent implements OnInit {
       end_date: ['', Validators.required],
       start_date: ['', Validators.required],
       condition: ['', Validators.required],
-      files: ['', Validators.required],
+      files: ['', Validators.required ],
     });
 
     // Fetch books and courses from the service
@@ -103,6 +103,7 @@ export class AuctionFormComponent implements OnInit {
     const dialogRef = this.dialog.open(BookModalComponent, {
       width: '300pt',
       height: '350pt',
+      panelClass: 'custom-dialog-container',
       data: {title: this.auctionForm.controls['book_id'].value} //FIXME: value is undefined, not priority for now, just UX to autocomplete the form
     });
 

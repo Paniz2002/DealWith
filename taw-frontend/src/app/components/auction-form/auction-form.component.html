@@ -115,29 +115,34 @@
         Condition is required.
       </mat-error>
     </mat-form-field>
+      <div>
+        <div class="row align-items-center">
+          <div class="col-auto">
+            Images:
+          </div>
+          <div class="col-auto">
+            <button type="button" style="width:100%" mat-raised-button color="accent"  (click)="fileInput.click()">Choose Files</button>
+            <input hidden (change)="onFileSelected()" multiple="multiple" #fileInput type="file" id="files">
+          </div>
+        </div>
+      </div>
 
-    <div>
-      <div class="row">
-        <mat-label>Images</mat-label>
-      </div>
-      <div class="row mt-3">
-        <button type="button" mat-raised-button (click)="fileInput.click()">Choose Files</button>
-        <input hidden (change)="onFileSelected()" multiple="multiple" #fileInput type="file" id="files">
-      </div>
-    </div>
     <mat-error *ngIf="auctionForm.controls['files'].hasError('required')">
       Choose at least one image.
     </mat-error>
     <div *ngIf="imagePreviews.length > 0">
       <mat-label>Preview</mat-label>
-      <mat-grid-list cols="3" rowHeight="2:1">
-        <mat-grid-tile *ngFor="let img of imagePreviews">
+      <mat-grid-list cols="3" rowHeight="1:1" gutterSize="5px">
+        <mat-grid-tile style="border: 1px solid #f06292;"  *ngFor="let img of imagePreviews">
           <img [src]="img" class="preview-img" alt="preview">
         </mat-grid-tile>
       </mat-grid-list>
     </div>
 
     <!-- Submit Button -->
-    <button mat-raised-button color="primary" type="submit">Submit Auction</button>
+    <div class="row">
+      <div class="col-12"><button style="width: 100%" mat-raised-button color="primary" type="submit">Submit Auction</button></div>
+    </div>
+
   </form>
 </div>

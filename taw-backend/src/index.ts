@@ -45,6 +45,8 @@ io.on("connection", (socket)=>{
   console.log("Joined room: ", roomName);
 
   socket.to(roomName).emit("hello", "Hello from server, this is our private room");
+
+  socket.emit("hello", "Hello, you have joined the room: " + roomName);
 })
 
 

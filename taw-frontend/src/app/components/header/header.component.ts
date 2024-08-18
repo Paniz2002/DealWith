@@ -32,6 +32,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       socket.on("hello", (data: any)=>{
         console.log(data);
       });
+    }else{
+      console.log("Socket is not connected");
     }
 
     this.changes.add(
