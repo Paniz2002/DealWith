@@ -19,6 +19,7 @@ import {
 } from "@angular/material/datepicker";
 import {MatNativeDateModule} from "@angular/material/core";
 import {MatGridList, MatGridTile} from "@angular/material/grid-list";
+import {NotificationService} from "../../services/popup/notification.service";
 
 
 interface Book {
@@ -76,6 +77,7 @@ export class AuctionFormComponent implements OnInit {
     private router: Router,
     private auctionService: AuctionService,
     private dialog: MatDialog,
+    private snackBar: NotificationService
   ) {
   }
 
@@ -115,13 +117,21 @@ export class AuctionFormComponent implements OnInit {
 
 
   onSubmit(): void {
-
     if (this.auctionForm.valid) {
       this.auctionService.addAuction(this.auctionForm).then(result => {
         if (result) {
-          this.router.navigate(['/auctions']); // or wherever you want to navigate after submission
+          console.log(result)
+          if (result._id ) {
+            result = this.auctionService.uploadImages(result._id, this.selectedFiles);
+            if (!result) {
+              this.snackBar.notify('Error uploading images');
+              return;
+            }
+            this.snackBar.notify('Auction added successfully');
+            this.router.navigate(['/auction']); // or wherever you want to navigate after submission
+          }
         }
-      });
+      })
     }
   }
 

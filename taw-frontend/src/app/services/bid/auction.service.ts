@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import axios from 'axios';
 import {environments} from "../../../environments/environments";
 import {FormGroup} from '@angular/forms';
+import {NotificationService} from "../popup/notification.service";
 
 
 @Injectable({
@@ -10,7 +11,7 @@ import {FormGroup} from '@angular/forms';
 export class AuctionService {
   private apiUrl = environments.BACKEND_URL;
 
-  constructor() {
+  constructor(private snackBar: NotificationService) {
   }
 
   addAuction(auctionForm: FormGroup) {
@@ -18,17 +19,31 @@ export class AuctionService {
       .then(res => res.data)
       .catch(err => {
         console.error('Error adding auction:', err);
+        if (err.response.data.message) {
+          this.snackBar.notify(err.response.data.message);
+        } else {
+          this.snackBar.notify('Error adding auction');
+        }
         return false;
       });
   }
 
   uploadImages(auctionId: string, files: File[]) {
     const formData = new FormData();
-    files.forEach(file => formData.append('images', file));
-    return axios.post(`${this.apiUrl}/api/auctions/images/${auctionId}`, formData)
+    for (let file of files) {
+      formData.append('images', file);
+    }
+
+    formData.set('auction_id', auctionId);
+    return axios.post(`${this.apiUrl}/api/auctions/images`, formData)
       .then(res => res.data)
       .catch(err => {
         console.error('Error uploading images:', err);
+        if (err.response.data.message) {
+          this.snackBar.notify(err.response.data.message);
+        } else {
+          this.snackBar.notify('Error uploading images');
+        }
         return false;
       });
   }
@@ -43,6 +58,7 @@ export class AuctionService {
       }
       return res.data;
     } catch (err) {
+      this.snackBar.notify('Error fetching books');
       console.error('Error fetching books:', err);
       return [];
     }
@@ -58,6 +74,7 @@ export class AuctionService {
       }
       return res.data;
     } catch (err) {
+      this.snackBar.notify('Error fetching courses');
       console.error('Error fetching courses:', err);
       return [];
     }
@@ -68,6 +85,7 @@ export class AuctionService {
       const res = await axios.post(`${this.apiUrl}/api/books`, form_body);
       return res.data;
     } catch (err) {
+      this.snackBar.notify('Error adding book');
       return null;
     }
   }

@@ -93,7 +93,6 @@ export const newAuctionController = async (req: Request, res: Response) => {
             book.save();
         }
 
-
         const auction = await Auction.create({
             book: book_id,
             condition,
@@ -107,8 +106,7 @@ export const newAuctionController = async (req: Request, res: Response) => {
 
         await auction.save();
 
-
-        res.sendStatus(200);
+        return res.status(200).json(auction);
     } catch (err) {
         console.log(err);
         return InternalException(req, res, "Unknown error while creating listing");
@@ -179,15 +177,14 @@ export const uploadAuctionImagesController = async (
             return BadRequestException(req, res, "No images uploaded");
         }
 
-        const {auction_id, seller_id} = req.body;
+        const {auction_id} = req.body;
 
-        if (!auction_id || !seller_id) {
+        if (!auction_id) {
             return BadRequestException(req, res, "Missing auction_id or user_id");
         }
 
         const auction = await Auction.findById(auction_id);
-        const user = await User.findById(seller_id);
-        if (!auction || !user) {
+        if (!auction ) {
             return BadRequestException(req, res, "Auction or user not found");
         }
 
