@@ -15,6 +15,7 @@ import Bid from "../../models/bid";
 import mongoose from "mongoose";
 import path from "path";
 import fs from "fs";
+import sharp from "sharp";
 
 const conditions = ["Mint", "Near Mint", "Excellent", "Good", "Fair", "Poor"];
 
@@ -64,7 +65,10 @@ export const newAuctionController = async (req: Request, res: Response) => {
 
     try {
         const user_id = getUserId(req, res);
-
+        const book = await Book.findById(book_id);
+        if (!book) {
+            return BadRequestException(req, res, "Book not found");
+        }
         const auction = await Auction.create({
             book: book_id,
             condition,
@@ -88,7 +92,7 @@ export const newAuctionController = async (req: Request, res: Response) => {
     }
 };
 
-export const uploadAuctionImagesController = async (
+/*export const uploadAuctionImagesController = async (
     req: Request,
     res: Response,
 ) => {
@@ -141,7 +145,75 @@ export const uploadAuctionImagesController = async (
     } catch (e) {
         return InternalException(req, res, "Error while saving images");
     }
+};*/
+
+export const uploadAuctionImagesController = async (
+    req: Request,
+    res: Response,
+) => {
+    try {
+        if (!req.files) {
+            return BadRequestException(req, res, "No images uploaded");
+        }
+
+        const {auction_id, seller_id} = req.body;
+
+        if (!auction_id || !seller_id) {
+            return BadRequestException(req, res, "Missing auction_id or user_id");
+        }
+
+        const auction = await Auction.findById(auction_id);
+        const user = await User.findById(seller_id);
+        if (!auction || !user) {
+            return BadRequestException(req, res, "Auction or user not found");
+        }
+
+        const user_id = getUserId(req, res);
+
+        if (!auction.isOwner(user_id)) {
+            return BadRequestException(
+                req,
+                res,
+                "The seller is not the owner of the auction",
+            );
+        }
+
+        if (auction.seller.toString() !== user_id) {
+            return UnauthorizedException(
+                req,
+                res,
+                "Unauthorized: You are not the seller of this auction",
+            );
+        }
+
+        const files = req.files as Express.Multer.File[];
+
+        for (const file of files) {
+            // Genera un percorso temporaneo per l'output del file convertito ( workaround per un errore )
+            const tempOutputPath = path.join(file.destination, `temp-${file.filename}`);
+
+            // Converti l'immagine in .webp
+            await sharp(file.path)
+                .webp()
+                .toFile(tempOutputPath);
+
+            fs.unlinkSync(file.path);
+
+            const finalOutputPath = path.join(file.destination, file.filename);
+            fs.renameSync(tempOutputPath, finalOutputPath);
+
+            auction.images.push(finalOutputPath);
+        }
+
+        await auction.save();
+
+        return res.status(200).send("Images uploaded and converted to .webp");
+    } catch (e) {
+        console.log(e);
+        return InternalException(req, res, "Error while saving images");
+    }
 };
+
 
 export const getAuctionImagesController = async (req: Request, res: Response) => {
     try {
