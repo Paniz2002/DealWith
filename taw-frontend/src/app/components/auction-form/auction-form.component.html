@@ -1,125 +1,122 @@
+<div class="auction-form-container">
+  <form [formGroup]="auctionForm" (ngSubmit)="onSubmit()">
+    <!-- Book Select with Text Search and Create Option -->
+    <mat-form-field appearance="fill">
+      <mat-label>Book</mat-label>
+      <input matInput formControlName="book" [matAutocomplete]="autoBook" required (keyup)="searchBook()">
+      <mat-autocomplete #autoBook="matAutocomplete" [displayWith]="displayBookTitle.bind(this)">
+        <mat-option *ngFor="let book of books" [value]="book.id">
+          [{{ book.ISBN }}] {{ book.title }}  ({{ book.year }})
+        </mat-option>
+        <mat-option  *ngIf="(!books || books.length === 0 )" (click)="addBook()">
+          Add "{{ auctionForm.controls['book'].value }}"
+        </mat-option>
+      </mat-autocomplete>
+      <mat-error *ngIf="auctionForm.controls['book'].hasError('required')">
+        Book is required.
+      </mat-error>
+    </mat-form-field>
 
-    <div class="auction-form-container">
-      <form [formGroup]="auctionForm" (ngSubmit)="onSubmit()">
-        <!-- Book Select with Text Search and Create Option -->
-        <mat-form-field appearance="fill">
-          <mat-label>Book</mat-label>
-          <input matInput formControlName="book" [matAutocomplete]="autoBook" required (keyup)="searchBook()">
-          <mat-autocomplete #autoBook="matAutocomplete" [displayWith]="displayBookTitle.bind(this)">
-            <mat-option *ngFor="let book of books" [value]="book.id">
-              [{{ book.ISBN }}] {{ book.title }}  ({{ book.year }})
-            </mat-option>
-            <mat-option  *ngIf="(!books || books.length === 0 )" (click)="addBook()">
-              Add "{{ auctionForm.controls['book'].value }}"
-            </mat-option>
-          </mat-autocomplete>
-          <mat-error *ngIf="auctionForm.controls['book'].hasError('required')">
-            Book is required.
-          </mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill">
-          <mat-label>Course</mat-label>
-          <input matInput formControlName="course" [matAutocomplete]="autoCourse" required  (keyup)="searchCourse()">
-          <mat-autocomplete #autoCourse="matAutocomplete" >
-            <mat-option *ngFor="let course of courses" [value]="course.id">[{{ course.university }}] {{ course.name }}</mat-option>
-          <!--  <mat-option *ngIf="!(courses)?.length"
-                        (click)="addCourse(auctionForm.controls['course'].value)">Add
-              "{{ auctionForm.controls['course'].value }}"
-            </mat-option> -->
-          </mat-autocomplete>
-          <mat-error *ngIf="auctionForm.controls['course'].hasError('required')">
-            Course is required.
-          </mat-error>
-        </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Course</mat-label>
+      <input matInput formControlName="course" [matAutocomplete]="autoCourse" required (keyup)="searchCourse()">
+      <mat-autocomplete #autoCourse="matAutocomplete" [displayWith]="displayCourseName.bind(this)">
+        <mat-option *ngFor="let course of courses" [value]="course.id">
+          [{{ course.university }}] {{ course.name }}
+        </mat-option>
+      </mat-autocomplete>
+      <mat-error *ngIf="auctionForm.controls['course'].hasError('required')">
+        Course is required.
+      </mat-error>
+    </mat-form-field>
 
 
-        <mat-label>Description</mat-label>
-        <editor apiKey="b73mxp10yh8wgoa1ishnuyp449aujc1fl7lahnis43mp1vrk"
-                formControlName="description" [init]="{
-              height: 300,
-              menubar: false,
-              plugins: [
-                'advlist autolink lists link image charmap print preview anchor',
-                'searchreplace visualblocks code fullscreen',
-                'insertdatetime media table paste code help wordcount'
-              ],
-              toolbar: 'undo redo | formatselect | bold italic backcolor |  alignleft aligncenter alignright alignjustify |  bullist numlist outdent indent | removeformat | help'
-            }"></editor>
-        <mat-error *ngIf="auctionForm.controls['description'].hasError('required')">
-          Description is required.
-        </mat-error>
+
+    <mat-label>Description</mat-label>
+    <editor apiKey="b73mxp10yh8wgoa1ishnuyp449aujc1fl7lahnis43mp1vrk"
+            formControlName="description" [init]="{
+          height: 300,
+          menubar: false,
+          plugins: [
+            'advlist autolink lists link image charmap print preview anchor',
+            'searchreplace visualblocks code fullscreen',
+            'insertdatetime media table paste code help wordcount'
+          ],
+          toolbar: 'undo redo | formatselect | bold italic backcolor |  alignleft aligncenter alignright alignjustify |  bullist numlist outdent indent | removeformat | help'
+        }"></editor>
+    <mat-error *ngIf="auctionForm.controls['description'].hasError('required')">
+      Description is required.
+    </mat-error>
 
 
-        <!-- Reserve Price Input -->
-        <mat-form-field appearance="fill">
-          <mat-label>Reserve Price</mat-label>
-          <input matInput formControlName="reserve_price" type="number" required>
-          <mat-error *ngIf="auctionForm.controls['reserve_price'].hasError('required')">
-            Reserve Price is required.
-          </mat-error>
-          <mat-error *ngIf="auctionForm.controls['reserve_price'].hasError('min')">
-            Reserve Price must be at least 1.
-          </mat-error>
-        </mat-form-field>
+    <!-- Reserve Price Input -->
+    <mat-form-field appearance="fill">
+      <mat-label>Reserve Price</mat-label>
+      <input matInput formControlName="reserve_price" type="number" required>
+      <mat-error *ngIf="auctionForm.controls['reserve_price'].hasError('required')">
+        Reserve Price is required.
+      </mat-error>
+      <mat-error *ngIf="auctionForm.controls['reserve_price'].hasError('min')">
+        Reserve Price must be at least 1.
+      </mat-error>
+    </mat-form-field>
 
-        <!-- Starting Price Input -->
-        <mat-form-field appearance="fill">
-          <mat-label>Starting Price</mat-label>
-          <input matInput formControlName="starting_price" type="number" required>
-          <mat-error *ngIf="auctionForm.controls['starting_price'].hasError('required')">
-            Starting Price is required.
-          </mat-error>
-          <mat-error *ngIf="auctionForm.controls['starting_price'].hasError('min')">
-            Starting Price must be at least 1.
-          </mat-error>
-        </mat-form-field>
+    <!-- Starting Price Input -->
+    <mat-form-field appearance="fill">
+      <mat-label>Starting Price</mat-label>
+      <input matInput formControlName="starting_price" type="number" required>
+      <mat-error *ngIf="auctionForm.controls['starting_price'].hasError('required')">
+        Starting Price is required.
+      </mat-error>
+      <mat-error *ngIf="auctionForm.controls['starting_price'].hasError('min')">
+        Starting Price must be at least 1.
+      </mat-error>
+    </mat-form-field>
 
-        <!-- Start Date Input -->
-        <mat-form-field appearance="fill">
-          <mat-label>Start Date</mat-label>
-          <input matInput formControlName="start_date" type="datetime-local" required>
-          <mat-error *ngIf="auctionForm.controls['start_date'].hasError('required')">
-            Start Date is required.
-          </mat-error>
-        </mat-form-field>
+    <!-- Start Date Input -->
+    <mat-form-field appearance="fill">
+      <mat-label>Start Date</mat-label>
+      <input matInput formControlName="start_date" type="datetime-local" required>
+      <mat-error *ngIf="auctionForm.controls['start_date'].hasError('required')">
+        Start Date is required.
+      </mat-error>
+    </mat-form-field>
 
-        <!-- End Date Input -->
-        <mat-form-field appearance="fill">
-          <mat-label>End Date</mat-label>
-          <input matInput formControlName="end_date" type="datetime-local" required>
-          <mat-error *ngIf="auctionForm.controls['end_date'].hasError('required')">
-            End Date is required.
-          </mat-error>
-        </mat-form-field>
+    <!-- End Date Input -->
+    <mat-form-field appearance="fill">
+      <mat-label>End Date</mat-label>
+      <input matInput formControlName="end_date" type="datetime-local" required>
+      <mat-error *ngIf="auctionForm.controls['end_date'].hasError('required')">
+        End Date is required.
+      </mat-error>
+    </mat-form-field>
 
-        <!-- Condition Select -->
-        <mat-form-field appearance="fill">
-          <mat-label>Condition</mat-label>
-          <mat-select formControlName="condition" required>
-            <mat-option value="Mint">Mint</mat-option>
-            <mat-option value="Near Mint">Near Mint</mat-option>
-            <mat-option value="Excellent">Excellent</mat-option>
-            <mat-option value="Good">Good</mat-option>
-            <mat-option value="Fair">Fair</mat-option>
-            <mat-option value="Poor">Poor</mat-option>
-          </mat-select>
-          <mat-error *ngIf="auctionForm.controls['condition'].hasError('required')">
-            Condition is required.
-          </mat-error>
-        </mat-form-field>
+    <!-- Condition Select -->
+    <mat-form-field appearance="fill">
+      <mat-label>Condition</mat-label>
+      <mat-select formControlName="condition" required>
+        <mat-option value="Mint">Mint</mat-option>
+        <mat-option value="Near Mint">Near Mint</mat-option>
+        <mat-option value="Excellent">Excellent</mat-option>
+        <mat-option value="Good">Good</mat-option>
+        <mat-option value="Fair">Fair</mat-option>
+        <mat-option value="Poor">Poor</mat-option>
+      </mat-select>
+      <mat-error *ngIf="auctionForm.controls['condition'].hasError('required')">
+        Condition is required.
+      </mat-error>
+    </mat-form-field>
 
-        <!--FIXME Images Multiple Upload
-        <mat-form-field appearance="fill">
-          <mat-label>Images</mat-label>
-          <input matInput formControlName="images" type="file" multiple required>
-          <mat-error *ngIf="auctionForm.controls['images'].hasError('required')">
-            Images are required.
-          </mat-error>
-        </mat-form-field> -->
+    <!--FIXME Images Multiple Upload
+    <mat-form-field appearance="fill">
+      <mat-label>Images</mat-label>
+      <input matInput formControlName="images" type="file" multiple required>
+      <mat-error *ngIf="auctionForm.controls['images'].hasError('required')">
+        Images are required.
+      </mat-error>
+    </mat-form-field> -->
 
-        <!-- Submit Button -->
-        <button mat-raised-button color="primary" type="submit">Submit Auction</button>
-      </form>
-    </div>
-
+    <!-- Submit Button -->
+    <button mat-raised-button color="primary" type="submit">Submit Auction</button>
+  </form>
+</div>

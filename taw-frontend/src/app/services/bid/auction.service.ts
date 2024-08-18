@@ -13,7 +13,7 @@ export class AuctionService {
   }
 
   addAuction(auctionForm: FormGroup) {
-    return axios.post(`${this.apiUrl}/api/listing`, auctionForm.value)
+    return axios.post(`${this.apiUrl}/api/auction`, auctionForm.value)
       .then(res => res.data)
       .catch(err => {
         console.error('Error adding auction:', err);

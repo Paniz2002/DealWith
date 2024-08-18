@@ -6,7 +6,7 @@
   },
   {
     "name": "computer science",
-    "year": { "year1": 2023, "year2": 2024 },
+    "year": { "year1": 2022, "year2": 2023 },
     "university": "Politecnico di Milano"
   },
   {
@@ -16,7 +16,7 @@
   },
   {
     "name": "mechanical engineering",
-    "year": { "year1": 2023, "year2": 2024 },
+    "year": { "year1": 2010, "year2": 2011 },
     "university": "Politecnico di Torino"
   },
   {
@@ -26,12 +26,12 @@
   },
   {
     "name": "civil engineering",
-    "year": { "year1": 2023, "year2": 2024 },
+    "year": { "year1": 1991, "year2": 1992 },
     "university": "University of Genova"
   },
   {
     "name": "business administration",
-    "year": { "year1": 2023, "year2": 2024 },
+    "year": { "year1": 2000, "year2": 2001 },
     "university": "University of Bologna"
   },
   {
@@ -46,7 +46,7 @@
   },
   {
     "name": "biology",
-    "year": { "year1": 2023, "year2": 2024 },
+    "year": { "year1": 2024, "year2": 2025 },
     "university": "Ca'Foscari University of Venice"
   },
   {
@@ -56,7 +56,7 @@
   },
   {
     "name": "physics",
-    "year": { "year1": 2023, "year2": 2024 },
+    "year": { "year1": 2004, "year2": 2005 },
     "university": "Ca'Foscari University of Venice"
   }
 ]
