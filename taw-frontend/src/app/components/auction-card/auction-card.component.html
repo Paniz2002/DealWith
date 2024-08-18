@@ -3,8 +3,31 @@
         <mat-card-title [routerLink]="['/auction',this.auctionID]"> <span class = "title"> {{ this.bookTitle }} </span> </mat-card-title>
         <mat-card-subtitle>{{ this.bookAuthor }}</mat-card-subtitle>
       </mat-card-header>
-      <img *ngFor="let image of this.base64Images" [src]="'data:image/webp;base64,' + image" loading="lazy" alt="Auction Image">
-      <!--@for (image of this.base64Images; track image) {
+  <div [id]="'auctionCarousel'+this.auctionID" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+      <button *ngFor="let image of base64Images; let i = index" type="button" [attr.data-bs-target]="'#auctionCarousel'+this.auctionID"
+              [attr.data-bs-slide-to]="i"
+              [ngClass]="{'active': i === 0}"
+              [attr.aria-label]="'Slide ' + (i + 1)">
+      </button>
+    </div>
+    <div class="carousel-inner">
+      <div *ngFor="let image of base64Images; let i = index" class="carousel-item" [ngClass]="{'active': i === 0}">
+        <img [src]="'data:image/webp;base64,' + image" class="carousel-image d-block w-100" alt="Auction Image">
+      </div>
+    </div>
+    <a class="carousel-control-prev" type="button" [attr.data-bs-target]="'#auctionCarousel'+this.auctionID" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </a>
+    <a class="carousel-control-next" type="button" [attr.data-bs-target]="'#auctionCarousel'+this.auctionID" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </a>
+  </div>
+     <!-- <img *ngFor="let image of this.base64Images" [src]="'data:image/webp;base64,' + image" loading="lazy" alt="Auction Image"> -->
+
+  <!--@for (image of this.base64Images; track image) {
         <img mat-card-image [src]="'data:image/webp;base64,' + image" alt="Carousel pictures of book" />
       }-->
       <mat-card-content>

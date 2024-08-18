@@ -227,7 +227,7 @@ const seedBooks = async (): Promise<void> => {
 
 const seedAuctions = async (): Promise<void> => {
   const imagesPath = path.join(__dirname, "data", "images", "sample");
-  const images = ["sample1.JPG", "sample2.JPG", "sample3.JPG"].map((image) =>
+  const images = ["sample1.webp", "sample2.webp", "sample3.webp"].map((image) =>
     path.join(imagesPath, image),
   );
 
@@ -261,12 +261,6 @@ const seedAuctions = async (): Promise<void> => {
         //add auction to book
        // book.auctions.push(newAuction);
         await book.save();
-
-        for (const course_id of book.courses) {
-          const course = await Course.findById(course_id);
-          course.auctions.push(newAuction);
-          await course.save();
-        }
       }
     } catch (err) {
       console.error(`Error saving book: ${bookData.title}`, err);

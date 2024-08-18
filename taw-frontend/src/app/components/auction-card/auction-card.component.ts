@@ -3,6 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { MatChipsModule } from '@angular/material/chips';
+import {NgClass, NgForOf, NgOptimizedImage} from "@angular/common";
 export interface AuctionCard {
   ID: string;
   bookTitle: string;
@@ -15,7 +16,7 @@ export interface AuctionCard {
 @Component({
   selector: 'app-auction-card',
   standalone: true,
-  imports: [RouterLink, MatCardModule, MatChipsModule, MatButtonModule],
+  imports: [RouterLink, MatCardModule, MatChipsModule, MatButtonModule, NgForOf, NgOptimizedImage, NgClass],
   templateUrl: './auction-card.component.html',
   styleUrl: './auction-card.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

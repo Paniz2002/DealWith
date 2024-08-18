@@ -24,3 +24,33 @@ button {
   width: 100%;
 }
 
+.carousel{
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+}
+
+.carousel-inner {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.carousel-inner .carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.carousel-item {
+  height: 300px; /* Imposta l'altezza fissa per l'elemento carousel */
+}
+
+.carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Per mantenere l'immagine centrata e coprire l'intera area */
+  object-position: center;
+}
+
