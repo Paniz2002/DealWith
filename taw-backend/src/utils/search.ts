@@ -180,12 +180,9 @@ export default async function fullTextSearch(
     //region populate
     refPaths=  uniqueAndSortByPopulatePath(refPaths);
     let pop = await recursivePopulate(refPaths);
-    console.log('pop', pop);
-
     for (const populateOption of pop) {
         query = query.populate(populateOption);
     }
-
     //endregion
 
 
@@ -195,10 +192,8 @@ export default async function fullTextSearch(
     let query_copy = query.clone();
     const refConditions_res = await buildReferenceConditions(refPaths, searchText);
     if (searchConditions) {
-        console.log('searchConditions',searchConditions)
         query_copy.or(searchConditions);
     }
-        console.log('refConditions_res',refConditions_res)
     query_copy.or(refConditions_res);
     results = await query_copy.exec();
     if (results.length > 0) {

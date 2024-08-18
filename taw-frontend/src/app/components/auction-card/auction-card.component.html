@@ -58,9 +58,7 @@
         <img mat-card-image [src]="'data:image/webp;base64,' + image" alt="Carousel pictures of book" />
       }-->
   <mat-card-content>
-    <p>
-      {{ this.bidDescription }}
-    </p>
+    <div [innerHTML]="this.bidDescription"></div>
     <label for="price">Bid:</label>
     <span class="price"> {{ this.currentPrice }} EUR </span>
   </mat-card-content>
