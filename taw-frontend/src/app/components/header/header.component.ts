@@ -15,8 +15,9 @@ import { EventManagerService } from '../../services/eventManager/event-manager.s
   styleUrl: './header.component.css',
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-  protected userType: string | null = '';
-  protected isUserLoggedIn: string | null = '';
+  protected userType: string | null = this.localStorage.get('userType');
+  protected isUserLoggedIn: string | null =
+    this.localStorage.get('isUserLoggedIn');
   protected changes: Subscription = new Subscription();
   constructor(
     protected localStorage: LocalStorageService,
