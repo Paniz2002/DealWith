@@ -8,17 +8,50 @@ import cron from "node-cron";
 import { whitelistMiddleware } from "./middlewares/whitelist";
 import connectDB from "./config/db";
 import { checkAuctionsEnd } from "./utils/notifications";
+import http from "http"
+import {Server} from "socket.io"
+import {getUserId} from "./utils/userID";
+import * as jwt from "jsonwebtoken";
+import {JWT_SECRET} from "./secret";
+import User from "../models/user";
 
 dotenv.config();
 
 const app: Express = express();
+const httpServer = http.createServer(app);
 
 connectDB();
 
 const port = process.env.PORT || 3000;
 
+export const io = new Server(3001, {
+  cors:{
+    origin: "http://localhost:4200",
+    methods: ["GET", "POST"],
+    allowedHeaders:["jwt"],
+    credentials: true,
+  }
+});
+
+io.on("connection", (socket)=>{
+  const query = socket.handshake.query;
+  const roomName = query.roomName;
+  console.log("Connection established")
+  if(!roomName){
+    console.log("No room name provided");
+    return;
+  }
+  socket.join(roomName);
+  console.log("Joined room: ", roomName);
+
+  socket.to(roomName).emit("hello", "Hello from server, this is our private room");
+})
+
+
+
+
 const corsOptions = {
-  origin: ["http://localhost:4200", "http://localhost:3000"],
+  origin: ["http://localhost:4200", "http://localhost:3000", "http://localhost:3001"],
   credentials: true, // Allows credentials (cookies) to be sent
 };
 

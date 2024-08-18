@@ -3,11 +3,10 @@ import connectDB from "../config/db";
 import Auction from "../../models/auction";
 import Book from "../../models/book";
 import User from "../../models/user";
+import {io} from "../index";
 
 export const checkAuctionsEnd = async () => {
     try{
-        await connectDB();
-
         const auctions = await Auction.find();
         for (const auction of auctions) {
             if (!auction.isActive() ) {
@@ -19,8 +18,10 @@ export const checkAuctionsEnd = async () => {
 
                     if (lastBid.price >= auction.reserve_price) {
                         if (!seller.existingNotification(auction._id, "AUCTION_END")) {
-                            seller.notifications.push(await AuctionEndNotification(auction._id));
+                            const notification = await AuctionEndNotification(auction._id);
+                            seller.notifications.push(notification);
                             await seller.save();
+                            io.to(seller._id).emit("notification", notification);
                         }
 
                         for(const bid of auction.bids){

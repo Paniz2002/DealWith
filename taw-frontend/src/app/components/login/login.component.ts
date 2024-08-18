@@ -19,6 +19,8 @@ import { NotificationService } from '../../services/popup/notification.service';
 import { RegisterComponent } from '../register/register.component';
 import { LocalStorageService } from '../../services/localStorage/localStorage.service';
 import { EventManagerService } from '../../services/eventManager/event-manager.service';
+// import {socket} from "../../../socket";
+import {io} from "socket.io-client";
 
 @Component({
   selector: 'app-register',
@@ -79,6 +81,7 @@ export class LoginComponent implements OnInit {
       if (res.status !== 200) {
         return;
       }
+
       this.localStorage.set('isUserLoggedIn', 'true');
       this.localStorage.set(
         'userType',

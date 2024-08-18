@@ -1,12 +1,7 @@
 import connectDB from "../config/db";
 import Auction from "../../models/auction";
 import User from "../../models/user";
-import {
-    AuctionEndNotification,
-    AuctionLoseNotification, AuctionNoBidsNotification,
-    AuctionReserveNotification,
-    AuctionWinNotification
-} from "../utils/notifications";
+
 import {Request, Response} from "express";
 import {getUserId} from "../utils/userID";
 
