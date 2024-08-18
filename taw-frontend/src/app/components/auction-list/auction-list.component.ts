@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuctionCardComponent } from '../auction-card/auction-card.component';
 import axios from 'axios';
-import { enviroments } from '../../../enviroments/enviroments';
+import { environments } from '../../../enviroments/environments';
 import { AuctionCard } from '../auction-card/auction-card.component';
 import { NotificationService } from '../../services/popup/notification.service';
 import { MatSliderModule } from '@angular/material/slider';
@@ -64,27 +64,46 @@ export class AuctionListComponent implements OnInit {
 
   ngOnInit(): void {
     axios
-      .get(enviroments.BACKEND_URL + '/api/auctions')
-      .then((auctions: any) => {
-        auctions.data.forEach((auction: any) => {
+      .get(environments.BACKEND_URL + '/api/auctions')
+      .then(async (auctions: any) => {
+        for (const auction of auctions.data) {
           this.availableAuctions.push(<AuctionCard>{
             ID: auction._id,
             bookTitle: auction.book.title,
             bidDescription: auction.description,
-            base64Images: auction.images as string[],
+            base64Images: [],
             bookAuthor: auction.book.author,
             currentPrice:
               auction.bids.length > 0
                 ? this.getLastBidPrice(auction.bids, auction.starting_price)
                 : auction.starting_price,
           });
-        });
+
+          await this.loadAuctionImages();
+        }
       })
       .catch((err) => {
         this.snackBar.notify(err.message);
       });
 
   }
+
+  private async loadAuctionImages(): Promise<void> {
+    // Itera su ogni asta disponibile per caricare le immagini
+    for (const auction of this.availableAuctions) {
+      try {
+        const response = await axios.get(
+          `${environments.BACKEND_URL}/api/auctions/${auction.ID}/images`
+        );
+
+        // Aggiorna l'asta con le immagini caricate
+        auction.base64Images = response.data.images;
+      } catch (error) {
+        console.error(`Error loading images for auction ${auction.ID}`, error);
+      }
+    }
+  }
+
   private getLastBidPrice(bids: any, startingPrice: Number): Number {
     let currMax: Number = -1;
     // There might be a "functional" way of doing it,
@@ -116,7 +135,7 @@ export class AuctionListComponent implements OnInit {
     }
     console.log(params);
     axios
-      .get(enviroments.BACKEND_URL + '/api/auctions', { params })
+      .get(environments.BACKEND_URL + '/api/auctions', { params })
       .then((auctions: any) => {
         auctions.data.forEach((auction: any) => {
           // FIXME:

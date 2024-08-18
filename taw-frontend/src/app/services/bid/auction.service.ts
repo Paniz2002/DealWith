@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
 import axios from 'axios';
-import {enviroments} from "../../../enviroments/enviroments";
+import {environments} from "../../../enviroments/environments";
 import {FormGroup} from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuctionService {
-  private apiUrl = enviroments.BACKEND_URL;
+  private apiUrl = environments.BACKEND_URL;
 
   constructor() {
   }

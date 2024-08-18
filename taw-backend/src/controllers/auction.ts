@@ -159,6 +159,7 @@ export const getAuctionImagesController = async (req: Request, res: Response) =>
 
     res.json({images: imagesBase64});
   }catch(e){
+    console.error(e);
     return InternalException(req, res, "Error while getting images");
   }
 }

@@ -12,6 +12,7 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {EditorModule} from '@tinymce/tinymce-angular';
 import {BookModalComponent} from "../book-modal/book-modal.component";
 import {MatDialog} from "@angular/material/dialog";
+import {MatCard} from "@angular/material/card";
 
 
 interface Book {
@@ -39,6 +40,7 @@ interface Book {
     MatIconModule,
     MatAutocompleteModule,
     EditorModule,
+    MatCard,
     //MatFormFieldControl
   ],
   selector: 'app-auction-form',

@@ -1,21 +1,21 @@
-
 <mat-card class="auction-card" appearance="outlined">
-  <mat-card-header>
-    <mat-card-title [routerLink]="['/auction',this.auctionID]"> <span class = "title"> {{ this.bookTitle }} </span> </mat-card-title>
-    <mat-card-subtitle>{{ this.bookAuthor }}</mat-card-subtitle>
-  </mat-card-header>
-  <!-- TODO: carousel of images -->
-  @for (image of this.base64Images; track image) {
-    <img mat-card-image [src]="image" alt="Carousel pictures of book" />
-  }
-  <mat-card-content>
-    <p>
-      {{ this.bidDescription }}
-    </p>
-    Bid: <span class="price"> {{ this.currentPrice }} EUR </span>
-  </mat-card-content>
-  <mat-card-actions>
-    <button mat-raised-button color="primary" [routerLink]="['/auction', this.auctionID]">View details</button>
-  </mat-card-actions>
-</mat-card>
+      <mat-card-header>
+        <mat-card-title [routerLink]="['/auction',this.auctionID]"> <span class = "title"> {{ this.bookTitle }} </span> </mat-card-title>
+        <mat-card-subtitle>{{ this.bookAuthor }}</mat-card-subtitle>
+      </mat-card-header>
+      <img *ngFor="let image of this.base64Images" [src]="'data:image/webp;base64,' + image" loading="lazy" alt="Auction Image">
+      <!--@for (image of this.base64Images; track image) {
+        <img mat-card-image [src]="'data:image/webp;base64,' + image" alt="Carousel pictures of book" />
+      }-->
+      <mat-card-content>
+        <p>
+          {{ this.bidDescription }}
+        </p>
+        Bid: <span class="price"> {{ this.currentPrice }} EUR </span>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" [routerLink]="['/auction', this.auctionID]">View details</button>
+      </mat-card-actions>
+    </mat-card>
+
 
