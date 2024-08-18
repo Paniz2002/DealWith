@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {Component, OnInit} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,20 +7,21 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { environments } from '../../../environments/environments';
+import {environments} from '../../../environments/environments';
 import axios from 'axios';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
-import { NotificationService } from '../../services/popup/notification.service';
-import { RegisterComponent } from '../register/register.component';
-import { LocalStorageService } from '../../services/localStorage/localStorage.service';
-import { EventManagerService } from '../../services/eventManager/event-manager.service';
+import {MatSelectModule} from '@angular/material/select';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {Router} from '@angular/router';
+import {NotificationService} from '../../services/popup/notification.service';
+import {RegisterComponent} from '../register/register.component';
+import {LocalStorageService} from '../../services/localStorage/localStorage.service';
+import {EventManagerService} from '../../services/eventManager/event-manager.service';
 // import {socket} from "../../../socket";
 import {io} from "socket.io-client";
+import {SocketService} from "../../socket.service";
 
 @Component({
   selector: 'app-register',
@@ -48,7 +49,9 @@ export class LoginComponent implements OnInit {
     private snackBar: NotificationService,
     private localStorage: LocalStorageService,
     private eventManager: EventManagerService,
-  ) {}
+    private socketService: SocketService
+  ) {
+  }
 
   ngOnInit() {
     this.isFormValid = false;
@@ -78,9 +81,16 @@ export class LoginComponent implements OnInit {
       const res = await axios.post(url, this.form.value, {
         withCredentials: true,
       });
-      if (res.status !== 200) {
+      if (res.status !== 200 || !res.data) {
         return;
       }
+      if (!res.data._id) {
+        console.log("No user id found");
+        return
+      }
+
+      this.socketService.joinRoom(res.data._id);
+      this.socketService.sendMessage(res.data._id, "User has logged in");
 
       this.localStorage.set('isUserLoggedIn', 'true');
       this.localStorage.set(

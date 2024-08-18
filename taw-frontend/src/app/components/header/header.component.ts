@@ -6,8 +6,6 @@ import { RouterLink } from '@angular/router';
 import { LocalStorageService } from '../../services/localStorage/localStorage.service';
 import { Subscription } from 'rxjs';
 import { EventManagerService } from '../../services/eventManager/event-manager.service';
-import {socket} from "../../app.module";
-// import {socket} from "../../../socket";
 
 
 @Component({
@@ -28,12 +26,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    if(socket){
-      socket.on("hello", (data: any)=>{
-        console.log(data);
-      });
-    }
-
     this.changes.add(
       this.eventManager.loginOk.subscribe(() => {
         this.userType = this.localStorage.get('userType');

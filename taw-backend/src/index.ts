@@ -18,36 +18,43 @@ import User from "../models/user";
 dotenv.config();
 
 const app: Express = express();
-const httpServer = http.createServer(app);
 
 connectDB();
 
 const port = process.env.PORT || 3000;
 
-export const io = new Server(3001, {
-  cors:{
-    origin: "http://localhost:4200",
-    methods: ["GET", "POST"],
-    allowedHeaders:["jwt"],
-    credentials: true,
-  }
+
+const server = http.createServer(app);
+export const  io = new Server(server, {
+    cors: {
+        origin: "http://localhost:4200", // Angular app's URL
+        methods: ["GET", "POST"]
+    }
 });
 
-io.on("connection", (socket)=>{
-  const query = socket.handshake.query;
-  const roomName = query.roomName;
-  console.log("Connection established")
-  if(!roomName){
-    console.log("No room name provided");
-    return;
-  }
-  socket.join(roomName);
-  console.log("Joined room: ", roomName);
+io.on('connection', (socket) => {
+    console.log('New client connected');
 
-  socket.to(roomName).emit("hello", "Hello from server, this is our private room");
-})
+    // When a user joins a room
+    socket.on('joinRoom', (room) => {
+        socket.join(room);
+        console.log(`User joined room: ${room}`);
+    });
+
+    // Handle a custom event
+    socket.on('sendMessage', (data) => {
+        const { room, message } = data;
+        io.to(room).emit('receiveMessage', message);
+    });
+
+    // When a user disconnects
+    socket.on('disconnect', () => {
+        console.log('Client disconnected');
+    });
+});
 
 
+server.listen(3001, () => console.log('[socketIo] Server is running on port 3001'));
 
 
 const corsOptions = {
