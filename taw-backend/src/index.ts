@@ -10,46 +10,47 @@ import connectDB from "./config/db";
 import { checkAuctionsEnd } from "./utils/notifications";
 import http from "http"
 import {Server} from "socket.io"
-import {getUserId} from "./utils/userID";
-import * as jwt from "jsonwebtoken";
-import {JWT_SECRET} from "./secret";
-import User from "../models/user";
 
 dotenv.config();
 
 const app: Express = express();
-const httpServer = http.createServer(app);
 
 connectDB();
 
 const port = process.env.PORT || 3000;
 
-export const io = new Server(3001, {
-  cors:{
-    origin: "http://localhost:4200",
-    methods: ["GET", "POST"],
-    allowedHeaders:["jwt"],
-    credentials: true,
-  }
+
+const server = http.createServer(app);
+export const  io = new Server(server, {
+    cors: {
+        origin: "http://localhost:4200", // Angular app's URL
+        methods: ["GET", "POST"]
+    }
 });
 
-io.on("connection", (socket)=>{
-  const query = socket.handshake.query;
-  const roomName = query.roomName;
-  console.log("Connection established")
-  if(!roomName){
-    console.log("No room name provided");
-    return;
-  }
-  socket.join(roomName);
-  console.log("Joined room: ", roomName);
+io.on('connection', (socket) => {
+    console.log('New client connected (no room yet)');
 
-  socket.to(roomName).emit("hello", "Hello from server, this is our private room");
+    // When a user joins a room
+    socket.on('joinRoom', (room) => { //REMEMBER: room is the user id so be careful when you use ._id (it could be type ObjectId), make sure to convert it to string
+        socket.join(room);
+        console.log(`User joined room: ${room}`);
+    });
 
-  socket.emit("hello", "Hello, you have joined the room: " + roomName);
-})
+    // Handle a custom event
+    socket.on('sendMessage', (data) => {
+        const { room, message } = data;
+        io.to(room).emit('receiveMessage', message);
+    });
+
+    // When a user disconnects
+    socket.on('disconnect', () => {
+        console.log('Client disconnected');
+    });
+});
 
 
+server.listen(3001, () => console.log('[socketIo] Server is running on port 3001'));
 
 
 const corsOptions = {
@@ -79,8 +80,7 @@ export function capitalizeFirstLetter(string:string) {
 
 // Schedule cron job to check auctions every 1 minute
 const job = cron.schedule("*/1 * * * *", () => {
-  console.log("Checking auctions...");
-  checkAuctionsEnd().then(r => console.log("Auctions checked"));
+  checkAuctionsEnd().then((r) => {console.log("Auction checked")}).catch((e) => {console.error("Auction checking Error",e)});
 });
 
 job.start();
