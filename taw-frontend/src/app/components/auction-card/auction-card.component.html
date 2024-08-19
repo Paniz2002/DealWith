@@ -52,11 +52,6 @@
       <span class="visually-hidden">Next</span>
     </a>
   </div>
-  <!-- <img *ngFor="let image of this.base64Images" [src]="'data:image/webp;base64,' + image" loading="lazy" alt="Auction Image"> -->
-
-  <!--@for (image of this.base64Images; track image) {
-        <img mat-card-image [src]="'data:image/webp;base64,' + image" alt="Carousel pictures of book" />
-      }-->
   <mat-card-content>
     <p>
       {{ this.bidDescription }}
@@ -68,7 +63,7 @@
     <button
       mat-raised-button
       color="primary"
-      [routerLink]="['/auction', this.auctionID]"
+      [routerLink]="[this.auctionID]"
     >
       View details
     </button>

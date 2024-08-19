@@ -18,12 +18,12 @@
       </button>
     }
     @if (this.userType === "student") {
-      <button mat-button [routerLink]="'/auction/create'" class="header-button">
+      <button mat-button [routerLink]="'create'" class="header-button">
         Create Auction
       </button>
     }
     @if (this.userType !== "admin") {
-      <button mat-button [routerLink]="'/auction'" class="header-button">
+      <button mat-button [routerLink]="''" class="header-button">
         List Auction(s)
       </button>
     }

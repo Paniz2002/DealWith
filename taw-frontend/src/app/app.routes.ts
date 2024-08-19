@@ -44,18 +44,18 @@ export const routes: Routes = [
   {
     // Ideally we'd have auction and then {path: create...} children
     // but it's not possibile.
-    path: 'auction/create',
+    path: 'create',
     component: AuctionFormComponent,
     pathMatch: 'full',
     canActivate: [StudentGuard],
   },
   {
-    path: 'auction/:id',
+    path: ':id',
     component: AuctionDetailsComponent,
     pathMatch: 'full',
   },
   {
-    path: 'auction',
+    path: '',
     component: AuctionListComponent,
     pathMatch: 'full',
   },
