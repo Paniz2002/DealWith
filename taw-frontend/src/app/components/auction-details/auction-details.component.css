@@ -1,3 +1,11 @@
 mat-card {
+  margin-top: 10px;
+  height: 100vh;
+}
+
+.messages-container{
+  height: 80vh;
+  overflow-y: auto;
   border-radius: 15px;
+  border: 1px solid #ccc;
 }

@@ -23,6 +23,7 @@ services:
       - ./taw-backend/.env
     ports:
       - "3000:3000"
+      - "3001:3001"
     networks:
       taw-network:
         ipv4_address: 172.77.0.17

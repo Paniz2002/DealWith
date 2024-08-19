@@ -5,5 +5,7 @@ export const logoutController = async (req: Request, res: Response) => {
     secure: false,
     sameSite: "lax",
   });
+
+
   return res.sendStatus(200);
 };
