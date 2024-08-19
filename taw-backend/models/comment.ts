@@ -16,7 +16,6 @@ const CommentSchema = new mongoose.Schema(
     receiver: {
       type: mongoose.Schema.Types.ObjectId,
       ref: User,
-      required: [true, "can't be blank"],
     },
     auction: {
       type: mongoose.Schema.Types.ObjectId,
