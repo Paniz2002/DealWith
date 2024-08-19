@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import {enviroments} from '../../../enviroments/enviroments';
+import {environments} from '../../../environments/environments';
 import axios from 'axios';
 import {MatSelectModule} from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';
@@ -45,7 +45,7 @@ export class RegisterComponent implements OnInit {
   ) {
     //check if current route is /register
     if (this.router.url !== '/register') {
-      axios.get(enviroments.BACKEND_URL + '/api/auth/me').then((res) => {
+      axios.get(environments.BACKEND_URL + '/api/auth/me').then((res) => {
         this.isUserModerator = res.data.is_moderator;
       }).catch((e) => {/*avoid printing in console*/});
     }
@@ -162,7 +162,7 @@ export class RegisterComponent implements OnInit {
     ) {
       return;
     }
-    const url = enviroments.BACKEND_URL + '/api/auth/register';
+    const url = environments.BACKEND_URL + '/api/auth/register';
     try {
       if (this.isUserModerator) {
         this.form.value.role = 'moderator';

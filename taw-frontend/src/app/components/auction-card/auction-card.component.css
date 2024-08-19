@@ -1,0 +1,56 @@
+.auction-card {
+  width: 100%;
+  border-radius: 15px;
+  margin-bottom: 8px;
+  margin-top: 8px;
+  padding: 20px;
+}
+
+.auction-card:hover {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+}
+
+.title:hover {
+  text-decoration: underline black;
+}
+
+.price{
+  font-size: 20px;
+  font-weight: bold;
+}
+
+button {
+  width: 100%;
+}
+
+.carousel{
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+}
+
+.carousel-inner {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.carousel-inner .carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.carousel-item {
+  height: 300px; /* Imposta l'altezza fissa per l'elemento carousel */
+}
+
+.carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Per mantenere l'immagine centrata e coprire l'intera area */
+  object-position: center;
+}
+

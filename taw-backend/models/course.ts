@@ -17,7 +17,8 @@ const CourseSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: University,
   },
-  auctions: [
+
+ /* auctions: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: Auction,
@@ -28,9 +29,10 @@ const CourseSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: Book,
     },
-  ],
+  ],*/
 });
 
+CourseSchema.index({ "$**": "text" });
 const Course: Model<any> = mongoose.model("Course", CourseSchema);
 
 export default Course;

@@ -1,19 +1,19 @@
 import {Injectable} from '@angular/core';
 import axios from 'axios';
-import {enviroments} from "../../../enviroments/enviroments";
+import {environments} from "../../../environments/environments";
 import {FormGroup} from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuctionService {
-  private apiUrl = enviroments.BACKEND_URL;
+  private apiUrl = environments.BACKEND_URL;
 
   constructor() {
   }
 
   addAuction(auctionForm: FormGroup) {
-    return axios.post(`${this.apiUrl}/api/listing`, auctionForm.value)
+    return axios.post(`${this.apiUrl}/api/auction`, auctionForm.value)
       .then(res => res.data)
       .catch(err => {
         console.error('Error adding auction:', err);
@@ -24,7 +24,7 @@ export class AuctionService {
   async getBooks(to_search: string) {
     try {
       let res;
-      if (to_search && to_search!=='' && to_search.length > 0) {
+      if (to_search && to_search !== '' && to_search.length > 0) {
         res = await axios.get(`${this.apiUrl}/api/books`, {params: {q: to_search}});
       } else {
         res = await axios.get(`${this.apiUrl}/api/books`);
@@ -36,13 +36,19 @@ export class AuctionService {
     }
   }
 
-  getCourses() {
-    return axios.get(`${this.apiUrl}/api/course`)
-      .then(res => res.data)
-      .catch(err => {
-        console.error('Error fetching courses:', err);
-        return [];
-      });
+  async getCourses(to_search: string) {
+    try {
+      let res;
+      if (to_search && to_search !== '' && to_search.length > 0) {
+        res = await axios.get(`${this.apiUrl}/api/courses`, {params: {q: to_search}});
+      } else {
+        res = await axios.get(`${this.apiUrl}/api/courses`);
+      }
+      return res.data;
+    } catch (err) {
+      console.error('Error fetching courses:', err);
+      return [];
+    }
   }
 
   async addBook(form_body: object) {
@@ -55,7 +61,7 @@ export class AuctionService {
   }
 
   addCourse(form_body: object) {
-    return axios.post(`${this.apiUrl}/api/course`, form_body)
+    return axios.post(`${this.apiUrl}/api/courses`, form_body)
       .then(res => res.data)
       .catch(err => {
         return null;
