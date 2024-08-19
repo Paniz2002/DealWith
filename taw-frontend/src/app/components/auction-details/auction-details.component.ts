@@ -37,12 +37,19 @@ import {AuctionDetailsCountdownComponent} from "../auction-details-countdown/auc
   styleUrl: './auction-details.component.css',
 })
 export class AuctionDetailsComponent implements OnInit {
+  months: Array<string> = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December',
+  ];
+
   auctionID: string;
   auctionDetails!: any;
   publicComments!: any;
   privateComments!: any;
   endDate!: Date ;
+  endDateTime!: any;
   auctionPrice: Number = -1;
+  isLastBidOwner!: boolean;
   form: FormGroup = new FormGroup({
     bidPrice: new FormControl('', [Validators.required]),
   });
@@ -67,6 +74,32 @@ export class AuctionDetailsComponent implements OnInit {
     return currMax >= startingPrice ? currMax : startingPrice;
   }
 
+  private isClientLastBidOwner(bids: any):any {
+    if(bids.length === 0) {
+      return false;
+    }
+
+    let currMax: Number = -1;
+    let owner = '';
+    bids.forEach((bid: any) => {
+      if (bid.price > currMax) {
+        currMax = bid.price;
+        owner = bid.user.toString();
+      }
+    });
+
+    return axios.get(environments.BACKEND_URL + '/api/auth/me').then((res: any) => {
+      console.log(res.data._id);
+      console.log(owner);
+      console.log(res.data._id === owner);
+
+      return res.data._id === owner;
+    }).catch((err) => {
+      console.error(err);
+    });
+
+  }
+
   // TODO: ERROR TypeError: ctx.auctionDetails is undefined
   // this happens because fetching from mongo web is slow as fuck.
   // (fix even if you use mongo docker)
@@ -76,10 +109,18 @@ export class AuctionDetailsComponent implements OnInit {
       .then((details: any) => {
         this.auctionDetails = details.data;
         this.endDate = new Date(this.auctionDetails.end_date);
+        this.endDateTime = `${
+          this.months[this.endDate.getMonth()]
+        } ${this.endDate.getDate()}, ${this.endDate.getFullYear()}`;
         this.auctionPrice = this.getLastBidPrice(
           this.auctionDetails.bids,
           this.auctionDetails.starting_price,
         );
+
+        this.isLastBidOwner = this.isClientLastBidOwner(this.auctionDetails.bids);
+
+        this.form.controls['bidPrice'].setValue(this.auctionPrice.valueOf() + 0.01);
+
         this.auctionDetails.book.courses.forEach((course: any) => {
           this.coursesUniversities.push(
             course.name + ', ' + course.university.name,
@@ -133,4 +174,15 @@ export class AuctionDetailsComponent implements OnInit {
   }
 
   protected readonly Date = Date;
+
+  onPriceChange($event: any) {
+    let value = $event.target.value;
+
+    if (value <= this.auctionPrice) {
+      value = this.auctionPrice.valueOf() + 0.01;
+    }
+
+    this.form.controls['bidPrice'].setValue(parseFloat(value).toFixed(2));
+  }
+
 }

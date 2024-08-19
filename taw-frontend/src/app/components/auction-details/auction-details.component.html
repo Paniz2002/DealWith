@@ -63,32 +63,49 @@
           ) {
           <mat-card-subtitle>Course: {{ courseUniversity }}</mat-card-subtitle>
         }
+        <mat-card-subtitle>
+          Seller: {{ this.auctionDetails.seller.profile.firstName }} {{ this.auctionDetails.seller.profile.lastName }}
+        </mat-card-subtitle>
       </mat-card-header>
+      <hr>
       <mat-card-content>
         <label for="price">Current bid:</label>
         <span id="price" class="price"> {{ this.auctionPrice }} EUR </span>
-
-        <hr>
-        <label for="auction-description"> <b> Description </b> </label>
-        <div id="auction-description" class="auction-description" [innerHTML]="this.auctionDetails.description"></div>
+        @if(this.isLastBidOwner){
+          <span style="color: green">You are the highest bidder</span>
+        }
       </mat-card-content>
-      <mat-card-actions>
+      <mat-card-actions [style.width.%]="100">
         @if (this.localStorage.get("userType") === "student") {
           @if(this.endDate.getTime() > Date.now()) {
-            <form [formGroup]="form">
-              <mat-form-field style="width:100%" appearance="fill">
-                <mat-label>Bid new price</mat-label>
-                <input type="number" required matInput formControlName="bidPrice" />
-                @if (form.invalid) {
-                  <mat-error>Please insert a price.</mat-error>
-                }
-              </mat-form-field>
-              <button mat-raised-button color="primary" (click)="submitBid()">Bid</button>
-            </form>
+
+              <form [style.width.%]="100" [formGroup]="form">
+                <div class="row d-flex align-items-center" [style.width.%]="100">
+                <div class="col-10">
+                  <mat-form-field [style.width.%]="100"  appearance="fill">
+                    <mat-label>Bid new price</mat-label>
+                    <input type="number" required matInput formControlName="bidPrice" (change)="onPriceChange($event)"/>
+                    @if (form.invalid) {
+                      <mat-error>Please insert a price.</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+                <div class="col-2">
+                  <button mat-raised-button color="primary" (click)="submitBid()">Bid</button>
+                </div>
+
+                </div>
+
+              </form>
           }
 
         }
       </mat-card-actions>
+      <hr>
+      <mat-card-content>
+        <label for="auction-description"> <b> Description </b> </label>
+        <div id="auction-description" class="auction-description" [innerHTML]="this.auctionDetails.description"></div>
+      </mat-card-content>
       <mat-card-content>
         <!-- Get countdown from end date-->
         @if (this.endDate.getTime() > Date.now()) {
@@ -97,7 +114,7 @@
         >
         </app-auction-details-countdown>
         }@else{
-        <p style="text-align: center; color:red">This Auction is expired on {{ this.endDate }}</p>
+        <p style="text-align: center; color:red">This Auction is expired on {{ this.endDateTime }}</p>
         }
       </mat-card-content>
     </mat-card>
