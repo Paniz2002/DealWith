@@ -79,7 +79,7 @@ export class AuctionListComponent implements OnInit {
                 : auction.starting_price,
           });
 
-          await this.loadAuctionImages();
+          this.loadAuctionImages();
         }
       })
       .catch((err) => {
@@ -87,16 +87,16 @@ export class AuctionListComponent implements OnInit {
       });
   }
 
-  private async loadAuctionImages(): Promise<void> {
+  private loadAuctionImages(): void {
     // Itera su ogni asta disponibile per caricare le immagini
     for (const auction of this.availableAuctions) {
       try {
-        const response = await axios.get(
+        const response = axios.get(
           `${environments.BACKEND_URL}/api/auctions/${auction.ID}/images`,
-        );
+        ).then((res) => {
+          auction.base64Images = res.data.images;
+        });
 
-        // Aggiorna l'asta con le immagini caricate
-        auction.base64Images = response.data.images;
       } catch (error) {
         console.error(`Error loading images for auction ${auction.ID}`, error);
       }
@@ -113,7 +113,7 @@ export class AuctionListComponent implements OnInit {
     return currMax >= startingPrice ? currMax : startingPrice;
   }
 
-  searchWithFilters(): void {
+  async searchWithFilters(): Promise<void> {
     // Funny javascript moment
     // Clears the array.
     this.availableAuctions.length = 0;
@@ -134,7 +134,7 @@ export class AuctionListComponent implements OnInit {
     }
     console.log(params);
     axios
-      .get(environments.BACKEND_URL + '/api/auctions', { params })
+      .get(environments.BACKEND_URL + '/api/auctions', {params})
       .then((auctions: any) => {
         auctions.data.forEach((auction: any) => {
           // FIXME:
@@ -150,10 +150,13 @@ export class AuctionListComponent implements OnInit {
             base64Images: auction.images,
           });
         });
+
+        this.loadAuctionImages();
       })
       .catch((err) => {
         this.snackBar.notify(err.message);
       });
+
   }
 
   toggleActive(): void {

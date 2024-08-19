@@ -28,7 +28,7 @@
       >
         <img
           [src]="'data:image/webp;base64,' + image"
-          class="carousel-image d-block w-100"
+          class="carousel-image object-fit-contain"
           alt="Auction Image"
         />
       </div>
@@ -38,6 +38,7 @@
       type="button"
       [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
       data-bs-slide="prev"
+      style="filter: invert(100%)"
     >
       <span class="carousel-control-prev-icon" aria-hidden="true"></span>
       <span class="visually-hidden">Previous</span>
@@ -47,15 +48,14 @@
       type="button"
       [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
       data-bs-slide="next"
+      style="filter: invert(100%)"
     >
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="carousel-control-next-icon"  aria-hidden="true"></span>
       <span class="visually-hidden">Next</span>
     </a>
   </div>
   <mat-card-content>
-    <p>
-      {{ this.bidDescription }}
-    </p>
+    <div [innerHTML]="this.bidDescription"></div>
     <label for="price">Bid:</label>
     <span class="price"> {{ this.currentPrice }} EUR </span>
   </mat-card-content>
