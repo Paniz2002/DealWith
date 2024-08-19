@@ -18,6 +18,7 @@ import axios from 'axios';
 import { environments } from '../../../environments/environments';
 import { LocalStorageService } from '../../services/localStorage/localStorage.service';
 import { NotificationService } from '../../services/popup/notification.service';
+import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-auction-details',
   standalone: true,
@@ -27,6 +28,7 @@ import { NotificationService } from '../../services/popup/notification.service';
     MatCardModule,
     MatChipsModule,
     MatInputModule,
+    MatIconModule,
     MatButtonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -126,4 +128,5 @@ export class AuctionDetailsComponent implements OnInit {
   protected async submitComment(isPrivate: boolean = false): Promise<void> {
     const params = {};
   }
+  protected async replyDialog() {}
 }
