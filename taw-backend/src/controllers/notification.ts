@@ -9,7 +9,6 @@ import {io} from "../index";
 export function sendNotification(room: string) {
     console.log(`Sending notification to room: ${room}`);
     getUnreadNotificationsController(room).then((notifications) => {
-
         io.to(room).emit('notification', notifications);
     })
 }

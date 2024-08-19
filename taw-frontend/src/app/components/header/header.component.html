@@ -28,14 +28,25 @@
         </button>
       }
       <!-- Notification icon with counter -->
-      @if (this.notificationCount > 0) {
-        <button mat-button class="header-button">
+      @if (notifications && notifications.length > 0) {
+        <button mat-button [matMenuTriggerFor]="notificationsMenu" class="header-button">
           <mat-icon>notifications</mat-icon>
           <span class="notification-counter"> <!-- FIXME: needs css to properly show the red badge -->
-            {{ notificationCount }}
+            {{ notifications.length }}
           </span>
         </button>
-      } @else if (this.notificationCount === 0) {
+
+        <mat-menu #notificationsMenu="matMenu" class="notifications-content" [hasBackdrop]="false" yPosition="below">
+          <ng-container>
+            @for (notification of notifications; track notification._id) {
+              <button mat-menu-item>
+                {{ notification.text }}
+              </button>
+            }
+
+          </ng-container>
+        </mat-menu>
+      } @else if (!notifications || notifications.length === 0) {
         <button mat-button class="header-button">
           <mat-icon>notifications</mat-icon>
         </button>
