@@ -512,9 +512,9 @@ export const getAuctionCommentsController = async (
     private: null,
     auction: auctionID,
   })
+    .select("-__v -createdAt -updatedAt")
     .populate({ path: "sender", select: "username" })
     .sort({ createdAt: 1 })
-    .select("__v")
     .exec();
   let privateComments: any[] = [];
 
@@ -524,10 +524,10 @@ export const getAuctionCommentsController = async (
       private: true,
       auction: auctionID,
     })
+      .select("-__v -createdAt -updatedAt")
       .populate({ path: "sender", select: "username" })
       .populate({ path: "receiver", select: "username" })
       .sort({ createdAt: 1 })
-      .select("__v")
       .exec();
   }
   return res.status(200).json({
@@ -562,7 +562,7 @@ export const postAuctionCommentsController = async (
     if (!repliedComment) {
       return BadRequestException(req, res, "Bad request: invalid parameters");
     }
-    params.replyTo = repliedComment;
+    params.inReplyTo = repliedComment;
     params.private = repliedComment.private;
   }
   if (Boolean(isPrivate)) {
