@@ -16,6 +16,8 @@ import {
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTabsModule } from '@angular/material/tabs';
+import {NgClass, NgForOf} from "@angular/common";
+import {AuctionDetailsCountdownComponent} from "../auction-details-countdown/auction-details-countdown.component";
 @Component({
   selector: 'app-auction-details',
   standalone: true,
@@ -27,6 +29,9 @@ import { MatTabsModule } from '@angular/material/tabs';
     FormsModule,
     ReactiveFormsModule,
     MatTabsModule,
+    NgForOf,
+    NgClass,
+    AuctionDetailsCountdownComponent,
   ],
   templateUrl: './auction-details.component.html',
   styleUrl: './auction-details.component.css',
@@ -36,6 +41,7 @@ export class AuctionDetailsComponent implements OnInit {
   auctionDetails!: any;
   publicComments!: any;
   privateComments!: any;
+  endDate!: Date ;
   auctionPrice: Number = -1;
   form: FormGroup = new FormGroup({
     bidPrice: new FormControl('', [Validators.required]),
@@ -69,6 +75,7 @@ export class AuctionDetailsComponent implements OnInit {
       .get(environments.BACKEND_URL + '/api/auctions/' + this.auctionID)
       .then((details: any) => {
         this.auctionDetails = details.data;
+        this.endDate = new Date(this.auctionDetails.end_date);
         this.auctionPrice = this.getLastBidPrice(
           this.auctionDetails.bids,
           this.auctionDetails.starting_price,
@@ -78,6 +85,8 @@ export class AuctionDetailsComponent implements OnInit {
             course.name + ', ' + course.university.name,
           );
         });
+
+        this.loadAuctionImages();
       })
       .catch((err) => {
         this.snackBar.notify(err.message);
@@ -103,8 +112,25 @@ export class AuctionDetailsComponent implements OnInit {
       environments.BACKEND_URL + '/api/auctions/' + this.auctionID,
       params,
     );
+
+    window.location.reload();
   }
   protected async submitComment(isPublic: boolean = true): Promise<void> {
     const params = {};
   }
+
+  private loadAuctionImages(): void {
+    try {
+      const response = axios.get(
+        `${environments.BACKEND_URL}/api/auctions/${this.auctionID}/images`,
+      ).then((res) => {
+        this.auctionDetails.base64Images = res.data.images;
+      });
+
+    } catch (error) {
+      console.error(`Error loading images for auction ${this.auctionID}`, error);
+    }
+  }
+
+  protected readonly Date = Date;
 }

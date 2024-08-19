@@ -2,40 +2,106 @@
 <div class="row g-0">
   <div class="col-6">
     <mat-card class="auction-card" appearance="outlined">
+
+      <div
+        [id]="'auctionCarousel' + this.auctionID"
+        class="carousel slide"
+        data-bs-ride="carousel"
+      >
+        <div class="carousel-indicators">
+          <button
+            *ngFor="let image of this.auctionDetails.base64Images; let i = index"
+            type="button"
+            [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
+            [attr.data-bs-slide-to]="i"
+            [ngClass]="{ active: i === 0 }"
+            [attr.aria-label]="'Slide ' + (i + 1)"
+          ></button>
+        </div>
+        <div class="carousel-inner">
+          <div
+            *ngFor="let image of this.auctionDetails.base64Images; let i = index"
+            class="carousel-item"
+            [ngClass]="{ active: i === 0 }"
+          >
+            <img
+              [src]="'data:image/webp;base64,' + image"
+              class="carousel-image object-fit-contain"
+              alt="Auction Image"
+            />
+          </div>
+        </div>
+        <a
+          class="carousel-control-prev"
+          type="button"
+          [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
+          data-bs-slide="prev"
+          style="filter: invert(100%)"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </a>
+        <a
+          class="carousel-control-next"
+          type="button"
+          [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
+          data-bs-slide="next"
+          style="filter: invert(100%)"
+        >
+          <span class="carousel-control-next-icon"  aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </a>
+      </div>
       <mat-card-header>
         <mat-card-title>{{ this.auctionDetails.book.title }}</mat-card-title>
-        <mat-card-subtitle>{{
+        <mat-card-subtitle>Author: {{
             this.auctionDetails.book.author
           }}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
         @for (
             courseUniversity of this.coursesUniversities;
           track courseUniversity
           ) {
-          <mat-chip>{{ courseUniversity }}</mat-chip>
+          <mat-card-subtitle>Course: {{ courseUniversity }}</mat-card-subtitle>
         }
-        <div [innerHTML]="this.auctionDetails.description"></div>
-        <mat-label>Current price</mat-label>
-        <mat-chip>{{ this.auctionPrice }}</mat-chip>
+      </mat-card-header>
+      <mat-card-content>
+        <label for="price">Current bid:</label>
+        <span id="price" class="price"> {{ this.auctionPrice }} EUR </span>
+
+        <hr>
+        <label for="auction-description"> <b> Description </b> </label>
+        <div id="auction-description" class="auction-description" [innerHTML]="this.auctionDetails.description"></div>
       </mat-card-content>
       <mat-card-actions>
         @if (this.localStorage.get("userType") === "student") {
-          <form [formGroup]="form">
-            <mat-form-field appearance="fill">
-              <mat-label>Bid new price</mat-label>
-              <input type="number" required matInput formControlName="bidPrice" />
-              @if (form.invalid) {
-                <mat-error>Please insert a price.</mat-error>
-              }
-            </mat-form-field>
-            <button mat-raised-button (click)="submitBid()">Bid</button>
-          </form>
+          @if(this.endDate.getTime() > Date.now()) {
+            <form [formGroup]="form">
+              <mat-form-field style="width:100%" appearance="fill">
+                <mat-label>Bid new price</mat-label>
+                <input type="number" required matInput formControlName="bidPrice" />
+                @if (form.invalid) {
+                  <mat-error>Please insert a price.</mat-error>
+                }
+              </mat-form-field>
+              <button mat-raised-button color="primary" (click)="submitBid()">Bid</button>
+            </form>
+          }
+
         }
       </mat-card-actions>
+      <mat-card-content>
+        <!-- Get countdown from end date-->
+        @if (this.endDate.getTime() > Date.now()) {
+        <app-auction-details-countdown
+          [targetDate]="this.endDate"
+        >
+        </app-auction-details-countdown>
+        }@else{
+        <p style="text-align: center; color:red">This Auction is expired on {{ this.endDate }}</p>
+        }
+      </mat-card-content>
     </mat-card>
   </div>
-  <!-- TODO: buttarlo a destra -->
 
   @if (this.localStorage.get("userType") === "student") {
     <div class="col-6">
