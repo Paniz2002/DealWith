@@ -92,6 +92,7 @@ export class LoginComponent implements OnInit {
       this.socketService.sendMessage(res.data._id, "User has logged in");
 
       this.localStorage.set('isUserLoggedIn', 'true');
+      this.localStorage.set('notification', res.data.notification);
       this.localStorage.set(
         'userType',
         res.data.is_moderator ? 'admin' : 'student',

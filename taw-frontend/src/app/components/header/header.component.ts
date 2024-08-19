@@ -9,12 +9,14 @@ import {EventManagerService} from '../../services/eventManager/event-manager.ser
 import {SocketService} from "../../socket.service";
 import axios from "axios";
 import {environments} from "../../../environments/environments";
+import { MatMenuModule} from '@angular/material/menu';
+
 
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [MatToolbar, MatIcon, MatButton, RouterLink],
+  imports: [MatToolbar, MatIcon, MatButton, RouterLink, MatMenuModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })
@@ -22,35 +24,48 @@ export class HeaderComponent implements OnInit, OnDestroy {
   protected userType: string | null = this.localStorage.get('userType');
   protected isUserLoggedIn: string | null = this.localStorage.get('isUserLoggedIn');
   protected changes: Subscription = new Subscription();
-  protected notificationCount: number = 0; // Initialize notification count //FIXME: init with the real number of notifications of the current user
-
+  protected notifications: Array<{
+    text: string;
+    _id: string;
+     }> = []; // Array to hold notification messages
 
   constructor(
     protected localStorage: LocalStorageService,
     protected eventManager: EventManagerService,
-    protected socketService: SocketService, // Inject SocketService
-
-  ) {
-  }
+    protected socketService: SocketService
+  ) {}
 
   ngOnInit(): void {
-
     this.changes.add(
       this.eventManager.loginOk.subscribe(() => {
+        this.notifications = []; // Reset notifications
         this.userType = this.localStorage.get('userType');
         this.isUserLoggedIn = this.localStorage.get('isUserLoggedIn');
+        this.initSocket();
+        this.socketService.receiveMessage((message) => {
+          if (message && message.length > 0) {
+            this.notifications = message; // Store notifications
+          }
+        });
       }),
     );
+
     this.changes.add(
       this.eventManager.logoutOk.subscribe(() => {
+        this.notifications = []; // Clear notifications
         this.userType = this.localStorage.get('userType');
         this.isUserLoggedIn = this.localStorage.get('isUserLoggedIn');
       }),
     );
-    this.initSocket();
-    this.socketService.receiveMessage((message: string) => {
-      this.notificationCount++;
-    });
+
+    if (this.isUserLoggedIn) {
+      this.initSocket();
+      this.socketService.receiveMessage((message) => {
+        if (message && message.length > 0) {
+          this.notifications = message; // Store notifications
+        }
+      });
+    }
   }
 
   ngOnDestroy(): void {
@@ -67,3 +82,4 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   }
 }
+

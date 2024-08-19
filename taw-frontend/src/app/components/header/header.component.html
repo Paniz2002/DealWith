@@ -12,20 +12,46 @@
       <button mat-button [routerLink]="'/register'" class="header-button">
         Register
       </button>
+
     } @else {
       <button mat-button [routerLink]="'/logout'" class="header-button">
         Logout
       </button>
-    }
-    @if (this.userType === "student") {
-      <button mat-button [routerLink]="'/create'" class="header-button">
-        Create Auction
-      </button>
-    }
-    @if (this.userType !== "admin") {
-      <button mat-button [routerLink]="'/'" class="header-button">
-        List Auction(s)
-      </button>
+      @if (this.userType === "student") {
+        <button mat-button [routerLink]="'/create'" class="header-button">
+          Create Auction
+        </button>
+      }
+      @if (this.userType !== "admin") {
+        <button mat-button [routerLink]="'/'" class="header-button">
+          List Auction(s)
+        </button>
+      }
+      <!-- Notification icon with counter -->
+      @if (notifications && notifications.length > 0) {
+        <button mat-button [matMenuTriggerFor]="notificationsMenu" class="header-button">
+          <mat-icon>notifications</mat-icon>
+          <span class="notification-counter"> <!-- FIXME: needs css to properly show the red badge -->
+            {{ notifications.length }}
+          </span>
+        </button>
+
+        <mat-menu #notificationsMenu="matMenu" class="notifications-content" [hasBackdrop]="false" yPosition="below">
+          <ng-container>
+            @for (notification of notifications; track notification._id) {
+              <button mat-menu-item>
+                {{ notification.text }}
+              </button>
+            }
+
+          </ng-container>
+        </mat-menu>
+      } @else if (!notifications || notifications.length === 0) {
+        <button mat-button class="header-button">
+          <mat-icon>notifications</mat-icon>
+        </button>
+      }
+
     }
   </div>
 </mat-toolbar>
