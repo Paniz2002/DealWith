@@ -1,0 +1,71 @@
+<mat-card>
+  <div class="row">
+    <div class="col-lg-auto col-0"></div>
+    <div
+      class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center"
+    >
+      <mat-form-field class="form-field" appearance="outline">
+        <mat-label>Book name</mat-label>
+        <input matInput [(ngModel)]="searchText" />
+      </mat-form-field>
+    </div>
+    <div
+      class="col-lg-2 col-md-4 col-6 mx-auto my-auto d-flex align-items-center justify-content-center"
+    >
+      <mat-label>Price range</mat-label>
+      <mat-slider discrete showTickMarks min="0" max="">
+        <input matSliderStartThumb [(ngModel)]="minPrice" />
+        <input matSliderEndThumb [(ngModel)]="maxPrice" />
+      </mat-slider>
+    </div>
+    <div
+      class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center"
+    >
+      <mat-form-field class="form-field">
+        <mat-label>Minimum condition</mat-label>
+        <mat-select [(ngModel)]="condition">
+          <mat-option value="Mint">Mint</mat-option>
+          <mat-option value="Near Mint">Near Mint</mat-option>
+          <mat-option value="Excellent">Excellent</mat-option>
+          <mat-option value="Good">Good</mat-option>
+          <mat-option value="Fair">Fair</mat-option>
+          <mat-option value="Poor">Poor</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div
+      class="col-lg-2 col-md-12 col-6 mx-auto d-flex align-items-center justify-content-center"
+    >
+      <mat-checkbox (click)="toggleActive()"
+        >Show only active auctions</mat-checkbox
+      >
+    </div>
+    <div
+      class="col-lg-2 col-12 d-flex align-items-center justify-content-center"
+    >
+      <button mat-raised-button color="primary" (click)="searchWithFilters()">
+        Filter
+      </button>
+    </div>
+    <div class="col-lg-auto col-0"></div>
+  </div>
+</mat-card>
+<div class="row">
+  @for (auction of availableAuctions; track auction.ID) {
+    <div class="col-md-6 col-sm-10 col-12 mx-auto">
+      <app-auction-card
+        auctionID="{{ auction.ID }}"
+        bookTitle="{{ auction.bookTitle }}"
+        bookAuthor="{{ auction.bookAuthor }}"
+        bidDescription="{{ auction.bidDescription }}"
+        [base64Images]="auction.base64Images"
+        currentPrice="{{ auction.currentPrice }}"
+      ></app-auction-card>
+    </div>
+  } @empty {
+    <p>
+      There are currently no available auctions matching your filters, please
+      try again later.
+    </p>
+  }
+</div>

@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { enviroments } from '../../../enviroments/enviroments';
+import { environments } from '../../../environments/environments';
 import axios from 'axios';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
@@ -34,7 +34,7 @@ import { RegisterComponent } from '../register/register.component';
   templateUrl: './updatepassword.html',
   styleUrl: '../register/register.component.css',
 })
-export class UpdatepasswordComponent implements OnInit {
+export class UpdatePasswordComponent implements OnInit {
   form!: FormGroup;
   isFormValid!: Boolean;
   id!: string | null;
@@ -69,7 +69,7 @@ export class UpdatepasswordComponent implements OnInit {
       return;
     }
     axios
-      .patch(enviroments.BACKEND_URL + '/api/auth/me', this.form.value)
+      .patch(environments.BACKEND_URL + '/api/auth/me', this.form.value)
       .then((res) => {
         if (res.status === 200) {
           return this.router.navigate(['/login']);

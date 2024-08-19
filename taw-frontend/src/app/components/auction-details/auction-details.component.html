@@ -1,0 +1,61 @@
+<!-- TODO: fare due col-6, la col-6 di destra ha le chat -->
+<div class="col-6">
+  <mat-card class="auction-card" appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>{{ this.auctionDetails.book.title }}</mat-card-title>
+      <mat-card-subtitle>{{
+        this.auctionDetails.book.author
+      }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      @for (
+        courseUniversity of this.coursesUniversities;
+        track courseUniversity
+      ) {
+        <mat-chip>{{ courseUniversity }}</mat-chip>
+      }
+      <p>
+        {{ this.auctionDetails.description }}
+      </p>
+      <mat-label>Current price</mat-label>
+      <mat-chip>{{ this.auctionPrice }}</mat-chip>
+    </mat-card-content>
+    <mat-card-actions>
+      @if (this.localStorage.get("userType") === "student") {
+        <form [formGroup]="form">
+          <mat-form-field appearance="fill">
+            <mat-label>Bid new price</mat-label>
+            <input type="number" required matInput formControlName="bidPrice" />
+            @if (form.invalid) {
+              <mat-error>Please insert a price.</mat-error>
+            }
+          </mat-form-field>
+          <button mat-raised-button (click)="submitBid()">Bid</button>
+        </form>
+      }
+    </mat-card-actions>
+  </mat-card>
+</div>
+<!-- TODO: buttarlo a destra -->
+
+@if (this.localStorage.get("userType") === "student") {
+  <div class="col-6">
+    <mat-card>
+      <mat-card-header>Messages</mat-card-header>
+      <mat-tab-group>
+        <mat-tab label="Private">
+          <form [formGroup]="commentForm" (submit)="submitComment()">
+            <textarea required matInput formControlName="comment"></textarea>
+            <button mat-raised-button>Send</button>
+          </form>
+        </mat-tab>
+        <mat-tab label="Public">
+          <form [formGroup]="commentForm" (submit)="submitComment(false)">
+            <textarea required matInput formControlName="comment"></textarea>
+            <button mat-raised-button>Send</button>
+          </form>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card>
+  </div>
+}

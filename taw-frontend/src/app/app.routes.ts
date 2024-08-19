@@ -1,12 +1,16 @@
 import { Routes } from '@angular/router';
+import { AdminHomepageComponent } from './components/admin-homepage/admin-homepage.component';
+import { AuctionDetailsComponent } from './components/auction-details/auction-details.component';
+import { AuctionFormComponent } from './components/auction-form/auction-form.component';
+import { AuctionListComponent } from './components/auction-list/auction-list.component';
 import { LoginComponent } from './components/login/login.component';
-import { UpdatepasswordComponent } from './components/update-password/updatepassword.component';
 import { RegisterComponent } from './components/register/register.component';
+import { RouteNotFoundComponent } from './components/route-not-found/route-not-found.component';
+import { UpdatePasswordComponent } from './components/update-password/updatepassword.component';
+import { AdminGuard } from './guards/admin/adminGuard';
 import { AuthenticationGuard } from './guards/auth/authentication.guard';
 import { LogoutGuard } from './guards/logout/logout.guard';
-import { AdminHomepageComponent } from './components/admin-homepage/admin-homepage.component';
-import {AuctionFormComponent} from "./components/auction-form/auction-form.component";
-import { AdminGuard } from './guards/admin/adminGuard';
+import { StudentGuard } from './guards/student/student.guard';
 export const routes: Routes = [
   {
     path: 'register',
@@ -21,7 +25,7 @@ export const routes: Routes = [
   {
     path: 'updatepassword',
     canActivate: [AuthenticationGuard],
-    component: UpdatepasswordComponent,
+    component: UpdatePasswordComponent,
     pathMatch: 'full',
   },
   {
@@ -32,16 +36,28 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    canActivate: [AuthenticationGuard, AdminGuard],
+    canActivate: [AdminGuard],
     pathMatch: 'full',
     component: AdminHomepageComponent,
     children: [],
-  }, {
+  },
+  {
+    // Ideally we'd have auction and then {path: create...} children
+    // but it's not possibile.
     path: 'auction/create',
-    canActivate: [AuthenticationGuard],
-    pathMatch: 'full',
     component: AuctionFormComponent,
-    children: [],
-  }
+    pathMatch: 'full',
+    canActivate: [StudentGuard],
+  },
+  {
+    path: 'auction/:id',
+    component: AuctionDetailsComponent,
+    pathMatch: 'full',
+  },
+  {
+    path: 'auction',
+    component: AuctionListComponent,
+    pathMatch: 'full',
+  },
+  { path: '*', pathMatch: 'full', component: RouteNotFoundComponent },
 ];
-

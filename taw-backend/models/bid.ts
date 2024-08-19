@@ -1,24 +1,21 @@
-import mongoose, { Model } from 'mongoose';
+import mongoose, { Model } from "mongoose";
 import User from "./user";
-import Auction from "./auction";
 
-const BidSchema = new mongoose.Schema({
+export const BidSchema = new mongoose.Schema(
+  {
     price: {
-        type: Number,
-        required: [true, "can't be blank"],
+      type: Number,
+      required: [true, "can't be blank"],
     },
     user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: User,
-        required: [true, "can't be blank"]
+      type: mongoose.Schema.Types.ObjectId,
+      ref: User,
+      required: [true, "can't be blank"],
     },
-    auction: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Auction',
-        required: [true, "can't be blank"]
-    }
-});
+  },
+  { timestamps: true },
+);
 
-const Bid: Model<any> = mongoose.model('Bid', BidSchema);
+const Bid: Model<any> = mongoose.model("Bid", BidSchema);
 
 export default Bid;

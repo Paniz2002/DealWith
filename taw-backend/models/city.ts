@@ -9,6 +9,7 @@ import mongoose, { Model } from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 import University from "./university";
 
+
 const CitySchema = new mongoose.Schema({
     name:{
         type: String,
@@ -25,14 +26,14 @@ const CitySchema = new mongoose.Schema({
         type: String,
         required: [true, "can't be blank"]
     },
-    universities: [{
+ /*   universities: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: University
-    }]
+    }] */
 });
 
 CitySchema.plugin(uniqueValidator, { message: 'already exists' });
-
+CitySchema.index({ "$**": "text" });
 const City: Model<any> = mongoose.model('City', CitySchema);
 
 export default City;

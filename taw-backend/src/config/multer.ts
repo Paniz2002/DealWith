@@ -1,13 +1,13 @@
-import fs from "fs";
 import { Express, Request } from "express";
 import path from "path";
 import multer from "multer";
+import fs from "fs";
+import sharp from "sharp";
 
 export interface MulterRequest extends Request {
   files: any;
 }
 
-// soluzione un po' greedy con cast a any
 const storage = multer.diskStorage({
   destination: (req: Request, file: any, cb: any) => {
     console.log("req.body", req.body);
@@ -16,11 +16,14 @@ const storage = multer.diskStorage({
     cb(null, dir);
   },
   filename: (req: Request, file: any, cb: any) => {
-    cb(null, "uploadedImage-" + Date.now() + path.extname(file.originalname));
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (ext !== ".jpg" && ext !== ".jpeg" && ext !== ".png") {
+      return cb(new Error("Only .jpg and .png images are allowed"), false);
+    }
+    cb(null, "uploadedImage-" + Date.now() + ".webp"); // Salva sempre come .webp
   },
 });
 
-// Inizializza multer con lo storage configurato
 const upload = multer({ storage: storage });
 
 export default upload;
