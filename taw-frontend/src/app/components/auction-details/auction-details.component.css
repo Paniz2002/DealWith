@@ -3,9 +3,14 @@ mat-card {
   height: 100vh;
 }
 
-.messages-container{
+.messages-container {
   height: 80vh;
   overflow-y: auto;
   border-radius: 15px;
   border: 1px solid #ccc;
+}
+
+.right {
+  text-align: right;
+  justify-content: flex-end;
 }

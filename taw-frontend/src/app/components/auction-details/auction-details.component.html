@@ -5,14 +5,14 @@
       <mat-card-header>
         <mat-card-title>{{ this.auctionDetails.book.title }}</mat-card-title>
         <mat-card-subtitle>{{
-            this.auctionDetails.book.author
-          }}</mat-card-subtitle>
+          this.auctionDetails.book.author
+        }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         @for (
-            courseUniversity of this.coursesUniversities;
+          courseUniversity of this.coursesUniversities;
           track courseUniversity
-          ) {
+        ) {
           <mat-chip>{{ courseUniversity }}</mat-chip>
         }
         <div [innerHTML]="this.auctionDetails.description"></div>
@@ -24,7 +24,12 @@
           <form [formGroup]="form">
             <mat-form-field appearance="fill">
               <mat-label>Bid new price</mat-label>
-              <input type="number" required matInput formControlName="bidPrice" />
+              <input
+                type="number"
+                required
+                matInput
+                formControlName="bidPrice"
+              />
               @if (form.invalid) {
                 <mat-error>Please insert a price.</mat-error>
               }
@@ -44,19 +49,50 @@
         <mat-tab-group>
           <mat-tab label="Private">
             <div class="messages-container">
-
+              <mat-list>
+                @for (comment of this.privateComments; track comment) {
+                  @if (this.whoAmI === comment.sender._id) {
+                    <mat-list-item class="right">
+                      {{ comment.text }}</mat-list-item
+                    >
+                  } @else {
+                    <mat-list-item>
+                      {{ comment.sender.username }}:
+                      {{ comment.text }}</mat-list-item
+                    >
+                  }
+                  <mat-divider></mat-divider>
+                } @empty {
+                  <p>There are currently no private messages.</p>
+                }
+              </mat-list>
             </div>
             <form [formGroup]="commentForm" (submit)="submitComment()">
-
-                  <textarea required matInput formControlName="comment"></textarea>
-                  <div class="align-self-center">
-                    <button mat-raised-button color="accent">Send</button>
-                  </div>
-
+              <textarea required matInput formControlName="comment"></textarea>
+              <div class="align-self-center">
+                <button mat-raised-button color="accent">Send</button>
+              </div>
             </form>
           </mat-tab>
           <mat-tab label="Public">
-
+            <mat-list>
+              @for (comment of this.publicComments; track comment) {
+                @if (this.whoAmI === comment.sender._id) {
+                  <mat-list-item class="right">
+                    {{ comment.text }}</mat-list-item
+                  >
+                } @else {
+                  <mat-list-item>
+                    {{ comment.sender.username }}:
+                    {{ comment.text }}</mat-list-item
+                  >
+                }
+                <mat-divider></mat-divider>
+                <mat-divider></mat-divider>
+              } @empty {
+                <p>There are currently no public messages.</p>
+              }
+            </mat-list>
             <form [formGroup]="commentForm" (submit)="submitComment(false)">
               <textarea required matInput formControlName="comment"></textarea>
               <button mat-raised-button>Send</button>
@@ -67,4 +103,3 @@
     </div>
   }
 </div>
-

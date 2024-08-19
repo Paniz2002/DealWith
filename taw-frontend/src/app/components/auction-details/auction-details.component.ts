@@ -1,11 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import axios from 'axios';
-import { environments } from '../../../environments/environments';
-import { NotificationService } from '../../services/popup/notification.service';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { LocalStorageService } from '../../services/localStorage/localStorage.service';
 import {
   FormControl,
   FormGroup,
@@ -13,13 +6,24 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
+import { ActivatedRoute } from '@angular/router';
+import axios from 'axios';
+import { environments } from '../../../environments/environments';
+import { LocalStorageService } from '../../services/localStorage/localStorage.service';
+import { NotificationService } from '../../services/popup/notification.service';
 @Component({
   selector: 'app-auction-details',
   standalone: true,
   imports: [
+    MatListModule,
+    MatDividerModule,
     MatCardModule,
     MatChipsModule,
     MatInputModule,
@@ -32,10 +36,11 @@ import { MatTabsModule } from '@angular/material/tabs';
   styleUrl: './auction-details.component.css',
 })
 export class AuctionDetailsComponent implements OnInit {
+  protected whoAmI!: string;
   auctionID: string;
   auctionDetails!: any;
-  publicComments!: any;
-  privateComments!: any;
+  publicComments: Array<any> = [];
+  privateComments: Array<any> = [];
   auctionPrice: Number = -1;
   form: FormGroup = new FormGroup({
     bidPrice: new FormControl('', [Validators.required]),
@@ -50,6 +55,9 @@ export class AuctionDetailsComponent implements OnInit {
     protected localStorage: LocalStorageService,
   ) {
     this.auctionID = this.route.snapshot.paramMap.get('id')!;
+    axios.get(environments.BACKEND_URL + '/api/auth/me').then((res: any) => {
+      this.whoAmI = res.data._id;
+    });
   }
 
   // TODO: import from auctionlist
@@ -84,14 +92,25 @@ export class AuctionDetailsComponent implements OnInit {
       });
 
     axios
-      .get(environments.BACKEND_URL + '/api/auctions/comments', {
-        params: {
-          isPrivate: true,
-          auctionID: this.auctionID,
+      .get(
+        environments.BACKEND_URL +
+          '/api/auctions/' +
+          this.auctionID +
+          '/comments',
+        {
+          params: {
+            isPrivate: true,
+          },
         },
-      })
+      )
       .then((res: any) => {
         console.log(res.data);
+        for (let data of res.data.public_comments) {
+          this.publicComments.push(data);
+        }
+        for (let data of res.data.private_comments) {
+          this.privateComments.push(data);
+        }
       });
   }
   protected async submitBid(): Promise<void> {
@@ -104,7 +123,7 @@ export class AuctionDetailsComponent implements OnInit {
       params,
     );
   }
-  protected async submitComment(isPublic: boolean = true): Promise<void> {
+  protected async submitComment(isPrivate: boolean = false): Promise<void> {
     const params = {};
   }
 }
