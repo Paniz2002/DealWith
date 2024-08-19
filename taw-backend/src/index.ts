@@ -10,6 +10,7 @@ import connectDB from "./config/db";
 import { checkAuctionsEnd } from "./utils/notifications";
 import http from "http"
 import {Server} from "socket.io"
+import { sendNotification} from "./controllers/notification";
 
 dotenv.config();
 
@@ -35,7 +36,10 @@ io.on('connection', (socket) => {
     socket.on('joinRoom', (room) => { //REMEMBER: room is the user id so be careful when you use ._id (it could be type ObjectId), make sure to convert it to string
         socket.join(room);
         console.log(`User joined room: ${room}`);
+        sendNotification(room);
     });
+
+
 
     // Handle a custom event
     socket.on('sendMessage', (data) => {
@@ -48,6 +52,8 @@ io.on('connection', (socket) => {
         console.log('Client disconnected');
     });
 });
+
+
 
 
 server.listen(3001, () => console.log('[socketIo] Server is running on port 3001'));

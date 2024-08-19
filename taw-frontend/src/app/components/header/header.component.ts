@@ -37,20 +37,39 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     this.changes.add(
       this.eventManager.loginOk.subscribe(() => {
+
+        this.notificationCount = 0;
         this.userType = this.localStorage.get('userType');
         this.isUserLoggedIn = this.localStorage.get('isUserLoggedIn');
+        this.initSocket();
+        this.socketService.receiveMessage((message) => {
+          console.log(message);
+          this.notificationCount = 0;
+          if (message && message.length > 0) {
+            this.notificationCount = message.length;
+          }
+        });
       }),
     );
     this.changes.add(
       this.eventManager.logoutOk.subscribe(() => {
+        this.notificationCount = 0;
         this.userType = this.localStorage.get('userType');
         this.isUserLoggedIn = this.localStorage.get('isUserLoggedIn');
       }),
     );
-    this.initSocket();
-    this.socketService.receiveMessage((message: string) => {
-      this.notificationCount++;
-    });
+
+    if (this.isUserLoggedIn) {
+      this.initSocket();
+      this.socketService.receiveMessage((message) => {
+        console.log(message);
+        this.notificationCount = 0;
+        if (message && message.length > 0) {
+          this.notificationCount = message.length;
+        }
+      });
+    }
+
   }
 
   ngOnDestroy(): void {

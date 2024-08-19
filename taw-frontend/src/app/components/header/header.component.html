@@ -35,6 +35,10 @@
             {{ notificationCount }}
           </span>
         </button>
+      } @else if (this.notificationCount === 0) {
+        <button mat-button class="header-button">
+          <mat-icon>notifications</mat-icon>
+        </button>
       }
 
     }
