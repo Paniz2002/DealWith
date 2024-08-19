@@ -3,6 +3,14 @@ import BadRequestException from "../exceptions/bad-request";
 import UnauthorizedException from "../exceptions/unauthorized";
 import { JWT_SECRET } from "../secret";
 import * as jwt from "jsonwebtoken";
+/**
+ * Computes the user _id from the request jwt cookie
+ * @return user _id
+ * @params req: Request request object
+ * @params req: Request response object
+ * @throws BadRequestException if missing jwt from request cookie.
+ * @throws UnauthorizedException if invalid jwt from request cookie.
+ */
 export const getUserId = (req: Request, res: Response) => {
   const token = req.cookies.jwt;
   if (!token) {

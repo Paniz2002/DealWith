@@ -45,3 +45,8 @@ mat-card {
   margin-top: 10px;
   margin-bottom: 10px;
 }
+
+.right {
+  text-align: right;
+  justify-content: flex-end;
+}
