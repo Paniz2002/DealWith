@@ -691,8 +691,10 @@ export const getMyParticipatedAuctionsController = async (req: Request, res: Res
           .select("-__v -reserve_price -start_date");
 
       const mappedAuctions =  auctions.map(auction => {
+        let maxBid = {price: auction.starting_price, user: user_id};
 
-        const maxBid = auction.bids.reduce((prev: { amount: number; }, current: { amount: number; }) => (prev.amount > current.amount) ? prev : current);
+        if(auction.bids.length !== 0)
+          maxBid = auction.bids.reduce((prev: { amount: number; }, current: { amount: number; }) => (prev.amount > current.amount) ? prev : current);
 
         const isWinning = maxBid.user.toString() === user_id.toString();
         const isEnded = auction.end_date < new Date();
@@ -710,6 +712,58 @@ export const getMyParticipatedAuctionsController = async (req: Request, res: Res
 
       return res.status(200).json(mappedAuctions);
     }catch (e){
+        return InternalException(req, res, "Error while getting auctions");
+    }
+}
+
+export const getAuctionStatisticsController = async (req: Request, res: Response) => {
+    try {
+      await connectDB();
+      const auctions = await Auction.find()
+          .populate({
+            path: "book",
+            populate: {
+              path: "courses",
+              select: "-_id -__v -auctions -books -year._id",
+              populate: {
+                path: "university",
+                select: "-_id -__v -courses ",
+                populate: {
+                  path: "city",
+                  select: "-_id -__v -universities -courses",
+                },
+              },
+            },
+            select: "-_id -__v -auctions",
+          })
+          .populate({
+            path: "seller",
+            select: "-__v -_id -password",
+          })
+          .select("-__v ");
+
+      const mappedAuctions =  auctions.map(auction => {
+        let maxBid = {price: auction.starting_price};
+
+        if(auction.bids.length !== 0)
+          maxBid = auction.bids.reduce((prev: { amount: number; }, current: { amount: number; }) => (prev.amount > current.amount) ? prev : current);
+
+        const isEnded = auction.end_date < new Date();
+        const isSuccessful = maxBid.price >= auction.reserve_price;
+
+        const auctionObject = auction.toObject();
+
+        return {
+          ...auctionObject,
+          isEnded: isEnded,
+          isSuccessful: isSuccessful
+        };
+      });
+
+      return res.status(200).json(mappedAuctions);
+
+    }catch (e){
+        console.log(e);
         return InternalException(req, res, "Error while getting auctions");
     }
 }

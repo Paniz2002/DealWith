@@ -10,7 +10,10 @@ import {
   getAuctionImagesController,
   patchAuctionController,
   deleteAuctionController,
-  postAuctionCommentsController, getMyParticipatedAuctionsController, getMyAuctionsController,
+  postAuctionCommentsController,
+  getMyParticipatedAuctionsController,
+  getMyAuctionsController,
+  getAuctionStatisticsController,
 } from "../controllers/auction";
 import upload from "../config/multer";
 import { adminMiddleware } from "../middlewares/admin";
@@ -23,9 +26,12 @@ auctionRoutes.post(
   uploadAuctionImagesController,
 );
 auctionRoutes.get("/", getAuctionController);
-// get the auction partecipated by the student
+
 auctionRoutes.get("/me", [studentMiddleware], getMyAuctionsController);
 auctionRoutes.get("/me/participated", [studentMiddleware], getMyParticipatedAuctionsController);
+
+auctionRoutes.get("/statistics",[adminMiddleware], getAuctionStatisticsController);
+
 auctionRoutes.get("/:id/images", getAuctionImagesController);
 auctionRoutes.get(
   "/:id/comments",
