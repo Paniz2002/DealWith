@@ -1,6 +1,6 @@
 <mat-card class="auction-card" appearance="outlined">
   <mat-card-header>
-    <mat-card-title [routerLink]="['/auction', this.auctionID]">
+    <mat-card-title [routerLink]="['/', this.auctionID]">
       <span class="title"> {{ this.bookTitle }} </span>
     </mat-card-title>
     <mat-card-subtitle>{{ this.bookAuthor }}</mat-card-subtitle>
@@ -55,8 +55,8 @@
     </a>
   </div>
   <mat-card-content>
-    <label for="price">Bid:</label>
-    <span class="price"> {{ this.currentPrice }} EUR </span>
+    <label for="price">Current bid:</label>
+    <span id="price" class="price"> {{ this.currentPrice }} EUR </span>
   </mat-card-content>
   <mat-card-actions>
     <button

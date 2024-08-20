@@ -3,11 +3,47 @@ mat-card {
   height: 100vh;
 }
 
-.messages-container {
+.messages-container{
   height: 80vh;
   overflow-y: auto;
   border-radius: 15px;
   border: 1px solid #ccc;
+}
+
+.carousel{
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: black;
+}
+
+.carousel-inner {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.carousel-inner .carousel-item img {
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-item {
+  height: 300px; /* Imposta l'altezza fissa per l'elemento carousel */
+}
+
+.carousel-image {
+  width: 100%;
+  height: 100%;
+}
+
+.price{
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.auction-description{
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .right {
