@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -19,6 +19,8 @@ import { environments } from '../../../environments/environments';
 import { LocalStorageService } from '../../services/localStorage/localStorage.service';
 import { NotificationService } from '../../services/popup/notification.service';
 import { MatIconModule } from '@angular/material/icon';
+import { ReplyDialogComponent } from '../reply-dialog/reply-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'app-auction-details',
   standalone: true,
@@ -52,6 +54,7 @@ export class AuctionDetailsComponent implements OnInit {
     privateComment: new FormControl('', [Validators.required]),
   });
   coursesUniversities: Array<string> = Array<string>();
+  replyDialog: MatDialog = inject(MatDialog);
   constructor(
     private route: ActivatedRoute,
     private snackBar: NotificationService,
@@ -107,7 +110,6 @@ export class AuctionDetailsComponent implements OnInit {
         },
       )
       .then((res: any) => {
-        console.log(res.data);
         for (let data of res.data.public_comments) {
           this.publicComments.push(data);
         }
@@ -146,5 +148,13 @@ export class AuctionDetailsComponent implements OnInit {
       // TODO: socket update
     }
   }
-  protected async replyDialog() {}
+  protected async replyTo(commentID: string, isPrivate: boolean = false) {
+    this.replyDialog.open(ReplyDialogComponent, {
+      data: {
+        commentID: commentID,
+        auctionID: this.auctionID,
+        isPrivate: isPrivate,
+      },
+    });
+  }
 }

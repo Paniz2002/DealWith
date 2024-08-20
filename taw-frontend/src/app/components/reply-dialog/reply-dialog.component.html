@@ -1,0 +1,12 @@
+<p>{{ this.data.commentID }}</p>
+<p>{{ this.data.auctionID }}</p>
+<p>{{ this.data.isPrivate }}</p>
+<form [formGroup]="form" (submit)="submitReply()">
+  <textarea required matInput formControlName="text"></textarea>
+  @if (form.invalid) {
+    <mat-error>Please insert a message.</mat-error>
+  }
+  <div class="align-self-center">
+    <button mat-raised-button color="accent">Send</button>
+  </div>
+</form>
