@@ -124,8 +124,17 @@
                   } @else {
                     <mat-list-item>
                       {{ comment.sender.username }}:
-                      {{ comment.text }}</mat-list-item
-                    >
+                      {{ comment.text }}
+
+                      <button
+                        class="right"
+                        mat-mini-fab
+                        aria-label="Reply button"
+                        (click)="replyTo(comment._id, true)"
+                      >
+                        <mat-icon>reply</mat-icon>
+                      </button>
+                    </mat-list-item>
                   }
                   <mat-divider></mat-divider>
                 } @empty {
@@ -133,8 +142,12 @@
                 }
               </mat-list>
             </div>
-            <form [formGroup]="commentForm" (submit)="submitComment()">
-              <textarea required matInput formControlName="comment"></textarea>
+            <form [formGroup]="commentForm" (submit)="submitComment(true)">
+              <textarea
+                required
+                matInput
+                formControlName="privateComment"
+              ></textarea>
               <div class="align-self-center">
                 <button mat-raised-button color="accent">Send</button>
               </div>
@@ -150,17 +163,29 @@
                 } @else {
                   <mat-list-item>
                     {{ comment.sender.username }}:
-                    {{ comment.text }}</mat-list-item
-                  >
+                    {{ comment.text }}
+
+                    <button
+                      class="right"
+                      mat-mini-fab
+                      aria-label="Reply button"
+                      (click)="replyTo(comment._id)"
+                    >
+                      <mat-icon>reply</mat-icon>
+                    </button>
+                  </mat-list-item>
                 }
-                <mat-divider></mat-divider>
                 <mat-divider></mat-divider>
               } @empty {
                 <p>There are currently no public messages.</p>
               }
             </mat-list>
-            <form [formGroup]="commentForm" (submit)="submitComment(false)">
-              <textarea required matInput formControlName="comment"></textarea>
+            <form [formGroup]="commentForm" (submit)="submitComment()">
+              <textarea
+                required
+                matInput
+                formControlName="publicComment"
+              ></textarea>
               <button mat-raised-button>Send</button>
             </form>
           </mat-tab>

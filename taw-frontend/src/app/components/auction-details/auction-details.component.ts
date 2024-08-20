@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -15,11 +15,14 @@ import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
 import {NgClass, NgForOf} from "@angular/common";
 import {AuctionDetailsCountdownComponent} from "../auction-details-countdown/auction-details-countdown.component";
-import {environments} from "../../../environments/environments";
-import axios from "axios";
+import { MatIconModule } from '@angular/material/icon';
+import { ReplyDialogComponent } from '../reply-dialog/reply-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 import {ActivatedRoute} from "@angular/router";
 import {NotificationService} from "../../services/popup/notification.service";
 import {LocalStorageService} from "../../services/localStorage/localStorage.service";
+import axios from "axios";
+import {environments} from "../../../environments/environments";
 @Component({
   selector: 'app-auction-details',
   standalone: true,
@@ -29,6 +32,7 @@ import {LocalStorageService} from "../../services/localStorage/localStorage.serv
     MatCardModule,
     MatChipsModule,
     MatInputModule,
+    MatIconModule,
     MatButtonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -59,9 +63,11 @@ export class AuctionDetailsComponent implements OnInit {
     bidPrice: new FormControl('', [Validators.required]),
   });
   commentForm: FormGroup = new FormGroup({
-    comment: new FormControl('', [Validators.required]),
+    publicComment: new FormControl('', [Validators.required]),
+    privateComment: new FormControl('', [Validators.required]),
   });
   coursesUniversities: Array<string> = Array<string>();
+  replyDialog: MatDialog = inject(MatDialog);
   constructor(
     private route: ActivatedRoute,
     private snackBar: NotificationService,
@@ -154,7 +160,6 @@ export class AuctionDetailsComponent implements OnInit {
         },
       )
       .then((res: any) => {
-        console.log(res.data);
         for (let data of res.data.public_comments) {
           this.publicComments.push(data);
         }
@@ -176,7 +181,33 @@ export class AuctionDetailsComponent implements OnInit {
     window.location.reload();
   }
   protected async submitComment(isPrivate: boolean = false): Promise<void> {
-    const params = {};
+    const msg = isPrivate
+      ? this.commentForm.value.privateComment
+      : this.commentForm.value.publicComment;
+    const params = {
+      isPrivate: isPrivate ? isPrivate : null,
+      text: msg,
+    };
+    const response = await axios.post(
+      environments.BACKEND_URL +
+        '/api/auctions/' +
+        this.auctionID +
+        '/comments',
+      params,
+    );
+    if (response.status === 200) {
+      this.snackBar.notify('Message sent successfully');
+      // TODO: socket update
+    }
+  }
+  protected async replyTo(commentID: string, isPrivate: boolean = false) {
+    this.replyDialog.open(ReplyDialogComponent, {
+      data: {
+        commentID: commentID,
+        auctionID: this.auctionID,
+        isPrivate: isPrivate,
+      },
+    });
   }
 
   private loadAuctionImages(): void {
