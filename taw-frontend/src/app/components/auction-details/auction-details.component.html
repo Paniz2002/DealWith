@@ -59,7 +59,6 @@
                     <mat-list-item>
                       {{ comment.sender.username }}:
                       {{ comment.text }}
-
                       <button
                         class="right"
                         mat-mini-fab
@@ -75,8 +74,12 @@
                 }
               </mat-list>
             </div>
-            <form [formGroup]="commentForm" (submit)="submitComment()">
-              <textarea required matInput formControlName="comment"></textarea>
+            <form [formGroup]="commentForm" (submit)="submitComment(true)">
+              <textarea
+                required
+                matInput
+                formControlName="privateComment"
+              ></textarea>
               <div class="align-self-center">
                 <button mat-raised-button color="accent">Send</button>
               </div>
@@ -110,8 +113,12 @@
                 <p>There are currently no public messages.</p>
               }
             </mat-list>
-            <form [formGroup]="commentForm" (submit)="submitComment(false)">
-              <textarea required matInput formControlName="comment"></textarea>
+            <form [formGroup]="commentForm" (submit)="submitComment()">
+              <textarea
+                required
+                matInput
+                formControlName="publicComment"
+              ></textarea>
               <button mat-raised-button>Send</button>
             </form>
           </mat-tab>

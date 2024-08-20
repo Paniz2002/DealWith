@@ -48,7 +48,8 @@ export class AuctionDetailsComponent implements OnInit {
     bidPrice: new FormControl('', [Validators.required]),
   });
   commentForm: FormGroup = new FormGroup({
-    comment: new FormControl('', [Validators.required]),
+    publicComment: new FormControl('', [Validators.required]),
+    privateComment: new FormControl('', [Validators.required]),
   });
   coursesUniversities: Array<string> = Array<string>();
   constructor(
@@ -126,7 +127,24 @@ export class AuctionDetailsComponent implements OnInit {
     );
   }
   protected async submitComment(isPrivate: boolean = false): Promise<void> {
-    const params = {};
+    const msg = isPrivate
+      ? this.commentForm.value.privateComment
+      : this.commentForm.value.publicComment;
+    const params = {
+      isPrivate: isPrivate ? isPrivate : null,
+      text: msg,
+    };
+    const response = await axios.post(
+      environments.BACKEND_URL +
+        '/api/auctions/' +
+        this.auctionID +
+        '/comments',
+      params,
+    );
+    if (response.status === 200) {
+      this.snackBar.notify('Message sent successfully');
+      // TODO: socket update
+    }
   }
   protected async replyDialog() {}
 }
