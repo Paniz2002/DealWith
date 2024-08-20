@@ -35,7 +35,7 @@ export class SocketService {
   }
 
 
-  receiveMessage(callback: (message: string) => void) {
+  receiveMessage(callback: (message: any) => void) {
     console.log('Receiving message');
     this.socket.on('notification', callback);
   }
