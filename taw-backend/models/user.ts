@@ -1,7 +1,7 @@
 import mongoose, { Model } from "mongoose";
 import bcrypt from "bcryptjs";
 import uniqueValidator from "mongoose-unique-validator";
-import {sendNotification} from "../src/controllers/notification";
+import {sendNotification} from "../src/utils/notifications";
 
 const UserSchema = new mongoose.Schema(
   {

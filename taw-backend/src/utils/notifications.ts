@@ -7,6 +7,8 @@ import {io} from "../index";
 
 export const checkAuctionsEnd = async () => {
     try{
+        await connectDB();
+
         const auctions = await Auction.find();
         for (const auction of auctions) {
             if (!auction.isActive() ) {
@@ -71,6 +73,27 @@ export const checkAuctionsEnd = async () => {
     }
 }
 
+export function sendNotification(room: string) {
+    console.log(`Sending notification to room: ${room}`);
+    getUnreadNotifications(room).then((notifications) => {
+        io.to(room).emit('notification', notifications);
+    })
+}
+
+async function getUnreadNotifications(user_id: string) {
+    try {
+        await connectDB();
+        let user = await User.findById(user_id)
+        if (!user) {
+            console.warn("User not found with id: " + user_id);
+            return [];
+        }
+        return user.getToReadNotifications();
+    } catch (e) {
+        console.error(e);
+        return [];
+    }
+}
 
 export const AuctionEndNotification = async (auction_id: mongoose.Types.ObjectId) => {
     await connectDB();

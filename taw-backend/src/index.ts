@@ -10,7 +10,7 @@ import connectDB from "./config/db";
 import { checkAuctionsEnd } from "./utils/notifications";
 import http from "http"
 import {Server} from "socket.io"
-import { sendNotification} from "./controllers/notification";
+import { sendNotification} from "./utils/notifications";
 
 dotenv.config();
 
