@@ -628,3 +628,88 @@ export const deleteAuctionController = async (req: Request, res: Response) => {
     return InternalException(req, res, "Error while deleting auction");
   }
 };
+
+export const getMyAuctionsController = async (req: Request, res: Response) => {
+  try {
+    const user_id = getUserId(req, res);
+    await connectDB();
+    const auctions = await Auction.find({seller: user_id})
+        .populate({
+          path: "book",
+          populate: {
+            path: "courses",
+            select: "-_id -__v -auctions -books -year._id",
+            populate: {
+              path: "university",
+              select: "-_id -__v -courses ",
+              populate: {
+                path: "city",
+                select: "-_id -__v -universities -courses",
+              },
+            },
+          },
+          select: "-_id -__v -auctions",
+        })
+        .populate({
+          path: "seller",
+          select: "-__v -_id -password -email -role",
+        })
+        .select("-__v");
+
+    return res.status(200).json(auctions);
+  }catch(e){
+    return InternalException(req, res, "Error while getting auctions");
+  }
+
+}
+
+export const getMyParticipatedAuctionsController = async (req: Request, res: Response) => {
+    try {
+      const user_id = getUserId(req, res);
+      await connectDB();
+      const auctions = await Auction.find({bids: {$elemMatch: {user: user_id}}})
+          .populate({
+            path: "book",
+            populate: {
+              path: "courses",
+              select: "-_id -__v -auctions -books -year._id",
+              populate: {
+                path: "university",
+                select: "-_id -__v -courses ",
+                populate: {
+                  path: "city",
+                  select: "-_id -__v -universities -courses",
+                },
+              },
+            },
+            select: "-_id -__v -auctions",
+          })
+          .populate({
+            path: "seller",
+            select: "-__v -_id -password -email -role -notifications -createdAt -updatedAt",
+          })
+          .select("-__v -reserve_price -start_date");
+
+      const mappedAuctions =  auctions.map(auction => {
+
+        const maxBid = auction.bids.reduce((prev: { amount: number; }, current: { amount: number; }) => (prev.amount > current.amount) ? prev : current);
+
+        const isWinning = maxBid.user.toString() === user_id.toString();
+        const isEnded = auction.end_date < new Date();
+
+        const auctionObject = auction.toObject();
+        delete auctionObject.bids;
+
+        return {
+          ...auctionObject,
+          isWinning: isWinning,
+          isEnded: isEnded
+        };
+      });
+
+
+      return res.status(200).json(mappedAuctions);
+    }catch (e){
+        return InternalException(req, res, "Error while getting auctions");
+    }
+}
