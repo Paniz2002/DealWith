@@ -48,24 +48,22 @@ const UserSchema = new mongoose.Schema(
 UserSchema.plugin(uniqueValidator, { message: "is already taken." });
 
 
-let originalNotifications: { isRead: boolean; }[]= [];
+let originalNotifications: { isVisible: boolean; }[]= [];
 UserSchema.pre("save", function (next) {
   if (!this.isModified("password")) {
     return next();
   }
-  originalNotifications = [...filterUnreadNotifications(this.notifications)];
+  originalNotifications = [...filterVisibleNotifications(this.notifications)];
   this.password = bcrypt.hashSync(this.password, 10);
   next();
 });
 
 
 UserSchema.post("save", async function (doc) {
-    const newNotifications =  [...filterUnreadNotifications(doc.notifications)];
+    const newNotifications =  [...filterVisibleNotifications(doc.notifications)];
     if (JSON.stringify(originalNotifications) !== JSON.stringify(newNotifications)) {
         sendNotification(doc._id.toString());
     }
-
-
 });
 
 UserSchema.methods.comparePassword = function (plaintext: string) {
@@ -80,13 +78,14 @@ UserSchema.methods.existingNotification = function (auction_id: mongoose.Types.O
     return this.notifications.find((notification: { auction: { toString: () => string; }; code: string; }) => notification.auction.toString() === auction_id.toString() && notification.code === code);
 }
 
-UserSchema.methods.getToReadNotifications = function(){
-    return filterUnreadNotifications(this.notifications);
+UserSchema.methods.getVisibleNotifications = function(){
+    return filterVisibleNotifications(this.notifications);
 }
 
-function filterUnreadNotifications(notifications: { isRead: boolean; }[]){
-    return notifications.filter((notification: { isRead: boolean; }) => !notification.isRead);
+function filterVisibleNotifications(notifications: { isVisible: boolean; }[]){
+    return notifications.filter((notification: { isVisible: boolean; }) => notification.isVisible);
 }
+
 
 
 const User: Model<any> = mongoose.model("User", UserSchema);

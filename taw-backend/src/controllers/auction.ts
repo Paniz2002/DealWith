@@ -110,60 +110,6 @@ export const newAuctionController = async (req: Request, res: Response) => {
   }
 };
 
-/*export const uploadAuctionImagesController = async (
-    req: Request,
-    res: Response,
-) => {
-    if (!req.files) {
-        return BadRequestException(req, res, "No images uploaded");
-    }
-
-    console.log(req.files);
-
-    const {auction_id, seller_id} = req.body;
-
-    if (!auction_id || !seller_id) {
-        return BadRequestException(req, res, "Missing auction_id or user_id");
-    }
-
-    const auction = await Auction.findById(auction_id);
-    const user = await User.findById(seller_id);
-    if (!auction || !user) {
-        return BadRequestException(req, res, "Auction or user not found");
-    }
-
-    const user_id = getUserId(req, res);
-
-    if (auction.isOwner(user_id)) {
-        return BadRequestException(
-            req,
-            res,
-            "The seller is not the owner of the auction",
-        );
-    }
-
-    if (auction.seller.toString() !== user_id) {
-        return UnauthorizedException(
-            req,
-            res,
-            "Unauthorized: You are not the seller of this auction",
-        );
-    }
-
-    const files = req.files as Express.Multer.File[];
-    try {
-        for (const file of files) {
-            const path = file.path;
-            auction.images.push(path);
-        }
-
-        await auction.save();
-
-        return res.status(200).send("Images uploaded");
-    } catch (e) {
-        return InternalException(req, res, "Error while saving images");
-    }
-};*/
 
 export const uploadAuctionImagesController = async (
   req: Request,

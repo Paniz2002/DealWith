@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, NgModule, OnInit, signal} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuctionService} from '../../services/bid/auction.service';
 import {Router} from '@angular/router';
@@ -17,9 +17,11 @@ import {
   MatDatepickerInput,
   MatDatepickerToggle
 } from "@angular/material/datepicker";
-import {MatNativeDateModule} from "@angular/material/core";
+import {MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats, MatNativeDateModule} from "@angular/material/core";
 import {MatGridList, MatGridTile} from "@angular/material/grid-list";
 import {NotificationService} from "../../services/popup/notification.service";
+
+
 
 
 interface Book {
@@ -35,6 +37,19 @@ interface Course {
   university: string;
   city: string;
 }
+
+
+export const MY_DATE_FORMATS: MatDateFormats = {
+  parse: {
+    dateInput: 'DD/MM/YYYY',
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'DD/MM/YYYY',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
 
 @Component({
@@ -56,7 +71,10 @@ interface Course {
     MatGridList,
     MatGridTile
   ],
-  providers: [],
+  providers: [
+    { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS }, //FIXME: dates from the calendar pop-up are not in format dd/MM/yyyy
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
+  ],
   selector: 'app-auction-form',
   standalone: true,
   styleUrls: ['./auction-form.component.css'],
@@ -86,8 +104,8 @@ export class AuctionFormComponent implements OnInit {
       book_id: ['', Validators.required],
       course_id: ['', Validators.required],
       description: ['', Validators.required],
-      reserve_price: ['', [Validators.required, Validators.min(1)]],
-      starting_price: ['', [Validators.required, Validators.min(1)]],
+      reserve_price: ['', [Validators.required, Validators.min(1)]], //FIXME: when i write an interger from keyboard autmoatically subs 0.02€
+      starting_price: ['', [Validators.required, Validators.min(1)]], //FIXME: when i write an interger from keyboard autmoatically subs 0.02€
       end_date: ['', Validators.required],
       start_date: ['', Validators.required],
       condition: ['', Validators.required],
@@ -129,7 +147,7 @@ export class AuctionFormComponent implements OnInit {
               return;
             }
             this.snackBar.notify('Auction added successfully');
-            this.router.navigate(['/auction']); // or wherever you want to navigate after submission
+            this.router.navigate(['/'+result._id]); // or wherever you want to navigate after submission
           }
         }
       })

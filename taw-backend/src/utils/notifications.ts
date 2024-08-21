@@ -88,7 +88,7 @@ async function getUnreadNotifications(user_id: string) {
             console.warn("User not found with id: " + user_id);
             return [];
         }
-        return user.getToReadNotifications();
+        return user.getVisibleNotifications();
     } catch (e) {
         console.error(e);
         return [];

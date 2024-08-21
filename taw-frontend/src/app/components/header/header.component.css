@@ -55,23 +55,35 @@
   right: -5px;
 }
 
-.notifications-menu .mat-menu-content {
-  height: 200px;
-  max-height: 200px;
-  overflow-y: scroll;
+.notifications-container {
+  position: relative;
 }
 
-.notifications-content {
-  max-height: 200px;
-  overflow-y: scroll;
+::ng-deep .notifications-content {
+  max-height: 300px;
+  height: 200px;
+  overflow-y: auto;
+  width: 500px;
 }
+
 
 .mat-menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   white-space: normal;
   height: auto;
   padding: 10px;
 }
 
 .mat-menu-item:hover {
+  background-color: rgba(33, 203, 243, 0.1);
+}
+
+.action-buttons button {
+  margin-left: 5px;
+}
+
+.notification-unread {
   background-color: rgba(33, 203, 243, 0.1);
 }
