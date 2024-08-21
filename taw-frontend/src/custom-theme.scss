@@ -33,3 +33,15 @@ $taw-frontend-theme: mat.define-light-theme((
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 @include mat.all-component-themes($taw-frontend-theme);
+
+
+.custom-dialog-container mat-dialog-container .mdc-dialog__container  .mat-mdc-dialog-surface {
+  border-radius: 15px;
+  padding: 10px
+}
+
+
+.custom-dialog-container mat-dialog-container .mdc-dialog__container  .mat-mdc-dialog-surface app-book-modal mat-dialog-content mat-form-field {
+  width: 100%;
+}
+

@@ -3,7 +3,7 @@
 }
 
 .custom-toolbar {
-  background: linear-gradient(45deg, #2196f3, #21cbf3);
+  background: linear-gradient(45deg, #1a237e, #3949ab);
   box-shadow: 0 3px 5px 2px rgba(33, 203, 243, 0.3);
   color: white;
 }
@@ -37,8 +37,53 @@
   font-weight: bold;
   border-radius: 20px;
   transition: background 0.3s ease;
+  position: relative;
 }
 
 .header-button:hover {
   background: rgba(255, 255, 255, 0.2);
+}
+
+.notification-counter {
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 0 6px;
+  font-size: 12px;
+  position: absolute;
+  top: -5px;
+  right: -5px;
+}
+
+.notifications-container {
+  position: relative;
+}
+
+::ng-deep .notifications-content {
+  max-height: 300px;
+  height: 200px;
+  overflow-y: auto;
+  width: 500px;
+}
+
+
+.mat-menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  white-space: normal;
+  height: auto;
+  padding: 10px;
+}
+
+.mat-menu-item:hover {
+  background-color: rgba(33, 203, 243, 0.1);
+}
+
+.action-buttons button {
+  margin-left: 5px;
+}
+
+.notification-unread {
+  background-color: rgba(33, 203, 243, 0.1);
 }

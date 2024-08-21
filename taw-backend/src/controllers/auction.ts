@@ -6,7 +6,6 @@ import UnauthorizedException from "../exceptions/unauthorized";
 import InternalException from "../exceptions/internal-exception";
 import Auction from "../../models/auction";
 import Book from "../../models/book";
-import User from "../../models/user";
 import Comment from "../../models/comment";
 import { validateForm } from "../utils/validate";
 import fullTextSearch from "../utils/search";
@@ -15,6 +14,7 @@ import Bid from "../../models/bid";
 import path from "path";
 import fs from "fs";
 import sharp from "sharp";
+import Course from "../../models/course";
 
 const conditions = ["Mint", "Near Mint", "Excellent", "Good", "Fair", "Poor"];
 
@@ -35,6 +35,7 @@ const formValidator = z
     reserve_price: z.number(),
     description: z.string().optional(),
     book_id: z.string(),
+    course_id: z.string(),
   })
   .refine((data) => data.start_date < data.end_date, {
     message: "End date must be greater than start date",
@@ -48,8 +49,10 @@ export const newAuctionController = async (req: Request, res: Response) => {
   } catch (e) {
     return BadRequestException(req, res, "Invalid date format");
   }
-  validateForm(req, res, req.body, formValidator);
-
+  let test = validateForm(req, res, req.body, formValidator);
+  if (test !== true) {
+    return test;
+  }
   await connectDB();
 
   const {
@@ -60,14 +63,33 @@ export const newAuctionController = async (req: Request, res: Response) => {
     reserve_price,
     description,
     book_id,
+    course_id,
   } = req.body;
-
   try {
     const user_id = getUserId(req, res);
     const book = await Book.findById(book_id);
     if (!book) {
       return BadRequestException(req, res, "Book not found");
     }
+
+    let alreadyExistingCourse = await Course.findById(course_id);
+    if (!alreadyExistingCourse) {
+      return BadRequestException(req, res, "Course not found");
+    }
+
+    //check if course exists in the book
+    let courseExists = false;
+    for (let course of book.courses) {
+      if (course.toString() === course_id) {
+        courseExists = true;
+        break;
+      }
+    }
+    if (!courseExists) {
+      book.courses.push(alreadyExistingCourse);
+      book.save();
+    }
+
     const auction = await Auction.create({
       book: book_id,
       condition,
@@ -81,70 +103,13 @@ export const newAuctionController = async (req: Request, res: Response) => {
 
     await auction.save();
 
-    /* alreadyExistingCourse.auctions.push(auction);
-            await alreadyExistingCourse.save(); */
-
-    res.sendStatus(201);
+    return res.status(200).json(auction);
   } catch (err) {
     console.log(err);
-    return InternalException(req, res, "Unknkown error while creating listing");
+    return InternalException(req, res, "Unknown error while creating listing");
   }
 };
 
-/*export const uploadAuctionImagesController = async (
-    req: Request,
-    res: Response,
-) => {
-    if (!req.files) {
-        return BadRequestException(req, res, "No images uploaded");
-    }
-
-    console.log(req.files);
-
-    const {auction_id, seller_id} = req.body;
-
-    if (!auction_id || !seller_id) {
-        return BadRequestException(req, res, "Missing auction_id or user_id");
-    }
-
-    const auction = await Auction.findById(auction_id);
-    const user = await User.findById(seller_id);
-    if (!auction || !user) {
-        return BadRequestException(req, res, "Auction or user not found");
-    }
-
-    const user_id = getUserId(req, res);
-
-    if (auction.isOwner(user_id)) {
-        return BadRequestException(
-            req,
-            res,
-            "The seller is not the owner of the auction",
-        );
-    }
-
-    if (auction.seller.toString() !== user_id) {
-        return UnauthorizedException(
-            req,
-            res,
-            "Unauthorized: You are not the seller of this auction",
-        );
-    }
-
-    const files = req.files as Express.Multer.File[];
-    try {
-        for (const file of files) {
-            const path = file.path;
-            auction.images.push(path);
-        }
-
-        await auction.save();
-
-        return res.status(200).send("Images uploaded");
-    } catch (e) {
-        return InternalException(req, res, "Error while saving images");
-    }
-};*/
 
 export const uploadAuctionImagesController = async (
   req: Request,
@@ -155,15 +120,14 @@ export const uploadAuctionImagesController = async (
       return BadRequestException(req, res, "No images uploaded");
     }
 
-    const { auction_id, seller_id } = req.body;
+    const { auction_id } = req.body;
 
-    if (!auction_id || !seller_id) {
+    if (!auction_id) {
       return BadRequestException(req, res, "Missing auction_id or user_id");
     }
 
     const auction = await Auction.findById(auction_id);
-    const user = await User.findById(seller_id);
-    if (!auction || !user) {
+    if (!auction) {
       return BadRequestException(req, res, "Auction or user not found");
     }
 
@@ -480,7 +444,8 @@ export const getAuctionCommentsController = async (
   req: Request,
   res: Response,
 ) => {
-  const { isPrivate, auctionID } = req.query;
+  const { isPrivate } = req.query;
+  const auctionID = req.params.id;
   await connectDB();
 
   const userID = getUserId(req, res);
@@ -489,15 +454,25 @@ export const getAuctionCommentsController = async (
     $or: [{ sender: userID }, { receiver: userID }],
     auction: auctionID,
   };
-  const publicComments = await Comment.find(filter)
-    .populate("sender receiver")
+  const publicComments = await Comment.find({
+    private: null,
+    auction: auctionID,
+  })
+    .select("-__v -createdAt -updatedAt")
+    .populate({ path: "sender", select: "username" })
     .sort({ createdAt: 1 })
     .exec();
-  let privateComments;
+  let privateComments: any[] = [];
+
   if (isPrivate) {
     filter.private = true;
-    privateComments = await Comment.find(filter)
-      .populate("sender reciever")
+    privateComments = await Comment.find({
+      private: true,
+      auction: auctionID,
+    })
+      .select("-__v -createdAt -updatedAt")
+      .populate({ path: "sender", select: "username" })
+      .populate({ path: "receiver", select: "username" })
       .sort({ createdAt: 1 })
       .exec();
   }
@@ -506,7 +481,48 @@ export const getAuctionCommentsController = async (
     public_comments: publicComments,
   });
 };
+export const postAuctionCommentsController = async (
+  req: Request,
+  res: Response,
+) => {
+  const { isPrivate, replyTo, text } = req.body;
+  const auctionID = req.params.id;
+  const currentAuction = await Auction.findById(auctionID).exec();
+  if (!currentAuction) {
+    return BadRequestException(req, res, "Bad request: invalid auction.");
+  }
+  if (text === "") {
+    return BadRequestException(req, res, "Bad request: invalid paramters.");
+  }
 
+  const userID = getUserId(req, res);
+  const params: any = {
+    sender: userID,
+    auction: auctionID,
+    text: text,
+  };
+  await connectDB();
+  let repliedComment;
+  if (replyTo) {
+    repliedComment = await Comment.findById(replyTo).exec();
+    if (!repliedComment) {
+      return BadRequestException(req, res, "Bad request: invalid parameters");
+    }
+    params.inReplyTo = repliedComment;
+    params.private = repliedComment.private;
+  }
+  if (Boolean(isPrivate)) {
+    params.private = true;
+    params.receiver = currentAuction.seller;
+  }
+  try {
+    await Comment.create(params);
+    return res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
+    return InternalException(req, res, "Unknown error while creating comment.");
+  }
+};
 export const patchAuctionController = async (req: Request, res: Response) => {
   try {
     const auction_id = req.params.id;
@@ -558,3 +574,142 @@ export const deleteAuctionController = async (req: Request, res: Response) => {
     return InternalException(req, res, "Error while deleting auction");
   }
 };
+
+export const getMyAuctionsController = async (req: Request, res: Response) => {
+  try {
+    const user_id = getUserId(req, res);
+    await connectDB();
+    const auctions = await Auction.find({seller: user_id})
+        .populate({
+          path: "book",
+          populate: {
+            path: "courses",
+            select: "-_id -__v -auctions -books -year._id",
+            populate: {
+              path: "university",
+              select: "-_id -__v -courses ",
+              populate: {
+                path: "city",
+                select: "-_id -__v -universities -courses",
+              },
+            },
+          },
+          select: "-_id -__v -auctions",
+        })
+        .populate({
+          path: "seller",
+          select: "-__v -_id -password -email -role",
+        })
+        .select("-__v");
+
+    return res.status(200).json(auctions);
+  }catch(e){
+    return InternalException(req, res, "Error while getting auctions");
+  }
+
+}
+
+export const getMyParticipatedAuctionsController = async (req: Request, res: Response) => {
+    try {
+      const user_id = getUserId(req, res);
+      await connectDB();
+      const auctions = await Auction.find({bids: {$elemMatch: {user: user_id}}})
+          .populate({
+            path: "book",
+            populate: {
+              path: "courses",
+              select: "-_id -__v -auctions -books -year._id",
+              populate: {
+                path: "university",
+                select: "-_id -__v -courses ",
+                populate: {
+                  path: "city",
+                  select: "-_id -__v -universities -courses",
+                },
+              },
+            },
+            select: "-_id -__v -auctions",
+          })
+          .populate({
+            path: "seller",
+            select: "-__v -_id -password -email -role -notifications -createdAt -updatedAt",
+          })
+          .select("-__v -reserve_price -start_date");
+
+      const mappedAuctions =  auctions.map(auction => {
+        let maxBid = {price: auction.starting_price, user: user_id};
+
+        if(auction.bids.length !== 0)
+          maxBid = auction.bids.reduce((prev: { amount: number; }, current: { amount: number; }) => (prev.amount > current.amount) ? prev : current);
+
+        const isWinning = maxBid.user.toString() === user_id.toString();
+        const isEnded = auction.end_date < new Date();
+
+        const auctionObject = auction.toObject();
+        delete auctionObject.bids;
+
+        return {
+          ...auctionObject,
+          isWinning: isWinning,
+          isEnded: isEnded
+        };
+      });
+
+
+      return res.status(200).json(mappedAuctions);
+    }catch (e){
+        return InternalException(req, res, "Error while getting auctions");
+    }
+}
+
+export const getAuctionStatisticsController = async (req: Request, res: Response) => {
+    try {
+      await connectDB();
+      const auctions = await Auction.find()
+          .populate({
+            path: "book",
+            populate: {
+              path: "courses",
+              select: "-_id -__v -auctions -books -year._id",
+              populate: {
+                path: "university",
+                select: "-_id -__v -courses ",
+                populate: {
+                  path: "city",
+                  select: "-_id -__v -universities -courses",
+                },
+              },
+            },
+            select: "-_id -__v -auctions",
+          })
+          .populate({
+            path: "seller",
+            select: "-__v -_id -password",
+          })
+          .select("-__v ");
+
+      const mappedAuctions =  auctions.map(auction => {
+        let maxBid = {price: auction.starting_price};
+
+        if(auction.bids.length !== 0)
+          maxBid = auction.bids.reduce((prev: { amount: number; }, current: { amount: number; }) => (prev.amount > current.amount) ? prev : current);
+
+        const isEnded = auction.end_date < new Date();
+        const isSuccessful = maxBid.price >= auction.reserve_price;
+
+        const auctionObject = auction.toObject();
+
+        return {
+          ...auctionObject,
+          isEnded: isEnded,
+          isSuccessful: isSuccessful
+        };
+      });
+
+      return res.status(200).json(mappedAuctions);
+
+    }catch (e){
+        console.log(e);
+        return InternalException(req, res, "Error while getting auctions");
+    }
+}

@@ -1,6 +1,12 @@
 import {Router} from "express";
-import {getNotificationsController} from "../controllers/notification";
+import {
+    deleteNotificationController,
+    getNotificationsController,
+    setNotificationReadController
+} from "../controllers/notification";
 
 const notificationRoutes: Router = Router();
-notificationRoutes.get("/",getNotificationsController);
+notificationRoutes.get("/", getNotificationsController);
+notificationRoutes.patch("/:id", setNotificationReadController);
+notificationRoutes.delete("/:id", deleteNotificationController);
 export default notificationRoutes;

@@ -3,6 +3,7 @@ import connectDB from "../config/db";
 import Auction from "../../models/auction";
 import Book from "../../models/book";
 import User from "../../models/user";
+import {io} from "../index";
 
 export const checkAuctionsEnd = async () => {
     try{
@@ -19,40 +20,48 @@ export const checkAuctionsEnd = async () => {
 
                     if (lastBid.price >= auction.reserve_price) {
                         if (!seller.existingNotification(auction._id, "AUCTION_END")) {
-                            seller.notifications.push(await AuctionEndNotification(auction._id));
+                            const notification = await AuctionEndNotification(auction._id);
+                            seller.notifications.push(notification);
                             await seller.save();
+
                         }
 
                         for(const bid of auction.bids){
                             let bidder = await User.findById(bid.user);
                             if(bid.user !== lastBid.user && !bidder.existingNotification(auction._id, "AUCTION_LOSE")){
-                                bidder.notifications.push(await AuctionLoseNotification(auction._id));
+                                const notification = await AuctionLoseNotification(auction._id);
+                                bidder.notifications.push(notification);
                                 await bidder.save();
                             }
+
                         }
 
                         if (!buyer.existingNotification(auction._id, "AUCTION_WIN")) {
-                            buyer.notifications.push(await AuctionWinNotification(auction._id));
+                            const notification = await AuctionWinNotification(auction._id);
+                            buyer.notifications.push(notification);
                             await buyer.save();
                         }
 
                     } else {
                         if (!seller.existingNotification(auction._id, "AUCTION_RESERVE")) {
-                            seller.notifications.push(await AuctionReserveNotification(auction._id));
+                            const notification = await AuctionReserveNotification(auction._id);
+                            seller.notifications.push(notification);
                             await seller.save();
                         }
 
                         for (const bid of auction.bids) {
                             let bidder = await User.findById(bid.user);
                             if (!bidder.existingNotification(auction._id, "AUCTION_LOSE")) {
-                                bidder.notifications.push(await AuctionLoseNotification(auction._id));
+                                const notification = await AuctionLoseNotification(auction._id);
+                                bidder.notifications.push(notification);
                                 await bidder.save();
                             }
                         }
                     }
                 } else {
                     if (!seller.existingNotification(auction._id, "AUCTION_NO_BIDS")) {
-                        seller.notifications.push(await AuctionNoBidsNotification(auction._id));
+                        const notification = await AuctionNoBidsNotification(auction._id);
+                        seller.notifications.push(notification);
                         await seller.save();
                     }
                 }
@@ -64,6 +73,27 @@ export const checkAuctionsEnd = async () => {
     }
 }
 
+export function sendNotification(room: string) {
+    console.log(`Sending notification to room: ${room}`);
+    getUnreadNotifications(room).then((notifications) => {
+        io.to(room).emit('notification', notifications);
+    })
+}
+
+async function getUnreadNotifications(user_id: string) {
+    try {
+        await connectDB();
+        let user = await User.findById(user_id)
+        if (!user) {
+            console.warn("User not found with id: " + user_id);
+            return [];
+        }
+        return user.getVisibleNotifications();
+    } catch (e) {
+        console.error(e);
+        return [];
+    }
+}
 
 export const AuctionEndNotification = async (auction_id: mongoose.Types.ObjectId) => {
     await connectDB();

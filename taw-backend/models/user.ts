@@ -1,6 +1,7 @@
 import mongoose, { Model } from "mongoose";
 import bcrypt from "bcryptjs";
 import uniqueValidator from "mongoose-unique-validator";
+import {sendNotification} from "../src/utils/notifications";
 
 const UserSchema = new mongoose.Schema(
   {
@@ -60,12 +61,23 @@ const UserSchema = new mongoose.Schema(
 
 UserSchema.plugin(uniqueValidator, { message: "is already taken." });
 
+
+let originalNotifications: { isVisible: boolean; }[]= [];
 UserSchema.pre("save", function (next) {
   if (!this.isModified("password")) {
     return next();
   }
+  originalNotifications = [...filterVisibleNotifications(this.notifications)];
   this.password = bcrypt.hashSync(this.password, 10);
   next();
+});
+
+
+UserSchema.post("save", async function (doc) {
+    const newNotifications =  [...filterVisibleNotifications(doc.notifications)];
+    if (JSON.stringify(originalNotifications) !== JSON.stringify(newNotifications)) {
+        sendNotification(doc._id.toString());
+    }
 });
 
 UserSchema.methods.comparePassword = function (plaintext: string) {
@@ -86,6 +98,16 @@ UserSchema.methods.existingNotification = function (
       notification.code === code,
   );
 };
+
+UserSchema.methods.getVisibleNotifications = function(){
+    return filterVisibleNotifications(this.notifications);
+}
+
+function filterVisibleNotifications(notifications: { isVisible: boolean; }[]){
+    return notifications.filter((notification: { isVisible: boolean; }) => notification.isVisible);
+}
+
+
 
 const User: Model<any> = mongoose.model("User", UserSchema);
 

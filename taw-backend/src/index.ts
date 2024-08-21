@@ -8,6 +8,9 @@ import cron from "node-cron";
 import { whitelistMiddleware } from "./middlewares/whitelist";
 import connectDB from "./config/db";
 import { checkAuctionsEnd } from "./utils/notifications";
+import http from "http"
+import {Server} from "socket.io"
+import { sendNotification} from "./utils/notifications";
 
 dotenv.config();
 
@@ -17,8 +20,47 @@ connectDB();
 
 const port = process.env.PORT || 3000;
 
+
+const server = http.createServer(app);
+export const  io = new Server(server, {
+    cors: {
+        origin: "http://localhost:4200", // Angular app's URL
+        methods: ["GET", "POST"]
+    }
+});
+
+io.on('connection', (socket) => {
+    console.log('New client connected (no room yet)');
+
+    // When a user joins a room
+    socket.on('joinRoom', (room) => { //REMEMBER: room is the user id so be careful when you use ._id (it could be type ObjectId), make sure to convert it to string
+        socket.join(room);
+        console.log(`User joined room: ${room}`);
+        sendNotification(room);
+    });
+
+
+
+    // Handle a custom event
+    socket.on('sendMessage', (data) => {
+        const { room, message } = data;
+        io.to(room).emit('receiveMessage', message);
+    });
+
+    // When a user disconnects
+    socket.on('disconnect', () => {
+        console.log('Client disconnected');
+    });
+});
+
+
+
+
+server.listen(3001, () => console.log('[socketIo] Server is running on port 3001'));
+
+
 const corsOptions = {
-  origin: ["http://localhost:4200", "http://localhost:3000"],
+  origin: ["http://localhost:4200", "http://localhost:3000", "http://localhost:3001"],
   credentials: true, // Allows credentials (cookies) to be sent
 };
 
@@ -44,8 +86,7 @@ export function capitalizeFirstLetter(string:string) {
 
 // Schedule cron job to check auctions every 1 minute
 const job = cron.schedule("*/1 * * * *", () => {
-  console.log("Checking auctions...");
-  checkAuctionsEnd().then(r => console.log("Auctions checked"));
+  checkAuctionsEnd().then((r) => {console.log("Auction checked")}).catch((e) => {console.error("Auction checking Error",e)});
 });
 
 job.start();

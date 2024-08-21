@@ -52,7 +52,7 @@
 </mat-card>
 <div class="row">
   @for (auction of availableAuctions; track auction.ID) {
-    <div class="col-md-6 col-sm-10 col-12 mx-auto">
+    <div class="col-xl-4 col-md-6 col-md-6 col-sm-10 col-12 mx-auto">
       <app-auction-card
         auctionID="{{ auction.ID }}"
         bookTitle="{{ auction.bookTitle }}"

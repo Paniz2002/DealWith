@@ -3,33 +3,32 @@
     <!-- Book Select with Text Search and Create Option -->
     <mat-form-field appearance="fill">
       <mat-label>Book</mat-label>
-      <input matInput formControlName="book" [matAutocomplete]="autoBook" required (keyup)="searchBook()">
+      <input matInput formControlName="book_id" [matAutocomplete]="autoBook" required (keyup)="searchBook()">
       <mat-autocomplete #autoBook="matAutocomplete" [displayWith]="displayBookTitle.bind(this)">
         <mat-option *ngFor="let book of books" [value]="book.id">
           [{{ book.ISBN }}] {{ book.title }}  ({{ book.year }})
         </mat-option>
-        <mat-option  *ngIf="(!books || books.length === 0 )" (click)="addBook()">
-          Add "{{ auctionForm.controls['book'].value }}"
+        <mat-option *ngIf="(!books || books.length === 0 )" (click)="addBook()">
+          Add "{{ auctionForm.controls['book_id'].value }}"
         </mat-option>
       </mat-autocomplete>
-      <mat-error *ngIf="auctionForm.controls['book'].hasError('required')">
+      <mat-error *ngIf="auctionForm.controls['book_id'].hasError('required')">
         Book is required.
       </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="fill">
       <mat-label>Course</mat-label>
-      <input matInput formControlName="course" [matAutocomplete]="autoCourse" required (keyup)="searchCourse()">
+      <input matInput formControlName="course_id" [matAutocomplete]="autoCourse" required (keyup)="searchCourse()">
       <mat-autocomplete #autoCourse="matAutocomplete" [displayWith]="displayCourseName.bind(this)">
         <mat-option *ngFor="let course of courses" [value]="course.id">
           [{{ course.university }}] {{ course.name }}
         </mat-option>
       </mat-autocomplete>
-      <mat-error *ngIf="auctionForm.controls['course'].hasError('required')">
+      <mat-error *ngIf="auctionForm.controls['course_id'].hasError('required')">
         Course is required.
       </mat-error>
     </mat-form-field>
-
 
 
     <mat-label>Description</mat-label>
@@ -52,7 +51,7 @@
     <!-- Reserve Price Input -->
     <mat-form-field appearance="fill">
       <mat-label>Reserve Price</mat-label>
-      <input matInput formControlName="reserve_price" type="number" required>
+      <input matInput formControlName="reserve_price" type="number" min="1" step="0.01" required>
       <mat-error *ngIf="auctionForm.controls['reserve_price'].hasError('required')">
         Reserve Price is required.
       </mat-error>
@@ -64,7 +63,7 @@
     <!-- Starting Price Input -->
     <mat-form-field appearance="fill">
       <mat-label>Starting Price</mat-label>
-      <input matInput formControlName="starting_price" type="number" required>
+      <input matInput formControlName="starting_price" type="number" min="1" step="0.01" required>
       <mat-error *ngIf="auctionForm.controls['starting_price'].hasError('required')">
         Starting Price is required.
       </mat-error>
@@ -73,10 +72,14 @@
       </mat-error>
     </mat-form-field>
 
+
     <!-- Start Date Input -->
     <mat-form-field appearance="fill">
       <mat-label>Start Date</mat-label>
-      <input matInput formControlName="start_date" type="datetime-local" required>
+      <input matInput [matDatepicker]="start_picker" formControlName="start_date" required>
+      <mat-datepicker-toggle matSuffix [for]="start_picker"></mat-datepicker-toggle>
+      <mat-datepicker #start_picker></mat-datepicker>
+      <mat-hint>dd/mm/yyyy</mat-hint>
       <mat-error *ngIf="auctionForm.controls['start_date'].hasError('required')">
         Start Date is required.
       </mat-error>
@@ -85,11 +88,19 @@
     <!-- End Date Input -->
     <mat-form-field appearance="fill">
       <mat-label>End Date</mat-label>
-      <input matInput formControlName="end_date" type="datetime-local" required>
+      <input matInput [matDatepicker]="end_picker" formControlName="end_date" required>
+      <mat-datepicker-toggle matSuffix [for]="end_picker"></mat-datepicker-toggle>
+      <mat-datepicker #end_picker></mat-datepicker>
+      <mat-hint>dd/mm/yyyy</mat-hint>
       <mat-error *ngIf="auctionForm.controls['end_date'].hasError('required')">
         End Date is required.
       </mat-error>
+      <mat-error *ngIf="auctionForm.controls['end_date'].hasError('matDatepickerFilter')">
+        End Date must be after Start Date.
+      </mat-error>
     </mat-form-field>
+
+
 
     <!-- Condition Select -->
     <mat-form-field appearance="fill">
@@ -106,17 +117,34 @@
         Condition is required.
       </mat-error>
     </mat-form-field>
+      <div>
+        <div class="row align-items-center">
+          <div class="col-auto">
+            Images:
+          </div>
+          <div class="col-auto">
+            <button type="button" style="width:100%" mat-raised-button color="accent"  (click)="fileInput.click()">Choose Files</button>
+            <input hidden (change)="onFileSelected()" multiple="multiple" #fileInput type="file" id="files">
+          </div>
+        </div>
+      </div>
 
-    <!--FIXME Images Multiple Upload
-    <mat-form-field appearance="fill">
-      <mat-label>Images</mat-label>
-      <input matInput formControlName="images" type="file" multiple required>
-      <mat-error *ngIf="auctionForm.controls['images'].hasError('required')">
-        Images are required.
-      </mat-error>
-    </mat-form-field> -->
+    <mat-error *ngIf="auctionForm.controls['files'].hasError('required')">
+      Choose at least one image.
+    </mat-error>
+    <div *ngIf="imagePreviews.length > 0">
+      <mat-label>Preview</mat-label>
+      <mat-grid-list cols="3" rowHeight="1:1" gutterSize="5px">
+        <mat-grid-tile style="border: 1px solid #f06292;"  *ngFor="let img of imagePreviews">
+          <img [src]="img" class="preview-img" alt="preview">
+        </mat-grid-tile>
+      </mat-grid-list>
+    </div>
 
     <!-- Submit Button -->
-    <button mat-raised-button color="primary" type="submit">Submit Auction</button>
+    <div class="row">
+      <div class="col-12"><button style="width: 100%" mat-raised-button color="primary" type="submit">Submit Auction</button></div>
+    </div>
+
   </form>
 </div>

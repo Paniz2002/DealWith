@@ -139,6 +139,7 @@ export class AdminHomepageComponent implements AfterViewInit {
         // Fetch again the API to have the updated students list.
         // This way if we have a new student registering we find it immediatly
         // instead of waiting for a page reload.
+        // TODO: socket?
         const res = await axios.get(
           environments.BACKEND_URL + '/api/admin/students',
         );

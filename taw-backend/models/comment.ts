@@ -10,17 +10,16 @@ const CommentSchema = new mongoose.Schema(
     },
     sender: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: User,
+      ref: "User",
       required: [true, "can't be blank"],
     },
     receiver: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: User,
-      required: [true, "can't be blank"],
+      ref: "User",
     },
     auction: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: Auction,
+      ref: 'Auction',
       required: [true, "can't be blank"],
     },
     private: {
