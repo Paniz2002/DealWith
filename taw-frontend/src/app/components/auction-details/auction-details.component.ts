@@ -23,6 +23,7 @@ import {NotificationService} from "../../services/popup/notification.service";
 import {LocalStorageService} from "../../services/localStorage/localStorage.service";
 import axios from "axios";
 import {environments} from "../../../environments/environments";
+import {ChatComponent} from "../chat/chat.component";
 @Component({
   selector: 'app-auction-details',
   standalone: true,
@@ -40,6 +41,7 @@ import {environments} from "../../../environments/environments";
     NgForOf,
     NgClass,
     AuctionDetailsCountdownComponent,
+    ChatComponent,
   ],
   templateUrl: './auction-details.component.html',
   styleUrl: './auction-details.component.css',
@@ -51,6 +53,7 @@ export class AuctionDetailsComponent implements OnInit {
   ];
 
   protected whoAmI!: string;
+  protected myId!: string;
   auctionID: string;
   auctionDetails!: any;
   publicComments: Array<any> = [];
@@ -75,7 +78,8 @@ export class AuctionDetailsComponent implements OnInit {
   ) {
     this.auctionID = this.route.snapshot.paramMap.get('id')!;
     axios.get(environments.BACKEND_URL + '/api/auth/me').then((res: any) => {
-      this.whoAmI = res.data._id;
+      this.whoAmI = res.data.username;
+      this.myId = res.data._id;
     });
   }
 
@@ -146,27 +150,6 @@ export class AuctionDetailsComponent implements OnInit {
       .catch((err) => {
         this.snackBar.notify(err.message);
       });
-
-    axios
-      .get(
-        environments.BACKEND_URL +
-          '/api/auctions/' +
-          this.auctionID +
-          '/comments',
-        {
-          params: {
-            isPrivate: true,
-          },
-        },
-      )
-      .then((res: any) => {
-        for (let data of res.data.public_comments) {
-          this.publicComments.push(data);
-        }
-        for (let data of res.data.private_comments) {
-          this.privateComments.push(data);
-        }
-      });
   }
   protected async submitBid(): Promise<void> {
     const params = {
@@ -179,35 +162,6 @@ export class AuctionDetailsComponent implements OnInit {
     );
 
     window.location.reload();
-  }
-  protected async submitComment(isPrivate: boolean = false): Promise<void> {
-    const msg = isPrivate
-      ? this.commentForm.value.privateComment
-      : this.commentForm.value.publicComment;
-    const params = {
-      isPrivate: isPrivate ? isPrivate : null,
-      text: msg,
-    };
-    const response = await axios.post(
-      environments.BACKEND_URL +
-        '/api/auctions/' +
-        this.auctionID +
-        '/comments',
-      params,
-    );
-    if (response.status === 200) {
-      this.snackBar.notify('Message sent successfully');
-      // TODO: socket update
-    }
-  }
-  protected async replyTo(commentID: string, isPrivate: boolean = false) {
-    this.replyDialog.open(ReplyDialogComponent, {
-      data: {
-        commentID: commentID,
-        auctionID: this.auctionID,
-        isPrivate: isPrivate,
-      },
-    });
   }
 
   private loadAuctionImages(): void {

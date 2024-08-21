@@ -37,7 +37,6 @@
             type="button"
             [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
             data-bs-slide="prev"
-            style="filter: invert(100%)"
           >
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
@@ -47,7 +46,6 @@
             type="button"
             [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
             data-bs-slide="next"
-            style="filter: invert(100%)"
           >
             <span class="carousel-control-next-icon"  aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
@@ -129,80 +127,10 @@
           <mat-card-title style="text-align: center">Comments</mat-card-title>
           <mat-tab-group>
             <mat-tab label="Private">
-              <div class="messages-container">
-                <mat-list>
-                  @for (comment of this.privateComments; track comment) {
-                    @if (this.whoAmI === comment.sender._id) {
-                      <mat-list-item class="right">
-                        {{ comment.text }}</mat-list-item
-                      >
-                    } @else {
-                      <mat-list-item>
-                        {{ comment.sender.username }}:
-                        {{ comment.text }}
-
-                        <button
-                          class="right"
-                          mat-mini-fab
-                          aria-label="Reply button"
-                          (click)="replyTo(comment._id, true)"
-                        >
-                          <mat-icon>reply</mat-icon>
-                        </button>
-                      </mat-list-item>
-                    }
-                    <mat-divider></mat-divider>
-                  } @empty {
-                    <p>There are currently no private messages.</p>
-                  }
-                </mat-list>
-              </div>
-              <form [formGroup]="commentForm" (submit)="submitComment(true)">
-              <textarea
-                required
-                matInput
-                formControlName="privateComment"
-              ></textarea>
-                <div class="align-self-center">
-                  <button mat-raised-button color="accent">Send</button>
-                </div>
-              </form>
+              <app-chat [isPrivate]="true" [auctionID]="this.auctionID" [whoAmI]="this.whoAmI" [auctionOwner]="this.auctionDetails.seller.username" [auctionOwnerID]="this.auctionDetails.seller._id"></app-chat>
             </mat-tab>
             <mat-tab label="Public">
-              <mat-list>
-                @for (comment of this.publicComments; track comment) {
-                  @if (this.whoAmI === comment.sender._id) {
-                    <mat-list-item class="right">
-                      {{ comment.text }}</mat-list-item
-                    >
-                  } @else {
-                    <mat-list-item>
-                      {{ comment.sender.username }}:
-                      {{ comment.text }}
-
-                      <button
-                        class="right"
-                        mat-mini-fab
-                        aria-label="Reply button"
-                        (click)="replyTo(comment._id)"
-                      >
-                        <mat-icon>reply</mat-icon>
-                      </button>
-                    </mat-list-item>
-                  }
-                  <mat-divider></mat-divider>
-                } @empty {
-                  <p>There are currently no public messages.</p>
-                }
-              </mat-list>
-              <form [formGroup]="commentForm" (submit)="submitComment()">
-              <textarea
-                required
-                matInput
-                formControlName="publicComment"
-              ></textarea>
-                <button mat-raised-button>Send</button>
-              </form>
+              <app-chat [isPrivate]="false" [auctionID]="this.auctionID" [whoAmI]="this.whoAmI" ></app-chat>
             </mat-tab>
           </mat-tab-group>
         </mat-card>
