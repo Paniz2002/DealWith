@@ -53,8 +53,8 @@ export class AuctionDetailsComponent implements OnInit {
   protected whoAmI!: string;
   auctionID: string;
   auctionDetails!: any;
-  publicComments!: any;
-  privateComments!: any;
+  publicComments: Array<any> = [];
+  privateComments: Array<any> = [];
   endDate!: Date ;
   endDateTime!: any;
   auctionPrice: Number = -1;
