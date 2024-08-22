@@ -79,34 +79,25 @@ AuctionSchema.methods.lastBidPrice = function () {
     }
     return this.bids[this.bids.length - 1].price;
 }
-AuctionSchema.methods.lastBidder = function () {
+AuctionSchema.methods.lastBidder =  function () {
     if (this.bids.length === 0) {
-        return Promise.resolve({});  // Return a resolved promise with an empty object if there are no bids
+        return {}  // Return a resolved promise with an empty object if there are no bids
     }
 
     let user_id = this.bids[this.bids.length - 1].user;
     if (!user_id) {
-        return Promise.reject(new Error("User not found"));  // Return a rejected promise if the user ID is not present
+        console.error("User not found");
+        return {};  // Return an empty object in case of an error
     }
 
     user_id = user_id.toString();
 
-    return User.findById(user_id)
-        .select("-__v -password -notifications -role")
-        .populate({
-            path: "email",
-            select: "-__v -_id"
-        })
-        .then((user) => {
-            if (user) {
-                return user;  // Return the found user
-            } else {
-                return {};  // Return an empty object if the user is not found
-            }
-        })
-        .catch((err) => {
-            return {};  // Return an empty object in case of an error
-        });
+   return User.findById(user_id)
+       .select("-__v -password -notifications -role")
+       .populate({
+           path: "email",
+           select: "-__v -_id"
+       });
 };
 
 

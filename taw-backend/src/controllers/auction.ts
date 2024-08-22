@@ -613,22 +613,16 @@ export const getMyAuctionsController = async (req: Request, res: Response) => {
             .select("-__v");
 
         //add isActive result to each auction
-        const mappedAuctions = auctions.map(auction => {
-            const auctionObject = auction.toObject();
-            return {
-                ...auctionObject,
-                isActive: auction.isActive(),
-                isSold: auction.isSold(),
-                currentPrice: auction.currentPrice(),
-                lastBidPrice: auction.lastBidPrice(),
-                lastBidder: auction.lastBidder().then((user: any) => {
-                    return user
-                }).catch((err: any) => {
-                    console.error(err);
-                    return {};
-                })
-            };
-        });
+        let mappedAuctions=[];
+        for(const auction of auctions){
+            let auctionObject = auction.toObject();
+            auctionObject.isActive = auction.isActive();
+            auctionObject.isSold = auction.isSold();
+            auctionObject.currentPrice = auction.currentPrice();
+            auctionObject.lastBidPrice = auction.lastBidPrice();
+            auctionObject.lastBidder = await auction.lastBidder();
+            mappedAuctions.push(auctionObject);
+        }
 
         return res.status(200).json(mappedAuctions);
     } catch (e) {
