@@ -1,29 +1,39 @@
 <mat-card>
-  <div class="row">
+  <div class="row" [formGroup]="form">
     <div class="col-lg-auto col-0"></div>
     <div
       class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center"
     >
       <mat-form-field class="form-field" appearance="outline">
         <mat-label>Book name</mat-label>
-        <input matInput [(ngModel)]="searchText" />
+        <input
+          matInput
+          type="text"
+          formControlName="bookName"
+          placeholder="Filter books by name."
+        />
+        @if (this.form.controls["bookName"].errors) {
+          <mat-error>Please write atleast 1 character.</mat-error>
+        }
       </mat-form-field>
     </div>
     <div
       class="col-lg-2 col-md-4 col-6 mx-auto my-auto d-flex align-items-center justify-content-center"
     >
-      <mat-label>Price range</mat-label>
-      <mat-slider discrete showTickMarks min="0" max="">
-        <input matSliderStartThumb [(ngModel)]="minPrice" />
-        <input matSliderEndThumb [(ngModel)]="maxPrice" />
-      </mat-slider>
+      <!-- TODO: css -->
+      <mat-form-field class="form-field">
+        <input type="number" matInput formControlName="minStartingPrice" />
+      </mat-form-field>
+      <mat-form-field class="form-field">
+        <input type="number" matInput formControlName="maxStartingPrice" />
+      </mat-form-field>
     </div>
     <div
       class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center"
     >
       <mat-form-field class="form-field">
         <mat-label>Minimum condition</mat-label>
-        <mat-select [(ngModel)]="condition">
+        <mat-select formControlName="condition">
           <mat-option value="Mint">Mint</mat-option>
           <mat-option value="Near Mint">Near Mint</mat-option>
           <mat-option value="Excellent">Excellent</mat-option>
@@ -31,12 +41,15 @@
           <mat-option value="Fair">Fair</mat-option>
           <mat-option value="Poor">Poor</mat-option>
         </mat-select>
+        @if (this.form.controls["condition"].errors) {
+          <mat-error>Please select a condition.</mat-error>
+        }
       </mat-form-field>
     </div>
     <div
       class="col-lg-2 col-md-12 col-6 mx-auto d-flex align-items-center justify-content-center"
     >
-      <mat-checkbox (click)="toggleActive()"
+      <mat-checkbox formControlName="active" (click)="toggleActive()"
         >Show only active auctions</mat-checkbox
       >
     </div>

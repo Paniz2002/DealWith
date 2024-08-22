@@ -1,28 +1,31 @@
-import {Component, inject, NgModule, OnInit, signal} from '@angular/core';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {AuctionService} from '../../services/bid/auction.service';
-import {Router} from '@angular/router';
-import {CommonModule} from "@angular/common";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatSelectModule} from "@angular/material/select";
-import {MatButtonModule} from "@angular/material/button";
-import {MatIconModule} from "@angular/material/icon";
-import {MatAutocompleteModule} from "@angular/material/autocomplete";
-import {EditorModule} from '@tinymce/tinymce-angular';
-import {BookModalComponent} from "../book-modal/book-modal.component";
-import {MatDialog} from "@angular/material/dialog";
+import { Component, inject, NgModule, OnInit, signal } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { AuctionService } from '../../services/bid/auction.service';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { EditorModule } from '@tinymce/tinymce-angular';
+import { BookModalComponent } from '../book-modal/book-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 import {
   MatDatepicker,
   MatDatepickerInput,
-  MatDatepickerToggle
-} from "@angular/material/datepicker";
-import {MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats, MatNativeDateModule} from "@angular/material/core";
-import {MatGridList, MatGridTile} from "@angular/material/grid-list";
-import {NotificationService} from "../../services/popup/notification.service";
-
-
-
+  MatDatepickerToggle,
+} from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatGridList, MatGridTile } from '@angular/material/grid-list';
+import { NotificationService } from '../../services/popup/notification.service';
 
 interface Book {
   id: string;
@@ -37,20 +40,6 @@ interface Course {
   university: string;
   city: string;
 }
-
-
-export const MY_DATE_FORMATS: MatDateFormats = {
-  parse: {
-    dateInput: 'DD/MM/YYYY',
-  },
-  display: {
-    dateInput: 'DD/MM/YYYY',
-    monthYearLabel: 'MMM YYYY',
-    dateA11yLabel: 'DD/MM/YYYY',
-    monthYearA11yLabel: 'MMMM YYYY',
-  },
-};
-
 
 @Component({
   imports: [
@@ -69,19 +58,13 @@ export const MY_DATE_FORMATS: MatDateFormats = {
     MatDatepicker,
     MatNativeDateModule,
     MatGridList,
-    MatGridTile
-  ],
-  providers: [
-    { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS }, //FIXME: dates from the calendar pop-up are not in format dd/MM/yyyy
-    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
+    MatGridTile,
   ],
   selector: 'app-auction-form',
   standalone: true,
   styleUrls: ['./auction-form.component.css'],
-  templateUrl: './auction-form.component.html'
+  templateUrl: './auction-form.component.html',
 })
-
-
 export class AuctionFormComponent implements OnInit {
   auctionForm!: FormGroup;
   books: Book[] = [];
@@ -89,15 +72,13 @@ export class AuctionFormComponent implements OnInit {
   selectedFiles: File[] = [];
   imagePreviews: string[] = [];
 
-
   constructor(
     private registerFormBuilder: FormBuilder,
     private router: Router,
     private auctionService: AuctionService,
     private dialog: MatDialog,
-    private snackBar: NotificationService
-  ) {
-  }
+    private snackBar: NotificationService,
+  ) {}
 
   ngOnInit() {
     this.auctionForm = this.registerFormBuilder.group({
@@ -109,12 +90,12 @@ export class AuctionFormComponent implements OnInit {
       end_date: ['', Validators.required],
       start_date: ['', Validators.required],
       condition: ['', Validators.required],
-      files: ['', Validators.required ],
+      files: ['', Validators.required],
     });
 
     // Fetch books and courses from the service
-    this.auctionService.getBooks('').then(data => this.books = data);
-    this.auctionService.getCourses('').then(data => this.courses = data);
+    this.auctionService.getBooks('').then((data) => (this.books = data));
+    this.auctionService.getCourses('').then((data) => (this.courses = data));
   }
 
   addBook() {
@@ -122,10 +103,10 @@ export class AuctionFormComponent implements OnInit {
       width: '300pt',
       height: '350pt',
       panelClass: 'custom-dialog-container',
-      data: {title: this.auctionForm.controls['book_id'].value} //FIXME: value is undefined, not priority for now, just UX to autocomplete the form
+      data: { title: this.auctionForm.controls['book_id'].value }, //FIXME: value is undefined, not priority for now, just UX to autocomplete the form
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.books.push(result);
         this.auctionForm.controls['book_id'].setValue(result.id);
@@ -134,26 +115,26 @@ export class AuctionFormComponent implements OnInit {
     });
   }
 
-
   onSubmit(): void {
     if (this.auctionForm.valid) {
-      this.auctionService.addAuction(this.auctionForm).then(result => {
+      this.auctionService.addAuction(this.auctionForm).then((result) => {
         if (result) {
-          console.log(result)
-          if (result._id ) {
-            result = this.auctionService.uploadImages(result._id, this.selectedFiles);
+          if (result._id) {
+            result = this.auctionService.uploadImages(
+              result._id,
+              this.selectedFiles,
+            );
             if (!result) {
               this.snackBar.notify('Error uploading images');
               return;
             }
             this.snackBar.notify('Auction added successfully');
-            this.router.navigate(['/'+result._id]); // or wherever you want to navigate after submission
+            this.router.navigate(['/' + result._id]); // or wherever you want to navigate after submission
           }
         }
-      })
+      });
     }
   }
-
 
   onFileSelected() {
     const inputNode: any = document.querySelector('#files');
@@ -179,13 +160,12 @@ export class AuctionFormComponent implements OnInit {
     }
   }
 
-
   searchBook() {
     //get the value of the input
     const search = this.auctionForm.controls['book_id'].value;
     //fetch the books from the service
     this.auctionService.getBooks(search).then((data) => {
-      this.books = data
+      this.books = data;
     });
   }
 
@@ -194,21 +174,19 @@ export class AuctionFormComponent implements OnInit {
     const search = this.auctionForm.controls['course_id'].value;
     //fetch the course from the service
     this.auctionService.getCourses(search).then((data) => {
-      this.courses = data
+      this.courses = data;
     });
   }
 
-  displayBookTitle(bookId: string):
-    string {
-    const book = this.books.find(book => book.id === bookId);
-    return book ? "[" + book.ISBN + "] " + book.title + " (" + book.year + ")" : '';
+  displayBookTitle(bookId: string): string {
+    const book = this.books.find((book) => book.id === bookId);
+    return book
+      ? '[' + book.ISBN + '] ' + book.title + ' (' + book.year + ')'
+      : '';
   }
 
-  displayCourseName(courseId: string):
-    string {
-    const course = this.courses.find(course => course.id === courseId);
+  displayCourseName(courseId: string): string {
+    const course = this.courses.find((course) => course.id === courseId);
     return course ? `[${course.university}] ${course.name}` : '';
   }
-
-
 }
