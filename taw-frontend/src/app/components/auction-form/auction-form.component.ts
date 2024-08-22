@@ -1,9 +1,11 @@
-import { Component, inject, NgModule, OnInit, signal } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
+  AbstractControl,
   FormBuilder,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { AuctionService } from '../../services/bid/auction.service';
@@ -73,7 +75,7 @@ export class AuctionFormComponent implements OnInit {
   imagePreviews: string[] = [];
 
   constructor(
-    private registerFormBuilder: FormBuilder,
+    private auctionFormBuilder: FormBuilder,
     private router: Router,
     private auctionService: AuctionService,
     private dialog: MatDialog,
@@ -81,17 +83,20 @@ export class AuctionFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.auctionForm = this.registerFormBuilder.group({
-      book_id: ['', Validators.required],
-      course_id: ['', Validators.required],
-      description: ['', Validators.required],
-      reserve_price: ['', [Validators.required, Validators.min(1)]], //FIXME: when i write an interger from keyboard autmoatically subs 0.02€
-      starting_price: ['', [Validators.required, Validators.min(1)]], //FIXME: when i write an interger from keyboard autmoatically subs 0.02€
-      end_date: ['', Validators.required],
-      start_date: ['', Validators.required],
-      condition: ['', Validators.required],
-      files: ['', Validators.required],
-    });
+    this.auctionForm = this.auctionFormBuilder.group(
+      {
+        book_id: ['', Validators.required],
+        course_id: ['', Validators.required],
+        description: ['', Validators.required],
+        reserve_price: ['', [Validators.required, Validators.min(1)]], //FIXME: when i write an interger from keyboard autmoatically subs 0.02€
+        starting_price: ['', [Validators.required, Validators.min(1)]], //FIXME: when i write an interger from keyboard autmoatically subs 0.02€
+        end_date: ['', Validators.required],
+        start_date: ['', Validators.required],
+        condition: ['', Validators.required],
+        files: ['', Validators.required],
+      },
+      { validator: this.reservePriceGreaterThanStartingPrice() },
+    );
 
     // Fetch books and courses from the service
     this.auctionService.getBooks('').then((data) => (this.books = data));
@@ -188,5 +193,27 @@ export class AuctionFormComponent implements OnInit {
   displayCourseName(courseId: string): string {
     const course = this.courses.find((course) => course.id === courseId);
     return course ? `[${course.university}] ${course.name}` : '';
+  }
+  reservePriceGreaterThanStartingPrice(): ValidatorFn {
+    return (formGroup: AbstractControl) => {
+      let startingPrice = formGroup.get('starting_price');
+      let reservePrice = formGroup.get('reserve_price');
+
+      if (!reservePrice) {
+        return { invalid: true };
+      }
+      if (!startingPrice) {
+        return null;
+      }
+
+      startingPrice = startingPrice.value;
+      reservePrice = reservePrice.value;
+
+      if (reservePrice! < startingPrice!) {
+        return { invalid: true };
+      }
+
+      return null;
+    };
   }
 }
