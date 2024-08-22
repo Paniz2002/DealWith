@@ -51,12 +51,12 @@ export class ChatComponent implements OnInit {
 
   ngOnInit() {
     if(this.isPrivate)
-      this.loadPrivateConversations();
+      this.loadPrivateConversations(0);
     else
       this.loadPublicConversations();
   }
 
-  loadPrivateConversations() {
+  loadPrivateConversations(defaultIndex: number) {
     try {
       axios.get(
         environments.BACKEND_URL + '/api/auctions/' + this.auctionID + '/comments',
@@ -66,8 +66,6 @@ export class ChatComponent implements OnInit {
           },
         }
       ).then((res) => {
-
-        console.log('loading private conversations');
 
         if (this.whoAmI === this.auctionOwner) {
           const conversationsMap: { [key: string]: Conversation } = {};
@@ -84,7 +82,7 @@ export class ChatComponent implements OnInit {
               if(!(isMeSender && isMeReceiver)) {
                 if (!conversationsMap[mappedUser]) {
                   conversationsMap[mappedUser] = {
-                    id: mappedUser,
+                    id: mappedUserID,
                     name: mappedUser,
                     receiver_id: mappedUserID,
                     messages: []
@@ -116,7 +114,7 @@ export class ChatComponent implements OnInit {
           this.conversations = Object.values(conversationsMap);
           if (this.conversations.length > 0) {
             this.noPrivateMessages = false;
-            this.selectedConversation = this.conversations[0]; // Seleziona la prima conversazione di default
+            this.selectedConversation = this.conversations[defaultIndex];
           }else{
             this.noPrivateMessages = true;
           }
@@ -157,7 +155,6 @@ export class ChatComponent implements OnInit {
         }
       });
 
-
     } catch (error) {
       console.error('Error loading private conversations:', error);
     }
@@ -197,7 +194,6 @@ export class ChatComponent implements OnInit {
           name: 'Public Chat',
           messages: messages
         }
-        console.log('selected conversation public', this.selectedConversation);
       });
 
 
@@ -220,8 +216,6 @@ export class ChatComponent implements OnInit {
           receiver: this.isPrivate ? isMeOwner ? this.selectedConversation.receiver_id : this.auctionOwnerID : null,
           replyTo: replyToId || null,
         };
-
-        console.log(params);
 
         const response = await axios.post(
           environments.BACKEND_URL + '/api/auctions/' + this.auctionID + '/comments',
@@ -269,8 +263,24 @@ export class ChatComponent implements OnInit {
     }
   }
 
-  reloadPrivateChat() {
-    this.loadPrivateConversations();
+  reloadPrivateChat(comment: any) {
+    let conversationToFind = null;
+
+    if(this.auctionOwner === this.whoAmI) {
+      if(comment.receiver === this.auctionOwnerID) {
+        conversationToFind = this.conversations.find((c) => c.id === comment.sender);
+      }else{
+        conversationToFind = this.conversations.find((c) => c.id === comment.receiver);
+      }
+    }
+
+    let index = 0;
+    // find index of conversation
+    if(conversationToFind)
+      index = this.conversations.indexOf(conversationToFind);
+
+    this.loadPrivateConversations(index);
+
   }
 
   reloadPublicChat() {

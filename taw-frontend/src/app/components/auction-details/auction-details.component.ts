@@ -198,7 +198,7 @@ export class AuctionDetailsComponent implements OnInit {
     if(comment.receiver === this.myId || comment.sender === this.myId) {
       if(this.tabGroup.selectedIndex !== 0)
         this.tabGroup.selectedIndex = 0;
-      this.chatComponents.toArray()[0].reloadPrivateChat();
+      this.chatComponents.toArray()[0].reloadPrivateChat(comment);
     }
   }
 
