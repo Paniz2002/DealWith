@@ -74,10 +74,12 @@ export const checkAuctionsEnd = async () => {
 }
 
 export function sendNotification(room: string) {
-    console.log(`Sending notification to room: ${room}`);
+
+   console.log(`Sending notification to room: ${room}`);
     getUnreadNotifications(room).then((notifications) => {
         io.to(room).emit('notification', notifications);
     })
+
 }
 
 async function getUnreadNotifications(user_id: string) {

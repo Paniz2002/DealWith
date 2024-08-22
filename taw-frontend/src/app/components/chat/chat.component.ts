@@ -42,22 +42,25 @@ export class ChatComponent implements OnInit {
   replyToMessageData?: Message; // Messaggio a cui si sta rispondendo
 
   ngOnInit() {
-    this.loadConversations();
+    if(this.isPrivate)
+      this.loadPrivateConversations();
+    else
+      this.loadPublicConversations();
   }
 
-  async loadConversations() {
+  loadPrivateConversations() {
     try {
-      const res = await axios.get(
+      axios.get(
         environments.BACKEND_URL + '/api/auctions/' + this.auctionID + '/comments',
         {
           params: {
-            isPrivate: this.isPrivate,
+            isPrivate: true,
           },
         }
-      );
+      ).then((res) => {
 
+        console.log('loading private conversations');
 
-      if (this.isPrivate) {
         if (this.whoAmI === this.auctionOwner) {
           const conversationsMap: { [key: string]: Conversation } = {};
           for (const data of res.data.private_comments) {
@@ -68,12 +71,9 @@ export class ChatComponent implements OnInit {
               const isMeReceiver = receiver.username === this.whoAmI;
 
               const mappedUser = isMeSender ? receiver.username : sender.username;
-
               const mappedUserID = isMeSender ? receiver._id : sender._id;
 
-              console.log(mappedUser);
-
-              if(!(isMeSender && isMeReceiver)){
+              if(!(isMeSender && isMeReceiver)) {
                 if (!conversationsMap[mappedUser]) {
                   conversationsMap[mappedUser] = {
                     id: mappedUser,
@@ -102,17 +102,14 @@ export class ChatComponent implements OnInit {
                   replyTo: repliedMessage
                 });
               }
-
             }
-
-
           }
 
           this.conversations = Object.values(conversationsMap);
           if (this.conversations.length > 0) {
             this.selectedConversation = this.conversations[0]; // Seleziona la prima conversazione di default
           }
-        }else {
+        } else {
           let messages: Message[] = [];
 
           for (const data of res.data.private_comments) {
@@ -135,7 +132,6 @@ export class ChatComponent implements OnInit {
                 author: sender.username,
                 content: text,
                 receiver: receiver.username,
-
                 replyTo: repliedMessage
               });
             }
@@ -148,28 +144,57 @@ export class ChatComponent implements OnInit {
 
           this.selectedConversation = this.conversations[0];
         }
-      } else {
-        // Carica solo la chat principale per gli utenti non possessori
-        this.conversations = [{
-          id: 'main',
-          name: 'Main Chat',
-          messages: res.data.public_comments.map((data: any) => ({
-            id: data._id,
-            author: data.sender.username,
-            content: data.text,
-            replyTo: data.inReplyTo ? {
-              id: data.inReplyTo._id,
-              author: data.inReplyTo.sender.username,
-              content: data.inReplyTo.text
-            } : undefined
-          }))
-        }];
-        this.selectedConversation = this.conversations[0]; // Seleziona la chat principale
-      }
+      });
+
+
     } catch (error) {
-      console.error('Error loading conversations:', error);
+      console.error('Error loading private conversations:', error);
     }
   }
+
+  loadPublicConversations() { // Carica le conversazioni pubbliche
+    try {
+      axios.get(
+        environments.BACKEND_URL + '/api/auctions/' + this.auctionID + '/comments'
+      ).then((res) => {
+        let messages: Message[] = [];
+
+        for(const data of res.data.public_comments){
+          const { _id, sender, text, inReplyTo } = data;
+
+          let repliedMessage: Message | undefined;
+          if (inReplyTo) {
+            const getRepliedMessage = res.data.public_comments.find((m: any) => m._id === inReplyTo._id);
+            repliedMessage = {
+              id: getRepliedMessage._id,
+              author: getRepliedMessage.sender.username,
+              content: getRepliedMessage.text
+            };
+          }
+
+          messages.push({
+            id: _id,
+            author: sender.username,
+            content: text,
+            replyTo: repliedMessage
+          });
+
+        }
+
+        this.selectedConversation = {
+          id: 'public',
+          name: 'Public Chat',
+          messages: messages
+        }
+        console.log('selected conversation public', this.selectedConversation);
+      });
+
+
+    } catch (error) {
+      console.error('Error loading public conversations:', error);
+    }
+  }
+
 
   async sendMessage(replyToId?: string) {
     if (this.newMessage.trim() && this.selectedConversation) {
@@ -231,5 +256,15 @@ export class ChatComponent implements OnInit {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
+  }
+
+  reloadChat(comment: any) {
+
+    if(comment.private === true)
+      this.loadPrivateConversations();
+    else{
+      this.loadPublicConversations();
+    }
+
   }
 }

@@ -1,6 +1,7 @@
 import mongoose, { Model } from "mongoose";
 import User from "./user";
 import Auction from "./auction";
+import {io} from "../src";
 
 const CommentSchema = new mongoose.Schema(
   {
@@ -33,5 +34,10 @@ const CommentSchema = new mongoose.Schema(
   },
 );
 
-const PublicComment: Model<any> = mongoose.model("Comment", CommentSchema);
-export default PublicComment;
+CommentSchema.post("save", async function (doc) {
+    io.to('auction_' + doc.auction.toString()).emit('comment', doc);
+    console.log('Comment emitted');
+});
+
+const Comment: Model<any> = mongoose.model("Comment", CommentSchema);
+export default Comment;

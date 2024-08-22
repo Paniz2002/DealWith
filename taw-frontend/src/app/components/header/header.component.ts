@@ -142,13 +142,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   initSocket() {
+    /*
     if (this.isUserLoggedIn) {
       axios.get(environments.BACKEND_URL + '/api/auth/me').then(res => {
         if (res.status === 200 && res.data && res.data._id) {
           this.socketService.joinRoom(res.data._id);
         }
       })
-    }
+    }*/
   }
 }
 

@@ -30,14 +30,24 @@ export class SocketService {
     this.socket.emit('joinRoom', room);
   }
 
+  joinAuctionRoom(room: string) {
+    console.log('Joining auction room');
+
+    this.socket.emit('joinCommentRoom', room);
+  }
+
   sendMessage(room: string, message: string) {
     this.socket.emit('sendMessage', {room, message});
   }
 
-
   receiveMessage(callback: (message: any) => void) {
     console.log('Receiving message');
     this.socket.on('notification', callback);
+  }
+
+  receiveComment(callback: (message: any) => void) {
+    console.log('Receiving comment');
+    this.socket.on('comment', callback);
   }
 
   disconnect() {

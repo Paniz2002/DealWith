@@ -523,7 +523,10 @@ export const postAuctionCommentsController = async (
     params.receiver = receiver;
   }
   try {
-    await Comment.create(params);
+    // await Comment.create(params);
+    let comment = new Comment(params);
+    await comment.save();
+
     return res.sendStatus(200);
   } catch (err) {
     console.log(err);

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import {Component, OnInit, inject, ViewChild} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -12,18 +12,17 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
-import { MatTabsModule } from '@angular/material/tabs';
+import {MatTabGroup, MatTabsModule} from '@angular/material/tabs';
 import {NgClass, NgForOf} from "@angular/common";
 import {AuctionDetailsCountdownComponent} from "../auction-details-countdown/auction-details-countdown.component";
 import { MatIconModule } from '@angular/material/icon';
-import { ReplyDialogComponent } from '../reply-dialog/reply-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
 import {ActivatedRoute} from "@angular/router";
 import {NotificationService} from "../../services/popup/notification.service";
 import {LocalStorageService} from "../../services/localStorage/localStorage.service";
 import axios from "axios";
 import {environments} from "../../../environments/environments";
 import {ChatComponent} from "../chat/chat.component";
+import {SocketService} from "../../socket.service";
 @Component({
   selector: 'app-auction-details',
   standalone: true,
@@ -47,6 +46,8 @@ import {ChatComponent} from "../chat/chat.component";
   styleUrl: './auction-details.component.css',
 })
 export class AuctionDetailsComponent implements OnInit {
+  @ViewChild(ChatComponent) chatComponent!: ChatComponent;
+  @ViewChild('tabs') tabGroup!: MatTabGroup;
   months: Array<string> = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December',
@@ -56,8 +57,6 @@ export class AuctionDetailsComponent implements OnInit {
   protected myId!: string;
   auctionID: string;
   auctionDetails!: any;
-  publicComments: Array<any> = [];
-  privateComments: Array<any> = [];
   endDate!: Date ;
   endDateTime!: any;
   auctionPrice: Number = -1;
@@ -65,16 +64,13 @@ export class AuctionDetailsComponent implements OnInit {
   form: FormGroup = new FormGroup({
     bidPrice: new FormControl('', [Validators.required]),
   });
-  commentForm: FormGroup = new FormGroup({
-    publicComment: new FormControl('', [Validators.required]),
-    privateComment: new FormControl('', [Validators.required]),
-  });
+
   coursesUniversities: Array<string> = Array<string>();
-  replyDialog: MatDialog = inject(MatDialog);
   constructor(
     private route: ActivatedRoute,
     private snackBar: NotificationService,
     protected localStorage: LocalStorageService,
+    protected socketService: SocketService,
   ) {
     this.auctionID = this.route.snapshot.paramMap.get('id')!;
     axios.get(environments.BACKEND_URL + '/api/auth/me').then((res: any) => {
@@ -92,36 +88,35 @@ export class AuctionDetailsComponent implements OnInit {
     return currMax >= startingPrice ? currMax : startingPrice;
   }
 
+  isOwner(): boolean{
+    return this.auctionDetails.seller._id === this.myId;
+  }
+
   private isClientLastBidOwner(bids: any):any {
     if(bids.length === 0) {
       return false;
     }
 
     let currMax: Number = -1;
-    let owner = '';
+    let lastBidOwner = '';
     bids.forEach((bid: any) => {
       if (bid.price > currMax) {
         currMax = bid.price;
-        owner = bid.user.toString();
+        lastBidOwner = bid.user.toString();
       }
     });
 
-    return axios.get(environments.BACKEND_URL + '/api/auth/me').then((res: any) => {
-      console.log(res.data._id);
-      console.log(owner);
-      console.log(res.data._id === owner);
-
-      return res.data._id === owner;
-    }).catch((err) => {
-      console.error(err);
-    });
+    return this.myId === lastBidOwner;
 
   }
 
-  // TODO: ERROR TypeError: ctx.auctionDetails is undefined
-  // this happens because fetching from mongo web is slow as fuck.
-  // (fix even if you use mongo docker)
   ngOnInit(): void {
+    this.initSocket();
+    this.socketService.receiveComment( (comment) => {
+      console.log('Received comment');
+      this.reloadChatContent(comment);
+    });
+
     axios
       .get(environments.BACKEND_URL + '/api/auctions/' + this.auctionID)
       .then((details: any) => {
@@ -146,6 +141,7 @@ export class AuctionDetailsComponent implements OnInit {
         });
 
         this.loadAuctionImages();
+
       })
       .catch((err) => {
         this.snackBar.notify(err.message);
@@ -187,6 +183,25 @@ export class AuctionDetailsComponent implements OnInit {
     }
 
     this.form.controls['bidPrice'].setValue(parseFloat(value).toFixed(2));
+  }
+
+  initSocket() {
+      this.socketService.joinAuctionRoom('auction_' + this.auctionID);
+  }
+
+  reloadChatContent(comment: any) {
+
+    this.chatComponent.reloadChat(comment);
+
+    if(comment.private === true && (comment.receiver === this.myId || comment.sender === this.myId)) {
+      this.chatComponent.reloadChat(comment);
+      if(this.tabGroup.selectedIndex !== 0)
+        this.tabGroup.selectedIndex = 0;
+    }else {
+      this.chatComponent.reloadChat(comment);
+      if(this.tabGroup.selectedIndex !== 1)
+        this.tabGroup.selectedIndex = 1;
+    }
   }
 
 }
