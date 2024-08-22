@@ -11,6 +11,7 @@ import { AdminGuard } from './guards/admin/adminGuard';
 import { AuthenticationGuard } from './guards/auth/authentication.guard';
 import { LogoutGuard } from './guards/logout/logout.guard';
 import { StudentGuard } from './guards/student/student.guard';
+import {StatisticsStudentComponent} from "./components/statistics-student/statistics-student.component";
 export const routes: Routes = [
   {
     path: 'register',
@@ -46,6 +47,12 @@ export const routes: Routes = [
     // but it's not possibile.
     path: 'create',
     component: AuctionFormComponent,
+    pathMatch: 'full',
+    canActivate: [StudentGuard],
+  },
+  {
+    path: 'statistics',
+    component: StatisticsStudentComponent,
     pathMatch: 'full',
     canActivate: [StudentGuard],
   },
