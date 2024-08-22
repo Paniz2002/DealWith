@@ -1,3 +1,5 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css");
+
 .chat-container {
   display: flex;
   flex-direction: column;
@@ -6,7 +8,44 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: #e8eaf6; /* Indigo-50 */
+  background-color: #F9F9F9; /* Indigo-50 */
+}
+
+/* chat.component.css */
+.conversations-list {
+  width: 100%;
+  background-color: #ffffff; /* Pink-100 */
+  overflow: hidden;
+  border: 1px solid #ddd;
+}
+
+.conversations-list div {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.conversations-list div.selected {
+  background-color: #3f51b5; /* Indigo-500 */
+  color: white;
+}
+
+.toggle-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  padding: 2px;
+  cursor: pointer;
+  color: #3f51b5; /* Indigo-500 */
+}
+
+.no-messages-warning{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  font-size: 20px;
+  color: #3f51b5; /* Indigo-500 */
 }
 
 .message-list {
@@ -24,6 +63,10 @@
   border: 1px solid #ddd;
   border-radius: 5px;
   position: relative;
+}
+
+.conversation-name{
+  color: #1a237e;
 }
 
 /* Messaggi inviati dall'utente corrente (destra) */

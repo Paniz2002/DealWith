@@ -4,6 +4,12 @@ import { environments } from '../../../environments/environments';
 import { FormsModule } from '@angular/forms';
 import { NotificationService } from '../../services/popup/notification.service';
 import { NgClass } from '@angular/common';
+import {
+  MatExpansionPanel,
+  MatExpansionPanelTitle,
+  MatExpansionPanelHeader,
+  MatExpansionPanelDescription
+} from "@angular/material/expansion";
 
 interface Message {
   id: string;
@@ -24,8 +30,8 @@ interface Conversation {
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   standalone: true,
-  imports: [FormsModule, NgClass],
-  styleUrls: ['./chat.component.css']
+  imports: [FormsModule, NgClass, MatExpansionPanel, MatExpansionPanelTitle, MatExpansionPanelHeader, MatExpansionPanelDescription],
+  styleUrls: ['./chat.component.css'],
 })
 export class ChatComponent implements OnInit {
 
@@ -37,6 +43,8 @@ export class ChatComponent implements OnInit {
   @Input() auctionOwnerID!: string; // ID del proprietario dell'asta
   @Input() whoAmI!: string; // Utente corrente
   conversations: Conversation[] = []; // Lista delle conversazioni per il possessore
+  isConversationListVisible: boolean = true; // Indica se la lista delle conversazioni è visibile
+  noPrivateMessages: boolean = false; // Indica se non ci sono messaggi privati
   selectedConversation!: Conversation; // Conversazione selezionata
   newMessage: string = '';
   replyToMessageData?: Message; // Messaggio a cui si sta rispondendo
@@ -107,7 +115,10 @@ export class ChatComponent implements OnInit {
 
           this.conversations = Object.values(conversationsMap);
           if (this.conversations.length > 0) {
+            this.noPrivateMessages = false;
             this.selectedConversation = this.conversations[0]; // Seleziona la prima conversazione di default
+          }else{
+            this.noPrivateMessages = true;
           }
         } else {
           let messages: Message[] = [];
@@ -258,13 +269,12 @@ export class ChatComponent implements OnInit {
     }
   }
 
-  reloadChat(comment: any) {
-
-    if(comment.private === true)
-      this.loadPrivateConversations();
-    else{
-      this.loadPublicConversations();
-    }
-
+  reloadPrivateChat() {
+    this.loadPrivateConversations();
   }
+
+  reloadPublicChat() {
+    this.loadPublicConversations();
+  }
+
 }

@@ -35,8 +35,12 @@ const CommentSchema = new mongoose.Schema(
 );
 
 CommentSchema.post("save", async function (doc) {
-    io.to('auction_' + doc.auction.toString()).emit('comment', doc);
-    console.log('Comment emitted');
+    if(doc.private)
+        io.to('auction_' + doc.auction.toString()).emit('private-comment', doc);
+    else
+        io.to('auction_' + doc.auction.toString()).emit('public-comment', doc);
+
+    console.log('Comment emitted, is Private: ', doc.private);
 });
 
 const Comment: Model<any> = mongoose.model("Comment", CommentSchema);

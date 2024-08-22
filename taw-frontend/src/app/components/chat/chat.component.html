@@ -1,14 +1,32 @@
 <!-- chat.component.html -->
+
+
 <div class="chat-container">
+  @if(isPrivate && (whoAmI == auctionOwner) && noPrivateMessages){
+    <div class="no-messages-warning">
+      Your auction has no private messages yet.
+    </div>
+  }@else{
+
   <!-- Lista delle conversazioni per il possessore dell'asta -->
   @if(isPrivate && (whoAmI == auctionOwner)){
-    <div class="conversations-list">
-      @for(conversation of conversations; track conversation){
-      <div (click)="selectConversation(conversation)" [ngClass]="{'selected': conversation === selectedConversation}">
-        {{ conversation.name }}
+    @if(isConversationListVisible){
+
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <p class="pt-3">Conversation whit <span class="conversation-name"> {{ selectedConversation?.name }} </span>, click to select another conversation</p>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="conversations-list">
+        @for(conversation of conversations; track conversation){
+          <div (click)="selectConversation(conversation)" [ngClass]="{'selected': conversation === selectedConversation}">
+            {{ conversation.name }}
+          </div>
+        }
       </div>
-      }
-    </div>
+    </mat-expansion-panel>
+    }
   }
 
   <!-- Messaggi della conversazione selezionata -->
@@ -50,4 +68,6 @@
     <input [(ngModel)]="newMessage" placeholder="Type a message..." />
     <button (click)="sendMessage(replyToMessageData?.id)">Send</button>
   </div>
+
+  }
 </div>

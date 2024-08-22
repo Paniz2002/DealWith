@@ -1,4 +1,4 @@
-import {Component, OnInit, inject, ViewChild} from '@angular/core';
+import {Component, OnInit, inject, ViewChild, ViewChildren, QueryList} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -46,7 +46,7 @@ import {SocketService} from "../../socket.service";
   styleUrl: './auction-details.component.css',
 })
 export class AuctionDetailsComponent implements OnInit {
-  @ViewChild(ChatComponent) chatComponent!: ChatComponent;
+  @ViewChildren(ChatComponent) chatComponents!: QueryList<ChatComponent>;
   @ViewChild('tabs') tabGroup!: MatTabGroup;
   months: Array<string> = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -112,9 +112,14 @@ export class AuctionDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.initSocket();
-    this.socketService.receiveComment( (comment) => {
-      console.log('Received comment');
-      this.reloadChatContent(comment);
+    this.socketService.receivePublicComment( (comment) => {
+      console.log('Received public comment');
+      this.reloadPublicChatContent(comment);
+    });
+
+    this.socketService.receivePrivateComment( (comment) => {
+      console.log('Received private comment');
+      this.reloadPrivateChatContent(comment);
     });
 
     axios
@@ -189,19 +194,18 @@ export class AuctionDetailsComponent implements OnInit {
       this.socketService.joinAuctionRoom('auction_' + this.auctionID);
   }
 
-  reloadChatContent(comment: any) {
-
-    this.chatComponent.reloadChat(comment);
-
-    if(comment.private === true && (comment.receiver === this.myId || comment.sender === this.myId)) {
-      this.chatComponent.reloadChat(comment);
+  reloadPrivateChatContent(comment: any) {
+    if(comment.receiver === this.myId || comment.sender === this.myId) {
       if(this.tabGroup.selectedIndex !== 0)
         this.tabGroup.selectedIndex = 0;
-    }else {
-      this.chatComponent.reloadChat(comment);
-      if(this.tabGroup.selectedIndex !== 1)
-        this.tabGroup.selectedIndex = 1;
+      this.chatComponents.toArray()[0].reloadPrivateChat();
     }
+  }
+
+  reloadPublicChatContent(comment: any) {
+    if(this.tabGroup.selectedIndex !== 1)
+      this.tabGroup.selectedIndex = 1;
+    this.chatComponents.toArray()[1].reloadPublicChat();
   }
 
 }

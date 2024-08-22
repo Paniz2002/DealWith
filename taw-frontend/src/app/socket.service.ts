@@ -45,9 +45,14 @@ export class SocketService {
     this.socket.on('notification', callback);
   }
 
-  receiveComment(callback: (message: any) => void) {
-    console.log('Receiving comment');
-    this.socket.on('comment', callback);
+  receivePublicComment(callback: (message: any) => void) {
+    console.log('Receiving public comment');
+    this.socket.on('public-comment', callback);
+  }
+
+  receivePrivateComment(callback: (message: any) => void) {
+    console.log('Receiving private comment');
+    this.socket.on('private-comment', callback);
   }
 
   disconnect() {
