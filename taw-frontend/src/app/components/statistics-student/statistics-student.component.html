@@ -1,1 +1,11 @@
-<p>statistics-student works!</p>
+<div  class="chart-container">
+  <canvas baseChart id="myAcutions"
+          [datasets]="lineChartData"
+          [labels]="lineChartLabels"
+          [options]="lineChartOptions"
+          [legend]="lineChartLegend"
+          [type]="lineChartType"
+          [plugins]="lineChartPlugins">
+  </canvas>
+</div>
+
