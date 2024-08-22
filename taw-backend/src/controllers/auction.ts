@@ -1,5 +1,5 @@
-import {Request, Response} from "express";
-import {z} from "zod";
+import { Request, Response } from "express";
+import { z } from "zod";
 import connectDB from "../config/db";
 import BadRequestException from "../exceptions/bad-request";
 import UnauthorizedException from "../exceptions/unauthorized";
@@ -7,9 +7,9 @@ import InternalException from "../exceptions/internal-exception";
 import Auction from "../../models/auction";
 import Book from "../../models/book";
 import Comment from "../../models/comment";
-import {validateForm} from "../utils/validate";
+import { validateForm } from "../utils/validate";
 import fullTextSearch from "../utils/search";
-import {getUserId} from "../utils/userID";
+import { getUserId } from "../utils/userID";
 import Bid from "../../models/bid";
 import path from "path";
 import fs from "fs";
@@ -398,7 +398,7 @@ export const getAuctionDetailsController = async (
             })
             .populate({
                 path: "seller",
-                select: "-__v -_id -password -email -role",
+        select: "-__v -password -email -role",
             })
             .select("-__v -reserve_price");
 
@@ -460,6 +460,7 @@ export const getAuctionCommentsController = async (
     })
         .select("-__v -createdAt -updatedAt")
         .populate({path: "sender", select: "username"})
+    .populate({path: "inReplyTo"})
         .sort({createdAt: 1})
         .exec();
     let privateComments: any[] = [];
@@ -473,6 +474,7 @@ export const getAuctionCommentsController = async (
             .select("-__v -createdAt -updatedAt")
             .populate({path: "sender", select: "username"})
             .populate({path: "receiver", select: "username"})
+      .populate({path: "inReplyTo"})
             .sort({createdAt: 1})
             .exec();
     }
@@ -481,11 +483,12 @@ export const getAuctionCommentsController = async (
         public_comments: publicComments,
     });
 };
+
 export const postAuctionCommentsController = async (
     req: Request,
     res: Response,
 ) => {
-    const {isPrivate, replyTo, text} = req.body;
+  const { isPrivate, replyTo, text, receiver } = req.body;
     const auctionID = req.params.id;
     const currentAuction = await Auction.findById(auctionID).exec();
     if (!currentAuction) {
@@ -494,6 +497,10 @@ export const postAuctionCommentsController = async (
     if (text === "") {
         return BadRequestException(req, res, "Bad request: invalid paramters.");
     }
+
+  if(!receiver && isPrivate){
+    return BadRequestException(req, res, "Bad request: receiver is required for private messages.");
+  }
 
     const userID = getUserId(req, res);
     const params: any = {
@@ -513,10 +520,13 @@ export const postAuctionCommentsController = async (
     }
     if (Boolean(isPrivate)) {
         params.private = true;
-        params.receiver = currentAuction.seller;
+    params.receiver = receiver;
     }
     try {
-        await Comment.create(params);
+    // await Comment.create(params);
+    let comment = new Comment(params);
+    await comment.save();
+
         return res.sendStatus(200);
     } catch (err) {
         console.log(err);
