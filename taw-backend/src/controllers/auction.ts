@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { z } from "zod";
+import {Request, Response} from "express";
+import {z} from "zod";
 import connectDB from "../config/db";
 import BadRequestException from "../exceptions/bad-request";
 import UnauthorizedException from "../exceptions/unauthorized";
@@ -7,15 +7,16 @@ import InternalException from "../exceptions/internal-exception";
 import Auction from "../../models/auction";
 import Book from "../../models/book";
 import Comment from "../../models/comment";
-import { validateForm } from "../utils/validate";
+import {validateForm} from "../utils/validate";
 import fullTextSearch from "../utils/search";
-import { getUserId } from "../utils/userID";
+import {getUserId} from "../utils/userID";
 import Bid from "../../models/bid";
 import path from "path";
 import fs from "fs";
 import sharp from "sharp";
 import Course from "../../models/course";
-import RequestNotFoundResponse from "../exceptions/request-not-found";
+import NotFoundException from "../exceptions/not-found";
+import NotFound from "../exceptions/not-found";
 
 const conditions = ["Mint", "Near Mint", "Excellent", "Good", "Fair", "Poor"];
 
@@ -70,12 +71,12 @@ export const newAuctionController = async (req: Request, res: Response) => {
         const user_id = getUserId(req, res);
         const book = await Book.findById(book_id);
         if (!book) {
-            return BadRequestException(req, res, "Book not found");
+            return NotFoundException(req, res, "Book not found");
         }
 
         let alreadyExistingCourse = await Course.findById(course_id);
         if (!alreadyExistingCourse) {
-            return BadRequestException(req, res, "Course not found");
+            return NotFoundException(req, res, "Course not found");
         }
 
         //check if course exists in the book
@@ -128,7 +129,7 @@ export const uploadAuctionImagesController = async (
 
         const auction = await Auction.findById(auction_id);
         if (!auction) {
-            return BadRequestException(req, res, "Auction or user not found");
+            return NotFoundException(req, res, "Auction or user not found");
         }
 
         const user_id = getUserId(req, res);
@@ -187,7 +188,7 @@ export const getAuctionImagesController = async (
 
         const auction = await Auction.findById(auction_id);
         if (!auction) {
-            return BadRequestException(req, res, "Auction not found");
+            return NotFound(req, res, "Auction not found");
         }
 
         const imagesBase64 = auction.images.map((imagePath: string) => {
@@ -246,7 +247,7 @@ const searchAuctions = async function (req: Request, res: Response) {
         if (q) {
             searchedAuctions = await fullTextSearch(Auction, q.toString());
             if (!searchedAuctions) {
-                return BadRequestException(req, res, "No auctions found");
+                return NotFound(req, res, "No auctions found");
             }
         }
 
@@ -311,7 +312,7 @@ const searchAuctions = async function (req: Request, res: Response) {
         }
 
         if (!priceFilteredAuctions) {
-            return BadRequestException(req, res, "No auctions found");
+            return NotFoundException(req, res, "No auctions found");
         } else {
             return priceFilteredAuctions;
         }
@@ -351,8 +352,8 @@ export const getAuctionController = async (req: Request, res: Response) => {
 
     try {
         let auctions = await searchAuctions(req, res);
-    if (!auctions || (auctions instanceof Array && auctions.length === 0)) {
-      return RequestNotFoundResponse(res);
+        if (!auctions || (auctions instanceof Array && auctions.length === 0)) {
+            return NotFoundException(req, res, "No auctions found");
         }
 
         return res.status(200).json(auctions);
@@ -392,12 +393,12 @@ export const getAuctionDetailsController = async (
             })
             .populate({
                 path: "seller",
-        select: "-__v -password -email -role",
+                select: "-__v -password -email -role",
             })
             .select("-__v -reserve_price");
 
         if (!auction) {
-            return BadRequestException(req, res, "Auction not found");
+            return NotFound(req, res, "Auction not found");
         }
 
         return res.status(200).json(auction);
@@ -454,7 +455,7 @@ export const getAuctionCommentsController = async (
     })
         .select("-__v -createdAt -updatedAt")
         .populate({path: "sender", select: "username"})
-    .populate({path: "inReplyTo"})
+        .populate({path: "inReplyTo"})
         .sort({createdAt: 1})
         .exec();
     let privateComments: any[] = [];
@@ -468,7 +469,7 @@ export const getAuctionCommentsController = async (
             .select("-__v -createdAt -updatedAt")
             .populate({path: "sender", select: "username"})
             .populate({path: "receiver", select: "username"})
-      .populate({path: "inReplyTo"})
+            .populate({path: "inReplyTo"})
             .sort({createdAt: 1})
             .exec();
     }
@@ -482,7 +483,7 @@ export const postAuctionCommentsController = async (
     req: Request,
     res: Response,
 ) => {
-  const { isPrivate, replyTo, text, receiver } = req.body;
+    const {isPrivate, replyTo, text, receiver} = req.body;
     const auctionID = req.params.id;
     const currentAuction = await Auction.findById(auctionID).exec();
     if (!currentAuction) {
@@ -492,9 +493,9 @@ export const postAuctionCommentsController = async (
         return BadRequestException(req, res, "Bad request: invalid paramters.");
     }
 
-  if(!receiver && isPrivate){
-    return BadRequestException(req, res, "Bad request: receiver is required for private messages.");
-  }
+    if (!receiver && isPrivate) {
+        return BadRequestException(req, res, "Bad request: receiver is required for private messages.");
+    }
 
     const userID = getUserId(req, res);
     const params: any = {
@@ -514,12 +515,12 @@ export const postAuctionCommentsController = async (
     }
     if (Boolean(isPrivate)) {
         params.private = true;
-    params.receiver = receiver;
+        params.receiver = receiver;
     }
     try {
-    // await Comment.create(params);
-    let comment = new Comment(params);
-    await comment.save();
+        // await Comment.create(params);
+        let comment = new Comment(params);
+        await comment.save();
 
         return res.sendStatus(200);
     } catch (err) {
@@ -535,7 +536,7 @@ export const patchAuctionController = async (req: Request, res: Response) => {
         await connectDB();
         const auction = await Auction.findById(auction_id);
         if (!auction) {
-            return BadRequestException(req, res, "Auction not found");
+            return NotFoundException(req, res, "Auction not found");
         }
 
         if (description) auction.description = description;
@@ -548,7 +549,7 @@ export const patchAuctionController = async (req: Request, res: Response) => {
 
         if (book_id) {
             const book = await Book.findById(book_id);
-            if (!book) return BadRequestException(req, res, "Book not found");
+            if (!book) return NotFoundException(req, res, "Book not found");
             auction.book = book_id;
         }
 
@@ -569,7 +570,7 @@ export const deleteAuctionController = async (req: Request, res: Response) => {
         const auction = await Auction.findById(auction_id);
 
         if (!auction) {
-            return BadRequestException(req, res, "Auction not found");
+            return NotFoundException(req, res, "Auction not found");
         }
 
         await Auction.deleteOne({_id: auction_id});
@@ -607,8 +608,8 @@ export const getMyAuctionsController = async (req: Request, res: Response) => {
             .select("-__v");
 
         //add isActive result to each auction
-        let mappedAuctions=[];
-        for(const auction of auctions){
+        let mappedAuctions = [];
+        for (const auction of auctions) {
             let auctionObject = auction.toObject();
             auctionObject.isActive = auction.isActive();
             auctionObject.isSold = auction.isSold();
@@ -625,15 +626,15 @@ export const getMyAuctionsController = async (req: Request, res: Response) => {
 };
 
 export const getMyParticipatedAuctionsController = async (
-  req: Request,
-  res: Response,
+    req: Request,
+    res: Response,
 ) => {
     try {
         const user_id = getUserId(req, res);
         await connectDB();
-    const auctions = await Auction.find({
-      bids: { $elemMatch: { user: user_id } },
-    })
+        const auctions = await Auction.find({
+            bids: {$elemMatch: {user: user_id}},
+        })
             .populate({
                 path: "book",
                 populate: {
@@ -652,24 +653,29 @@ export const getMyParticipatedAuctionsController = async (
             })
             .populate({
                 path: "seller",
-        select:
-          "-__v -_id -password -email -role -notifications -createdAt -updatedAt",
+                select:
+                    "-__v -_id -password -email -role -notifications -createdAt -updatedAt",
             })
             .select("-__v -reserve_price -start_date");
 
-    const mappedAuctions = auctions.map((auction) => {
-            const isWinning = auction.lastBidder()._id.toString() === user_id.toString();
+        let mappedAuctions = [];
+        for (const auction of auctions) {
+            const lastBidder = await auction.lastBidder();
+            console.log(lastBidder);
+
+            const isWinning = lastBidder._id.toString() === user_id.toString();
             const isActive = auction.isActive();
 
             const auctionObject = auction.toObject();
             delete auctionObject.bids;
 
-            return {
+            mappedAuctions.push({
                 ...auctionObject,
                 isWinning: isWinning,
                 isActive: isActive,
-            };
-        });
+            });
+        }
+
 
         return res.status(200).json(mappedAuctions);
     } catch (e) {
@@ -678,8 +684,8 @@ export const getMyParticipatedAuctionsController = async (
 };
 
 export const getAuctionStatisticsController = async (
-  req: Request,
-  res: Response,
+    req: Request,
+    res: Response,
 ) => {
     try {
         await connectDB();
@@ -706,14 +712,14 @@ export const getAuctionStatisticsController = async (
             })
             .select("-__v ");
 
-    const mappedAuctions = auctions.map((auction) => {
+        const mappedAuctions = auctions.map((auction) => {
             let maxBid = {price: auction.starting_price};
 
             if (auction.bids.length !== 0)
-        maxBid = auction.bids.reduce(
-          (prev: { amount: number }, current: { amount: number }) =>
-            prev.amount > current.amount ? prev : current,
-        );
+                maxBid = auction.bids.reduce(
+                    (prev: { amount: number }, current: { amount: number }) =>
+                        prev.amount > current.amount ? prev : current,
+                );
 
             const isEnded = auction.end_date < new Date();
             const isSuccessful = maxBid.price >= auction.reserve_price;
@@ -723,7 +729,7 @@ export const getAuctionStatisticsController = async (
             return {
                 ...auctionObject,
                 isEnded: isEnded,
-        isSuccessful: isSuccessful,
+                isSuccessful: isSuccessful,
             };
         });
 
