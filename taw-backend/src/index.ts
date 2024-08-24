@@ -26,27 +26,32 @@ export const io = new Server(server, {
   },
 });
 
-io.on("connection", (socket) => {
-  console.log("New client connected (no room yet)");
+io.on('connection', (socket) => {
+    console.log('New client connected (no room yet)');
 
-  // When a user joins a room
-  socket.on("joinRoom", (room) => {
-    //REMEMBER: room is the user id so be careful when you use ._id (it could be type ObjectId), make sure to convert it to string
-    socket.join(room);
-    console.log(`User joined room: ${room}`);
-    sendNotification(room);
-  });
+    // When a user joins a room
+    socket.on('joinRoom', (room) => { //REMEMBER: room is the user id so be careful when you use ._id (it could be type ObjectId), make sure to convert it to string
+        socket.join(room);
+        console.log(`User joined room: ${room}`);
+        sendNotification(room);
+    });
 
-  // Handle a custom event
-  socket.on("sendMessage", (data) => {
-    const { room, message } = data;
-    io.to(room).emit("receiveMessage", message);
-  });
+    socket.on('joinCommentRoom', (room) => {
+        console.log('Joining comment room');
+        socket.join(room);
+        console.log(`User joined comment room: ${room}`);
+    });
 
-  // When a user disconnects
-  socket.on("disconnect", () => {
-    console.log("Client disconnected");
-  });
+    // Handle a custom event
+    socket.on('sendMessage', (data) => {
+        const { room, message } = data;
+        io.to(room).emit('receiveMessage', message);
+    });
+
+    // When a user disconnects
+    socket.on('disconnect', () => {
+        console.log('Client disconnected');
+    });
 });
 
 server.listen(3001, () =>

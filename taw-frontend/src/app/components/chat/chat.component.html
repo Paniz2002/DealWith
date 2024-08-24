@@ -1,0 +1,73 @@
+<!-- chat.component.html -->
+
+
+<div class="chat-container">
+  @if(isPrivate && (whoAmI == auctionOwner) && noPrivateMessages){
+    <div class="no-messages-warning">
+      Your auction has no private messages yet.
+    </div>
+  }@else{
+
+  <!-- Lista delle conversazioni per il possessore dell'asta -->
+  @if(isPrivate && (whoAmI == auctionOwner)){
+    @if(isConversationListVisible){
+
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <p class="pt-3">Conversation whit <span class="conversation-name"> {{ selectedConversation?.name }} </span>, click to select another conversation</p>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="conversations-list">
+        @for(conversation of conversations; track conversation){
+          <div (click)="selectConversation(conversation)" [ngClass]="{'selected': conversation === selectedConversation}">
+            {{ conversation.name }}
+          </div>
+        }
+      </div>
+    </mat-expansion-panel>
+    }
+  }
+
+  <!-- Messaggi della conversazione selezionata -->
+  <div class="message-list">
+    @if(selectedConversation){
+      <!-- Itera sui messaggi della conversazione selezionata -->
+      @for(message of selectedConversation.messages ; track message){
+        <div class="message" [ngClass]="{'sent': message.author === whoAmI, 'received': message.author !== whoAmI}" [id]="message.id">
+          <div class="message-author">{{ message.author }}</div>
+          <div class="message-content">
+            <!-- Visualizza il messaggio a cui si sta rispondendo -->
+            @if (message.replyTo){
+            <div class="reply-preview" (click)="scrollToMessage(message.replyTo?.id)">
+              <div class="reply-author">{{ message.replyTo?.author }}</div>
+              <div class="reply-content">{{ message.replyTo?.content }}</div>
+            </div>
+            }
+            {{ message.content }}
+          </div>
+          <button class="reply-button" (click)="replyToMessage(message)">Reply</button>
+        </div>
+      }
+    }
+
+  </div>
+
+  <!-- Sezione di risposta -->
+  @if(replyToMessageData){
+    <div class="reply-preview">
+      <div class="reply-content">
+        Replying to {{ replyToMessageData?.author }}: {{ replyToMessageData?.content }}
+      </div>
+      <button class="cancel-reply-button" (click)="cancelReply()">Cancel</button>
+    </div>
+  }
+
+  <!-- Input del messaggio -->
+  <div class="message-input">
+    <input [(ngModel)]="newMessage" placeholder="Type a message..." />
+    <button (click)="sendMessage(replyToMessageData?.id)">Send</button>
+  </div>
+
+  }
+</div>

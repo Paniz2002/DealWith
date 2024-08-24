@@ -1,0 +1,171 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css");
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #F9F9F9; /* Indigo-50 */
+}
+
+/* chat.component.css */
+.conversations-list {
+  width: 100%;
+  background-color: #ffffff; /* Pink-100 */
+  overflow: hidden;
+  border: 1px solid #ddd;
+}
+
+.conversations-list div {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.conversations-list div.selected {
+  background-color: #3f51b5; /* Indigo-500 */
+  color: white;
+}
+
+.toggle-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  padding: 2px;
+  cursor: pointer;
+  color: #3f51b5; /* Indigo-500 */
+}
+
+.no-messages-warning{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  font-size: 20px;
+  color: #3f51b5; /* Indigo-500 */
+}
+
+.message-list {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ddd;
+}
+
+.message {
+  max-width: 60%;
+  padding: 10px;
+  margin-bottom: 5px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  position: relative;
+}
+
+.conversation-name{
+  color: #1a237e;
+}
+
+/* Messaggi inviati dall'utente corrente (destra) */
+.sent {
+  margin-left: auto;
+  background-color: #c5cae9; /* Indigo-100 */
+  color: #1a237e; /* Indigo-900 */
+  text-align: right;
+}
+
+/* Messaggi ricevuti da altri utenti (sinistra) */
+.received {
+  margin-right: auto;
+  background-color: #ffffff; /* White background for received messages */
+  color: #283593; /* Indigo-800 */
+  text-align: left;
+}
+
+.message-author {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.message-content {
+  font-size: 14px;
+}
+
+.reply-to {
+  color: #d81b60; /* Pink-600 */
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.reply-button {
+  align-self: flex-end;
+  background-color: transparent;
+  border: none;
+  color: #3f51b5; /* Indigo-500 */
+  cursor: pointer;
+  font-size: 12px;
+  margin-top: 5px;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.reply-button:hover {
+  color: #304ffe; /* Indigo-700 */
+}
+
+.reply-preview {
+  background-color: #fce4ec; /* Pink-50 */
+  padding: 10px;
+  border-left: 4px solid #e91e63; /* Pink-500 */
+  margin-bottom: 10px;
+}
+
+.reply-content {
+  font-size: 14px;
+  color: #880e4f; /* Pink-900 */
+}
+
+.cancel-reply-button {
+  background-color: transparent;
+  border: none;
+  color: #d81b60; /* Pink-600 */
+  cursor: pointer;
+  font-size: 12px;
+  margin-top: 5px;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.cancel-reply-button:hover {
+  color: #c2185b; /* Pink-700 */
+}
+
+.message-input {
+  display: flex;
+  padding: 10px;
+  background-color: #ffffff; /* White background for input area */
+}
+
+.message-input input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.message-input button {
+  background-color: #3f51b5; /* Indigo-500 */
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.message-input button:hover {
+  background-color: #303f9f; /* Indigo-700 */
+}

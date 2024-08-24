@@ -1,6 +1,7 @@
 import mongoose, { Model } from "mongoose";
 import User from "./user";
 import Auction from "./auction";
+import {io} from "../src";
 
 const CommentSchema = new mongoose.Schema(
   {
@@ -33,5 +34,14 @@ const CommentSchema = new mongoose.Schema(
   },
 );
 
-const PublicComment: Model<any> = mongoose.model("Comment", CommentSchema);
-export default PublicComment;
+CommentSchema.post("save", async function (doc) {
+    if(doc.private)
+        io.to('auction_' + doc.auction.toString()).emit('private-comment', doc);
+    else
+        io.to('auction_' + doc.auction.toString()).emit('public-comment', doc);
+
+    console.log('Comment emitted, is Private: ', doc.private);
+});
+
+const Comment: Model<any> = mongoose.model("Comment", CommentSchema);
+export default Comment;

@@ -6,7 +6,6 @@ mat-card {
 .messages-container{
   height: 80vh;
   overflow-y: auto;
-  border-radius: 15px;
   border: 1px solid #ccc;
 }
 
@@ -49,4 +48,9 @@ mat-card {
 .right {
   text-align: right;
   justify-content: flex-end;
+}
+
+mat-card{
+  border: 0;
+  box-shadow: none;
 }
