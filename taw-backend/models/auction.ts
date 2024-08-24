@@ -55,7 +55,7 @@ const AuctionSchema = new mongoose.Schema(
 AuctionSchema.index({"$**": "text"});
 
 AuctionSchema.methods.isActive = function () {
-    return this.end_date > Date.now();
+    return this.end_date > Date.now() && this.start_date <= Date.now();
 };
 
 AuctionSchema.methods.isOwner = function (user_id: string) {

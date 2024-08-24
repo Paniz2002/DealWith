@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { Chart, ChartOptions, ChartType, registerables } from 'chart.js';
-import { ChartDataset } from 'chart.js';
+import {Component, OnInit} from '@angular/core';
+import {Chart, ChartOptions, ChartType, registerables} from 'chart.js';
+import {ChartDataset} from 'chart.js';
 import axios from 'axios';
-import { BaseChartDirective } from 'ng2-charts';
-import { environments } from '../../../environments/environments';
-import { Router } from "@angular/router";
+import {BaseChartDirective} from 'ng2-charts';
+import {environments} from '../../../environments/environments';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-statistics-student',
@@ -24,7 +24,7 @@ export class StatisticsStudentComponent implements OnInit {
 
   // Participated Auctions Chart Data
   public participatedChartData: ChartDataset[] = [
-    { data: [], label: 'Participated Auctions', hidden: false }
+    {data: [], label: 'Participated Auctions', hidden: false}
   ];
   public participatedChartLabels: string[] = [];
 
@@ -101,6 +101,10 @@ export class StatisticsStudentComponent implements OnInit {
     this.lineChartData[0].data = this.lineChartLabels.map(month => activeAuctions[month] || 0);
     this.lineChartData[1].data = this.lineChartLabels.map(month => closedSoldAuctions[month] || 0);
     this.lineChartData[2].data = this.lineChartLabels.map(month => closedNotSoldAuctions[month] || 0);
+    // Force update chart
+    setTimeout(() => {
+      this.lineChartData = [...this.lineChartData];
+    }, 500);
 
     this.auctions = data.sort((a: any, b: any) => new Date(b.end_date).getTime() - new Date(a.end_date).getTime());
   }
@@ -124,10 +128,14 @@ export class StatisticsStudentComponent implements OnInit {
 
     this.participatedChartData[0].data = this.participatedChartLabels.map(month => participatedAuctions[month] || 0);
 
+    setTimeout(() => {
+      this.participatedChartData = [...this.participatedChartData];
+    }, 500);
     this.participatedAuctions = data.sort((a: any, b: any) => new Date(b.end_date).getTime() - new Date(a.end_date).getTime());
   }
 
   viewAuction(auctionId: string) {
     this.router.navigate(['/' + auctionId]); // or wherever you want to navigate after submission
   }
+
 }
