@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { z } from "zod";
 import BadRequestException from "../exceptions/bad-request";
 import connectDB from "../config/db";
-import Email from "../../models/email";
 import User from "../../models/user";
 import InternalException from "../exceptions/internal-exception";
 import * as jwt from "jsonwebtoken";
@@ -55,7 +54,7 @@ export const registerController = async (req: Request, res: Response) => {
   }
 
   // Check if the email already exists
-  const alreadyRegisteredEmail = await Email.findOne({
+  const alreadyRegisteredEmail = await User.findOne({
     address: req.body.email,
   });
   if (alreadyRegisteredEmail) {
@@ -80,11 +79,6 @@ export const registerController = async (req: Request, res: Response) => {
   }
   try {
     // Create a new email document
-    const email = await Email.create({
-      address: req.body.email,
-      validated: false,
-    });
-
     // Create a new user document
     const user = new User({
       profile: {
@@ -93,7 +87,7 @@ export const registerController = async (req: Request, res: Response) => {
       },
       username: req.body.username,
       password: req.body.password, //encrypted byt the user model
-      email: email._id, // Reference the saved email document
+      email: req.body.email, // Reference the saved email document
       role: req.body.role,
     });
 

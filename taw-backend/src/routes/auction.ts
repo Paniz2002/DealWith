@@ -28,9 +28,17 @@ auctionRoutes.post(
 auctionRoutes.get("/", getAuctionController);
 
 auctionRoutes.get("/me", [studentMiddleware], getMyAuctionsController);
-auctionRoutes.get("/me/participated", [studentMiddleware], getMyParticipatedAuctionsController);
+auctionRoutes.get(
+  "/me/participated",
+  [studentMiddleware],
+  getMyParticipatedAuctionsController,
+);
 
-auctionRoutes.get("/statistics",[adminMiddleware], getAuctionStatisticsController);
+auctionRoutes.get(
+  "/statistics",
+  [adminMiddleware],
+  getAuctionStatisticsController,
+);
 
 auctionRoutes.get("/:id/images", getAuctionImagesController);
 auctionRoutes.get(

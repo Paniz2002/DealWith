@@ -12,7 +12,6 @@
       <button mat-button [routerLink]="'/register'" class="header-button">
         Register
       </button>
-
     } @else {
       <button mat-button [routerLink]="'/logout'" class="header-button">
         Logout
@@ -30,11 +29,17 @@
       <!-- Notification icon with counter -->
       @if (notifications && notifications.length > 0) {
         <!-- Notification icon with counter -->
-        <div class="notifications-container"
-             (mouseenter)="openMenu(menuTrigger)"
-             (mouseleave)="closeMenu(menuTrigger)">
-          <button mat-button [matMenuTriggerFor]="notificationsMenu" #menuTrigger="matMenuTrigger"
-                  class="header-button">
+        <div
+          class="notifications-container"
+          (mouseenter)="openMenu(menuTrigger)"
+          (mouseleave)="closeMenu(menuTrigger)"
+        >
+          <button
+            mat-button
+            [matMenuTriggerFor]="notificationsMenu"
+            #menuTrigger="matMenuTrigger"
+            class="header-button"
+          >
             <mat-icon>notifications</mat-icon>
             @if (notificationsCnt > 0) {
               <span class="notification-counter">
@@ -43,22 +48,38 @@
             }
           </button>
 
-          <mat-menu #notificationsMenu="matMenu" class="notifications-content" [hasBackdrop]="false"
-                    yPosition="below" overlapTrigger="false">
-            <div (mouseenter)="keepMenuOpen()" (mouseleave)="closeMenu(menuTrigger)">
+          <mat-menu
+            #notificationsMenu="matMenu"
+            class="notifications-content"
+            [hasBackdrop]="false"
+            yPosition="below"
+            overlapTrigger="false"
+          >
+            <div
+              (mouseenter)="keepMenuOpen()"
+              (mouseleave)="closeMenu(menuTrigger)"
+            >
               <ng-container>
                 @for (notification of notifications; track notification._id) {
-                  <div mat-menu-item (mouseenter)="markNotificationAsSeen(notification._id)"
-                          [ngClass]="{'notification-unread': !notification.isRead}"
-                          (click)="viewAuction(notification.auction)">
+                  <div
+                    mat-menu-item
+                    (mouseenter)="markNotificationAsSeen(notification._id)"
+                    [ngClass]="{ 'notification-unread': !notification.isRead }"
+                    (click)="viewAuction(notification.auction)"
+                  >
                     {{ notification.text }}
                     <span class="action-buttons">
-
-                  <button mat-icon-button (click)="deleteNotification(notification._id); $event.stopPropagation()"
-                          aria-label="Delete notification">
-                      <mat-icon>delete</mat-icon>
-                  </button>
-                </span>
+                      <button
+                        mat-icon-button
+                        (click)="
+                          deleteNotification(notification._id);
+                          $event.stopPropagation()
+                        "
+                        aria-label="Delete notification"
+                      >
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </span>
                   </div>
                 }
               </ng-container>

@@ -15,6 +15,7 @@ import path from "path";
 import fs from "fs";
 import sharp from "sharp";
 import Course from "../../models/course";
+import RequestNotFoundResponse from "../exceptions/request-not-found";
 
 const conditions = ["Mint", "Near Mint", "Excellent", "Good", "Fair", "Poor"];
 
@@ -109,7 +110,6 @@ export const newAuctionController = async (req: Request, res: Response) => {
         return InternalException(req, res, "Unknown error while creating listing");
     }
 };
-
 
 export const uploadAuctionImagesController = async (
     req: Request,
@@ -351,14 +351,8 @@ export const getAuctionController = async (req: Request, res: Response) => {
 
     try {
         let auctions = await searchAuctions(req, res);
-
-        if (auctions instanceof Array) {
-            if (auctions.length === 0)
-                return BadRequestException(req, res, "No auctions found");
-        }
-
-        if (!auctions) {
-            return BadRequestException(req, res, "No auctions found");
+    if (!auctions || (auctions instanceof Array && auctions.length === 0)) {
+      return RequestNotFoundResponse(res);
         }
 
         return res.status(200).json(auctions);
@@ -628,14 +622,18 @@ export const getMyAuctionsController = async (req: Request, res: Response) => {
     } catch (e) {
         return InternalException(req, res, "Error while getting auctions");
     }
+};
 
-}
-
-export const getMyParticipatedAuctionsController = async (req: Request, res: Response) => {
+export const getMyParticipatedAuctionsController = async (
+  req: Request,
+  res: Response,
+) => {
     try {
         const user_id = getUserId(req, res);
         await connectDB();
-        const auctions = await Auction.find({bids: {$elemMatch: {user: user_id}}})
+    const auctions = await Auction.find({
+      bids: { $elemMatch: { user: user_id } },
+    })
             .populate({
                 path: "book",
                 populate: {
@@ -654,17 +652,19 @@ export const getMyParticipatedAuctionsController = async (req: Request, res: Res
             })
             .populate({
                 path: "seller",
-                select: "-__v -_id -password -email -role -notifications -createdAt -updatedAt",
+        select:
+          "-__v -_id -password -email -role -notifications -createdAt -updatedAt",
             })
             .select("-__v -reserve_price -start_date");
 
-        const mappedAuctions = auctions.map(auction => {
+    const mappedAuctions = auctions.map((auction) => {
             let maxBid = {price: auction.starting_price, user: user_id};
 
             if (auction.bids.length !== 0)
-                maxBid = auction.bids.reduce((prev: { amount: number; }, current: {
-                    amount: number;
-                }) => (prev.amount > current.amount) ? prev : current);
+        maxBid = auction.bids.reduce(
+          (prev: { amount: number }, current: { amount: number }) =>
+            prev.amount > current.amount ? prev : current,
+        );
 
             const isWinning = maxBid.user.toString() === user_id.toString();
             const isEnded = auction.end_date < new Date();
@@ -675,18 +675,20 @@ export const getMyParticipatedAuctionsController = async (req: Request, res: Res
             return {
                 ...auctionObject,
                 isWinning: isWinning,
-                isEnded: isEnded
+        isEnded: isEnded,
             };
         });
-
 
         return res.status(200).json(mappedAuctions);
     } catch (e) {
         return InternalException(req, res, "Error while getting auctions");
     }
-}
+};
 
-export const getAuctionStatisticsController = async (req: Request, res: Response) => {
+export const getAuctionStatisticsController = async (
+  req: Request,
+  res: Response,
+) => {
     try {
         await connectDB();
         const auctions = await Auction.find()
@@ -712,13 +714,14 @@ export const getAuctionStatisticsController = async (req: Request, res: Response
             })
             .select("-__v ");
 
-        const mappedAuctions = auctions.map(auction => {
+    const mappedAuctions = auctions.map((auction) => {
             let maxBid = {price: auction.starting_price};
 
             if (auction.bids.length !== 0)
-                maxBid = auction.bids.reduce((prev: { amount: number; }, current: {
-                    amount: number;
-                }) => (prev.amount > current.amount) ? prev : current);
+        maxBid = auction.bids.reduce(
+          (prev: { amount: number }, current: { amount: number }) =>
+            prev.amount > current.amount ? prev : current,
+        );
 
             const isEnded = auction.end_date < new Date();
             const isSuccessful = maxBid.price >= auction.reserve_price;
@@ -728,14 +731,13 @@ export const getAuctionStatisticsController = async (req: Request, res: Response
             return {
                 ...auctionObject,
                 isEnded: isEnded,
-                isSuccessful: isSuccessful
+        isSuccessful: isSuccessful,
             };
         });
 
         return res.status(200).json(mappedAuctions);
-
     } catch (e) {
         console.log(e);
         return InternalException(req, res, "Error while getting auctions");
     }
-}
+};
