@@ -30,14 +30,29 @@ export class SocketService {
     this.socket.emit('joinRoom', room);
   }
 
+  joinAuctionRoom(room: string) {
+    console.log('Joining auction room');
+
+    this.socket.emit('joinCommentRoom', room);
+  }
+
   sendMessage(room: string, message: string) {
     this.socket.emit('sendMessage', {room, message});
   }
 
-
   receiveMessage(callback: (message: any) => void) {
     console.log('Receiving message');
     this.socket.on('notification', callback);
+  }
+
+  receivePublicComment(callback: (message: any) => void) {
+    console.log('Receiving public comment');
+    this.socket.on('public-comment', callback);
+  }
+
+  receivePrivateComment(callback: (message: any) => void) {
+    console.log('Receiving private comment');
+    this.socket.on('private-comment', callback);
   }
 
   disconnect() {

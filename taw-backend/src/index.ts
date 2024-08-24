@@ -39,7 +39,11 @@ io.on('connection', (socket) => {
         sendNotification(room);
     });
 
-
+    socket.on('joinCommentRoom', (room) => {
+        console.log('Joining comment room');
+        socket.join(room);
+        console.log(`User joined comment room: ${room}`);
+    });
 
     // Handle a custom event
     socket.on('sendMessage', (data) => {
