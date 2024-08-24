@@ -658,16 +658,8 @@ export const getMyParticipatedAuctionsController = async (
             .select("-__v -reserve_price -start_date");
 
     const mappedAuctions = auctions.map((auction) => {
-            let maxBid = {price: auction.starting_price, user: user_id};
-
-            if (auction.bids.length !== 0)
-        maxBid = auction.bids.reduce(
-          (prev: { amount: number }, current: { amount: number }) =>
-            prev.amount > current.amount ? prev : current,
-        );
-
-            const isWinning = maxBid.user.toString() === user_id.toString();
-            const isEnded = auction.end_date < new Date();
+            const isWinning = auction.lastBidder()._id.toString() === user_id.toString();
+            const isActive = auction.isActive();
 
             const auctionObject = auction.toObject();
             delete auctionObject.bids;
@@ -675,7 +667,7 @@ export const getMyParticipatedAuctionsController = async (
             return {
                 ...auctionObject,
                 isWinning: isWinning,
-        isEnded: isEnded,
+                isActive: isActive,
             };
         });
 

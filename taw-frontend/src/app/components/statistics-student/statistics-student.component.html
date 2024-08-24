@@ -47,7 +47,51 @@
   </div>
 
   <div class="panel">
-    <h2>Additional Information</h2>
-    <!-- Additional content can be added here in the future -->
+    <h1>My Participated Auctions</h1>
+    <h2 class="subtitle">Auction List</h2>
+
+    <div class="chart-container">
+      <canvas baseChart
+              [datasets]="participatedChartData"
+              [labels]="participatedChartLabels"
+              [options]="lineChartOptions"
+              [legend]="lineChartLegend"
+              [type]="lineChartType"
+              [plugins]="lineChartPlugins">
+      </canvas>
+    </div>
+
+    <table class="auction-table">
+      <thead>
+      <tr>
+        <th>Book Name</th>
+        <th>Seller</th>
+        <th>Condition</th>
+        <th>Starting Price</th>
+        <th>Current Price</th>
+        <th>Winning</th>
+        <th>Is Active</th>
+        <th>Action</th>
+      </tr>
+      </thead>
+      <tbody>
+        @for (auction of participatedAuctions; track auction._id) {
+          <tr>
+            <td>{{ auction.book.title }}</td>
+            <td>{{ auction.seller.profile.firstName }} {{ auction.seller.profile.lastName }}</td>
+            <td>{{ auction.condition }}</td>
+            <td>{{ auction.starting_price }}€</td>
+            <td>{{ auction.starting_price }}€</td>
+            <td>{{ auction.isWinning ? 'Yes' : 'No' }}</td>
+            <td>{{ auction.isActive ? 'Yes' : 'No' }}</td>
+            <td>
+              <button (click)="viewAuction(auction._id)">
+                <i class="fa fa-eye"></i> View
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
   </div>
 </div>
