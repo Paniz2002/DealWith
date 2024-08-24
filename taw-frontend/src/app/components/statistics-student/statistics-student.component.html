@@ -1,11 +1,53 @@
-<div  class="chart-container">
-  <canvas baseChart id="myAcutions"
-          [datasets]="lineChartData"
-          [labels]="lineChartLabels"
-          [options]="lineChartOptions"
-          [legend]="lineChartLegend"
-          [type]="lineChartType"
-          [plugins]="lineChartPlugins">
-  </canvas>
-</div>
+<div class="statistics-container">
+  <div class="panel">
+    <h1>My Placed Auctions</h1>
+    <h2 class="subtitle">Auction List</h2>
 
+    <div class="chart-container">
+      <canvas baseChart
+              [datasets]="lineChartData"
+              [labels]="lineChartLabels"
+              [options]="lineChartOptions"
+              [legend]="lineChartLegend"
+              [type]="lineChartType"
+              [plugins]="lineChartPlugins">
+      </canvas>
+    </div>
+
+    <table class="auction-table">
+      <thead>
+      <tr>
+        <th>Book Name</th>
+        <th>Is Active</th>
+        <th>Is Sold</th>
+        <th>Current Price</th>
+        <th>Sold Price</th>
+        <th>Last Bidder</th>
+        <th>Action</th>
+      </tr>
+      </thead>
+      <tbody>
+        @for (auction of auctions; track auction._id) {
+          <tr>
+            <td>{{ auction.book.title }}</td>
+            <td>{{ auction.isActive ? 'Yes' : 'No' }}</td>
+            <td>{{ auction.isSold ? 'Yes' : 'No' }}</td>
+            <td>{{ auction.currentPrice }}€</td>
+            <td>{{ auction.isSold ? (auction.currentPrice) + '€' : '-' }}</td>
+            <td>{{ auction.lastBidder?.profile?.firstName }} {{ auction.lastBidder?.profile?.lastName }}</td>
+            <td>
+              <button (click)="viewAuction(auction._id)">
+                <i class="fa fa-eye"></i> View
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h2>Additional Information</h2>
+    <!-- Additional content can be added here in the future -->
+  </div>
+</div>
