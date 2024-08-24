@@ -15,7 +15,8 @@ import path from "path";
 import fs from "fs";
 import sharp from "sharp";
 import Course from "../../models/course";
-import RequestNotFoundResponse from "../exceptions/request-not-found";
+import NotFoundException from "../exceptions/not-found";
+import NotFound from "../exceptions/not-found";
 
 const conditions = ["Mint", "Near Mint", "Excellent", "Good", "Fair", "Poor"];
 
@@ -70,12 +71,12 @@ export const newAuctionController = async (req: Request, res: Response) => {
     const user_id = getUserId(req, res);
     const book = await Book.findById(book_id);
     if (!book) {
-      return BadRequestException(req, res, "Book not found");
+      return NotFoundException(req, res, "Book not found");
     }
 
     let alreadyExistingCourse = await Course.findById(course_id);
     if (!alreadyExistingCourse) {
-      return BadRequestException(req, res, "Course not found");
+      return NotFoundException(req, res, "Course not found");
     }
 
     //check if course exists in the book
@@ -128,7 +129,7 @@ export const uploadAuctionImagesController = async (
 
     const auction = await Auction.findById(auction_id);
     if (!auction) {
-      return BadRequestException(req, res, "Auction or user not found");
+      return NotFoundException(req, res, "Auction or user not found");
     }
 
     const user_id = getUserId(req, res);
@@ -187,7 +188,7 @@ export const getAuctionImagesController = async (
 
     const auction = await Auction.findById(auction_id);
     if (!auction) {
-      return BadRequestException(req, res, "Auction not found");
+      return NotFound(req, res, "Auction not found");
     }
 
     const imagesBase64 = auction.images.map((imagePath: string) => {
@@ -246,7 +247,7 @@ const searchAuctions = async function (req: Request, res: Response) {
     if (q) {
       searchedAuctions = await fullTextSearch(Auction, q.toString());
       if (!searchedAuctions) {
-        return BadRequestException(req, res, "No auctions found");
+        return NotFound(req, res, "No auctions found");
       }
     }
 
@@ -311,7 +312,7 @@ const searchAuctions = async function (req: Request, res: Response) {
     }
 
     if (!priceFilteredAuctions) {
-      return BadRequestException(req, res, "No auctions found");
+      return NotFoundException(req, res, "No auctions found");
     } else {
       return priceFilteredAuctions;
     }
@@ -352,7 +353,7 @@ export const getAuctionController = async (req: Request, res: Response) => {
   try {
     let auctions = await searchAuctions(req, res);
     if (!auctions || (auctions instanceof Array && auctions.length === 0)) {
-      return RequestNotFoundResponse(res);
+      return NotFoundException(req, res, "No auctions found");
     }
 
     return res.status(200).json(auctions);
@@ -397,7 +398,7 @@ export const getAuctionDetailsController = async (
       .select("-__v -reserve_price");
 
     if (!auction) {
-      return BadRequestException(req, res, "Auction not found");
+      return NotFound(req, res, "Auction not found");
     }
 
     return res.status(200).json(auction);
@@ -535,7 +536,7 @@ export const patchAuctionController = async (req: Request, res: Response) => {
     await connectDB();
     const auction = await Auction.findById(auction_id);
     if (!auction) {
-      return BadRequestException(req, res, "Auction not found");
+      return NotFoundException(req, res, "Auction not found");
     }
 
     if (description) auction.description = description;
@@ -548,7 +549,7 @@ export const patchAuctionController = async (req: Request, res: Response) => {
 
     if (book_id) {
       const book = await Book.findById(book_id);
-      if (!book) return BadRequestException(req, res, "Book not found");
+      if (!book) return NotFoundException(req, res, "Book not found");
       auction.book = book_id;
     }
 
@@ -569,7 +570,7 @@ export const deleteAuctionController = async (req: Request, res: Response) => {
     const auction = await Auction.findById(auction_id);
 
     if (!auction) {
-      return BadRequestException(req, res, "Auction not found");
+      return NotFoundException(req, res, "Auction not found");
     }
 
     await Auction.deleteOne({ _id: auction_id });
