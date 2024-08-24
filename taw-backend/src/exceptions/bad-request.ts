@@ -6,4 +6,3 @@ const BadRequestException = (req: Request, res: Response, message: string) => {
 };
 
 export default BadRequestException;
-

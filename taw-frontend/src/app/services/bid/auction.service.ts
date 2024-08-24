@@ -1,23 +1,22 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import axios from 'axios';
-import {environments} from "../../../environments/environments";
-import {FormGroup} from '@angular/forms';
-import {NotificationService} from "../popup/notification.service";
-
+import { environments } from '../../../environments/environments';
+import { FormGroup } from '@angular/forms';
+import { NotificationService } from '../popup/notification.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuctionService {
   private apiUrl = environments.BACKEND_URL;
 
-  constructor(private snackBar: NotificationService) {
-  }
+  constructor(private snackBar: NotificationService) {}
 
   addAuction(auctionForm: FormGroup) {
-    return axios.post(`${this.apiUrl}/api/auctions`, auctionForm.value)
-      .then(res => res.data)
-      .catch(err => {
+    return axios
+      .post(`${this.apiUrl}/api/auctions`, auctionForm.value)
+      .then((res) => res.data)
+      .catch((err) => {
         console.error('Error adding auction:', err);
         if (err.response.data.message) {
           this.snackBar.notify(err.response.data.message);
@@ -35,9 +34,10 @@ export class AuctionService {
     }
 
     formData.set('auction_id', auctionId);
-    return axios.post(`${this.apiUrl}/api/auctions/images`, formData)
-      .then(res => res.data)
-      .catch(err => {
+    return axios
+      .post(`${this.apiUrl}/api/auctions/images`, formData)
+      .then((res) => res.data)
+      .catch((err) => {
         console.error('Error uploading images:', err);
         if (err.response.data.message) {
           this.snackBar.notify(err.response.data.message);
@@ -48,11 +48,13 @@ export class AuctionService {
       });
   }
 
-  async getBooks(to_search: string) {
+  async getBooks(to_search: string = '') {
     try {
       let res;
       if (to_search && to_search !== '' && to_search.length > 0) {
-        res = await axios.get(`${this.apiUrl}/api/books`, {params: {q: to_search}});
+        res = await axios.get(`${this.apiUrl}/api/books`, {
+          params: { q: to_search },
+        });
       } else {
         res = await axios.get(`${this.apiUrl}/api/books`);
       }
@@ -64,11 +66,13 @@ export class AuctionService {
     }
   }
 
-  async getCourses(to_search: string) {
+  async getCourses(to_search: string = '') {
     try {
       let res;
       if (to_search && to_search !== '' && to_search.length > 0) {
-        res = await axios.get(`${this.apiUrl}/api/courses`, {params: {q: to_search}});
+        res = await axios.get(`${this.apiUrl}/api/courses`, {
+          params: { q: to_search },
+        });
       } else {
         res = await axios.get(`${this.apiUrl}/api/courses`);
       }
@@ -89,5 +93,4 @@ export class AuctionService {
       return null;
     }
   }
-
 }

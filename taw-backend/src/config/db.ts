@@ -1,28 +1,33 @@
-import mongoose, {ConnectOptions} from "mongoose";
+import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 dotenv.config();
-
+let conn: typeof mongoose | null = null;
 export default async function connectDB() {
-    const url = process.env.MONGODB_URI as string;
+  if (conn) {
+    return conn;
+  }
 
-    // initial try catch to handle mongoDB errors
-    try {
-        await mongoose.connect(url);
-    } catch (err) {
-        console.error((err as Error).message);
-        process.exit(1);
-    }
-    const dbConnection = mongoose.connection;
+  const url = process.env.MONGODB_URI as string;
 
-    // event listeners for mongoDB connection
-    dbConnection.once("open", (_) => {
-        console.log("Database connected to " + url);
-    });
+  try {
+    await mongoose.connect(url);
+    conn = mongoose;
+    Object.freeze(conn);
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
 
-    dbConnection.on("error", (err) => {
-        console.error("Database connection error: " + err);
-    });
+  const dbConnection = mongoose.connection;
 
-    return;
+  dbConnection.once("open", () => {
+    console.log("Database connected to " + url);
+  });
+
+  dbConnection.on("error", (err) => {
+    console.error("Database connection error: " + err);
+  });
+
+  return conn;
 }

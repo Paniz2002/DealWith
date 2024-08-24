@@ -31,7 +31,9 @@ export const loginController = async (req: Request, res: Response) => {
       user.createdAt.getTime() === user.updatedAt.getTime(),
   };
 
-  const jwtToken = jwt.sign(response, JWT_SECRET);
+  const jwtToken = jwt.sign(response, JWT_SECRET, {
+    expiresIn: "1d",
+  });
   res.cookie("jwt", jwtToken, {
     httpOnly: true,
     secure: false,

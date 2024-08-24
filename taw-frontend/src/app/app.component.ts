@@ -14,8 +14,8 @@ import { environments } from '../environments/environments';
 export class AppComponent {
   title = 'taw-frontend';
   @HostListener('window:beforeunload', ['$event'])
-  beforeUnloadHandler() {
-    fetch(environments.BACKEND_URL + '/api/auth/logout').then(() => {
+  beforeUnloadHandler(event: any) {
+    fetch(environments.BACKEND_URL + '/api/auth/logout').finally(() => {
       localStorage.clear();
     });
   }

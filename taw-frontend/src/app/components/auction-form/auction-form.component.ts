@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
+  AbstractControlOptions,
   FormBuilder,
   FormGroup,
   FormsModule,
@@ -95,12 +96,14 @@ export class AuctionFormComponent implements OnInit {
         condition: ['', Validators.required],
         files: ['', Validators.required],
       },
-      { validator: this.reservePriceGreaterThanStartingPrice() },
+      {
+        validators: this.reservePriceGreaterThanStartingPrice(),
+      } as AbstractControlOptions,
     );
 
     // Fetch books and courses from the service
-    this.auctionService.getBooks('').then((data) => (this.books = data));
-    this.auctionService.getCourses('').then((data) => (this.courses = data));
+    this.auctionService.getBooks().then((data) => (this.books = data));
+    this.auctionService.getCourses().then((data) => (this.courses = data));
   }
 
   addBook() {

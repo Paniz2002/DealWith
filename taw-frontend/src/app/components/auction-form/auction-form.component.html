@@ -14,16 +14,19 @@
         #autoBook="matAutocomplete"
         [displayWith]="displayBookTitle.bind(this)"
       >
-        <mat-option *ngFor="let book of books" [value]="book.id">
-          [{{ book.ISBN }}] {{ book.title }} ({{ book.year }})
-        </mat-option>
-        <mat-option *ngIf="!books || books.length === 0" (click)="addBook()">
-          Add "{{ auctionForm.controls["book_id"].value }}"
-        </mat-option>
+        @for (book of this.books; track book) {
+          <mat-option [value]="book.id">
+            [{{ book.ISBN }}] {{ book.title }} ({{ book.year }})
+          </mat-option>
+        } @empty {
+          <mat-option (click)="addBook()">
+            Add "{{ auctionForm.controls["book_id"].value }}"
+          </mat-option>
+        }
       </mat-autocomplete>
-      <mat-error *ngIf="auctionForm.controls['book_id'].hasError('required')">
-        Book is required.
-      </mat-error>
+      @if (auctionForm.controls["book_id"].hasError("required")) {
+        <mat-error> Book is required. </mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="fill">
@@ -39,34 +42,23 @@
         #autoCourse="matAutocomplete"
         [displayWith]="displayCourseName.bind(this)"
       >
-        <mat-option *ngFor="let course of courses" [value]="course.id">
-          [{{ course.university }}] {{ course.name }}
-        </mat-option>
+        @for (course of courses; track course) {
+          <mat-option [value]="course.id">
+            [{{ course.university }}] {{ course.name }}
+          </mat-option>
+        }
       </mat-autocomplete>
-      <mat-error *ngIf="auctionForm.controls['course_id'].hasError('required')">
-        Course is required.
-      </mat-error>
+      @if (auctionForm.controls["course_id"].hasError("required")) {
+        <mat-error> Course is required.</mat-error>
+      }
     </mat-form-field>
-
-    <mat-label>Description</mat-label>
-    <editor
-      apiKey="b73mxp10yh8wgoa1ishnuyp449aujc1fl7lahnis43mp1vrk"
-      formControlName="description"
-      [init]="{
-        height: 300,
-        menubar: false,
-        plugins: [
-          'advlist autolink lists link image charmap print preview anchor',
-          'searchreplace visualblocks code fullscreen',
-          'insertdatetime media table paste code help wordcount',
-        ],
-        toolbar:
-          'undo redo | formatselect | bold italic backcolor |  alignleft aligncenter alignright alignjustify |  bullist numlist outdent indent | removeformat | help',
-      }"
-    ></editor>
-    <mat-error *ngIf="auctionForm.controls['description'].hasError('required')">
-      Description is required.
-    </mat-error>
+    <mat-form-field appearance="fill">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" required></textarea>
+      @if (auctionForm.controls["description"].hasError("required")) {
+        <mat-error> Description is required. </mat-error>
+      }
+    </mat-form-field>
 
     <!-- Reserve Price Input -->
     <mat-form-field appearance="fill">
@@ -79,14 +71,12 @@
         step="0.01"
         required
       />
-      <mat-error
-        *ngIf="auctionForm.controls['reserve_price'].hasError('required')"
-      >
-        Reserve Price is required.
-      </mat-error>
-      <mat-error *ngIf="auctionForm.controls['reserve_price'].hasError('min')">
-        Reserve Price must be at least 1.
-      </mat-error>
+      @if (auctionForm.controls["reserve_price"].hasError("required")) {
+        <mat-error> Reserve Price is required. </mat-error>
+      }
+      @if (auctionForm.controls["reserve_price"].hasError("min")) {
+        <mat-error> Reserve Price must be at least 1. </mat-error>
+      }
     </mat-form-field>
 
     <!-- Starting Price Input -->
@@ -97,16 +87,15 @@
         formControlName="starting_price"
         type="number"
         min="1"
+        step="0.01"
         required
       />
-      <mat-error
-        *ngIf="auctionForm.controls['starting_price'].hasError('required')"
-      >
-        Starting Price is required.
-      </mat-error>
-      <mat-error *ngIf="auctionForm.controls['starting_price'].hasError('min')">
-        Starting Price must be at least 1.
-      </mat-error>
+      @if (auctionForm.controls["starting_price"].hasError("required")) {
+        <mat-error> Starting Price is required. </mat-error>
+      }
+      @if (auctionForm.controls["starting_price"].hasError("min")) {
+        <mat-error> Starting Price must be at least 1. </mat-error>
+      }
     </mat-form-field>
 
     <!-- Start Date Input -->
@@ -124,11 +113,9 @@
       ></mat-datepicker-toggle>
       <mat-datepicker #start_picker></mat-datepicker>
       <mat-hint>dd/mm/yyyy</mat-hint>
-      <mat-error
-        *ngIf="auctionForm.controls['start_date'].hasError('required')"
-      >
-        Start Date is required.
-      </mat-error>
+      @if (auctionForm.controls["start_date"].hasError("required")) {
+        <mat-error> Start Date is required. </mat-error>
+      }
     </mat-form-field>
 
     <!-- End Date Input -->
@@ -146,14 +133,12 @@
       ></mat-datepicker-toggle>
       <mat-datepicker #end_picker></mat-datepicker>
       <mat-hint>dd/mm/yyyy</mat-hint>
-      <mat-error *ngIf="auctionForm.controls['end_date'].hasError('required')">
-        End Date is required.
-      </mat-error>
-      <mat-error
-        *ngIf="auctionForm.controls['end_date'].hasError('matDatepickerFilter')"
-      >
-        End Date must be after Start Date.
-      </mat-error>
+      @if (auctionForm.controls["end_date"].hasError("required")) {
+        <mat-error> End Date is required. </mat-error>
+      }
+      @if (auctionForm.controls["end_date"].hasError("matDatepickerFilter")) {
+        <mat-error> End Date must be after Start Date. </mat-error>
+      }
     </mat-form-field>
 
     <!-- Condition Select -->
@@ -167,49 +152,46 @@
         <mat-option value="Fair">Fair</mat-option>
         <mat-option value="Poor">Poor</mat-option>
       </mat-select>
-      <mat-error *ngIf="auctionForm.controls['condition'].hasError('required')">
-        Condition is required.
-      </mat-error>
+      @if (auctionForm.controls["condition"].hasError("required")) {
+        <mat-error> Condition is required. </mat-error>
+      }
     </mat-form-field>
-    <div>
-      <div class="row align-items-center">
-        <div class="col-auto">Images:</div>
-        <div class="col-auto">
-          <button
-            type="button"
-            style="width: 100%"
-            mat-raised-button
-            color="accent"
-            (click)="fileInput.click()"
-          >
-            Choose Files
-          </button>
-          <input
-            hidden
-            (change)="onFileSelected()"
-            multiple="multiple"
-            #fileInput
-            type="file"
-            id="files"
-          />
-        </div>
+
+    <!-- Image Upload and Preview -->
+
+    <div class="row align-items-center">
+      <div class="col-auto">
+        <button
+          type="button"
+          mat-raised-button
+          color="accent"
+          (click)="fileInput.click()"
+        >
+          Add image(s)
+        </button>
+        @if (auctionForm.controls["files"].hasError("required")) {
+          <mat-error> Choose at least one image.</mat-error>
+        }
+        <input
+          hidden
+          (change)="onFileSelected()"
+          multiple="multiple"
+          #fileInput
+          type="file"
+          id="files"
+        />
       </div>
     </div>
-
-    <mat-error *ngIf="auctionForm.controls['files'].hasError('required')">
-      Choose at least one image.
-    </mat-error>
-    <div *ngIf="imagePreviews.length > 0">
+    @if (imagePreviews.length > 0) {
       <mat-label>Preview</mat-label>
       <mat-grid-list cols="3" rowHeight="1:1" gutterSize="5px">
-        <mat-grid-tile
-          style="border: 1px solid #f06292"
-          *ngFor="let img of imagePreviews"
-        >
-          <img [src]="img" class="preview-img" alt="preview" />
-        </mat-grid-tile>
+        @for (img of imagePreviews; track img) {
+          <mat-grid-tile style="border: 1px solid #f06292">
+            <img [src]="img" class="preview-img" alt="preview" />
+          </mat-grid-tile>
+        }
       </mat-grid-list>
-    </div>
+    }
 
     <!-- Submit Button -->
     <div class="row">
