@@ -15,6 +15,7 @@ import path from "path";
 import fs from "fs";
 import sharp from "sharp";
 import Course from "../../models/course";
+import RequestNotFoundResponse from "../exceptions/request-not-found";
 
 const conditions = ["Mint", "Near Mint", "Excellent", "Good", "Fair", "Poor"];
 
@@ -109,7 +110,6 @@ export const newAuctionController = async (req: Request, res: Response) => {
     return InternalException(req, res, "Unknown error while creating listing");
   }
 };
-
 
 export const uploadAuctionImagesController = async (
   req: Request,
@@ -351,14 +351,8 @@ export const getAuctionController = async (req: Request, res: Response) => {
 
   try {
     let auctions = await searchAuctions(req, res);
-
-    if (auctions instanceof Array) {
-      if (auctions.length === 0)
-        return BadRequestException(req, res, "No auctions found");
-    }
-
-    if (!auctions) {
-      return BadRequestException(req, res, "No auctions found");
+    if (!auctions || (auctions instanceof Array && auctions.length === 0)) {
+      return RequestNotFoundResponse(res);
     }
 
     return res.status(200).json(auctions);
@@ -589,137 +583,149 @@ export const getMyAuctionsController = async (req: Request, res: Response) => {
   try {
     const user_id = getUserId(req, res);
     await connectDB();
-    const auctions = await Auction.find({seller: user_id})
-        .populate({
-          path: "book",
+    const auctions = await Auction.find({ seller: user_id })
+      .populate({
+        path: "book",
+        populate: {
+          path: "courses",
+          select: "-_id -__v -auctions -books -year._id",
           populate: {
-            path: "courses",
-            select: "-_id -__v -auctions -books -year._id",
+            path: "university",
+            select: "-_id -__v -courses ",
             populate: {
-              path: "university",
-              select: "-_id -__v -courses ",
-              populate: {
-                path: "city",
-                select: "-_id -__v -universities -courses",
-              },
+              path: "city",
+              select: "-_id -__v -universities -courses",
             },
           },
-          select: "-_id -__v -auctions",
-        })
-        .populate({
-          path: "seller",
-          select: "-__v -_id -password -email -role",
-        })
-        .select("-__v");
+        },
+        select: "-_id -__v -auctions",
+      })
+      .populate({
+        path: "seller",
+        select: "-__v -_id -password -email -role",
+      })
+      .select("-__v");
 
     return res.status(200).json(auctions);
-  }catch(e){
+  } catch (e) {
     return InternalException(req, res, "Error while getting auctions");
   }
+};
 
-}
-
-export const getMyParticipatedAuctionsController = async (req: Request, res: Response) => {
-    try {
-      const user_id = getUserId(req, res);
-      await connectDB();
-      const auctions = await Auction.find({bids: {$elemMatch: {user: user_id}}})
-          .populate({
-            path: "book",
+export const getMyParticipatedAuctionsController = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const user_id = getUserId(req, res);
+    await connectDB();
+    const auctions = await Auction.find({
+      bids: { $elemMatch: { user: user_id } },
+    })
+      .populate({
+        path: "book",
+        populate: {
+          path: "courses",
+          select: "-_id -__v -auctions -books -year._id",
+          populate: {
+            path: "university",
+            select: "-_id -__v -courses ",
             populate: {
-              path: "courses",
-              select: "-_id -__v -auctions -books -year._id",
-              populate: {
-                path: "university",
-                select: "-_id -__v -courses ",
-                populate: {
-                  path: "city",
-                  select: "-_id -__v -universities -courses",
-                },
-              },
+              path: "city",
+              select: "-_id -__v -universities -courses",
             },
-            select: "-_id -__v -auctions",
-          })
-          .populate({
-            path: "seller",
-            select: "-__v -_id -password -email -role -notifications -createdAt -updatedAt",
-          })
-          .select("-__v -reserve_price -start_date");
+          },
+        },
+        select: "-_id -__v -auctions",
+      })
+      .populate({
+        path: "seller",
+        select:
+          "-__v -_id -password -email -role -notifications -createdAt -updatedAt",
+      })
+      .select("-__v -reserve_price -start_date");
 
-      const mappedAuctions =  auctions.map(auction => {
-        let maxBid = {price: auction.starting_price, user: user_id};
+    const mappedAuctions = auctions.map((auction) => {
+      let maxBid = { price: auction.starting_price, user: user_id };
 
-        if(auction.bids.length !== 0)
-          maxBid = auction.bids.reduce((prev: { amount: number; }, current: { amount: number; }) => (prev.amount > current.amount) ? prev : current);
+      if (auction.bids.length !== 0)
+        maxBid = auction.bids.reduce(
+          (prev: { amount: number }, current: { amount: number }) =>
+            prev.amount > current.amount ? prev : current,
+        );
 
-        const isWinning = maxBid.user.toString() === user_id.toString();
-        const isEnded = auction.end_date < new Date();
+      const isWinning = maxBid.user.toString() === user_id.toString();
+      const isEnded = auction.end_date < new Date();
 
-        const auctionObject = auction.toObject();
-        delete auctionObject.bids;
+      const auctionObject = auction.toObject();
+      delete auctionObject.bids;
 
-        return {
-          ...auctionObject,
-          isWinning: isWinning,
-          isEnded: isEnded
-        };
-      });
+      return {
+        ...auctionObject,
+        isWinning: isWinning,
+        isEnded: isEnded,
+      };
+    });
 
+    return res.status(200).json(mappedAuctions);
+  } catch (e) {
+    return InternalException(req, res, "Error while getting auctions");
+  }
+};
 
-      return res.status(200).json(mappedAuctions);
-    }catch (e){
-        return InternalException(req, res, "Error while getting auctions");
-    }
-}
-
-export const getAuctionStatisticsController = async (req: Request, res: Response) => {
-    try {
-      await connectDB();
-      const auctions = await Auction.find()
-          .populate({
-            path: "book",
+export const getAuctionStatisticsController = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    await connectDB();
+    const auctions = await Auction.find()
+      .populate({
+        path: "book",
+        populate: {
+          path: "courses",
+          select: "-_id -__v -auctions -books -year._id",
+          populate: {
+            path: "university",
+            select: "-_id -__v -courses ",
             populate: {
-              path: "courses",
-              select: "-_id -__v -auctions -books -year._id",
-              populate: {
-                path: "university",
-                select: "-_id -__v -courses ",
-                populate: {
-                  path: "city",
-                  select: "-_id -__v -universities -courses",
-                },
-              },
+              path: "city",
+              select: "-_id -__v -universities -courses",
             },
-            select: "-_id -__v -auctions",
-          })
-          .populate({
-            path: "seller",
-            select: "-__v -_id -password",
-          })
-          .select("-__v ");
+          },
+        },
+        select: "-_id -__v -auctions",
+      })
+      .populate({
+        path: "seller",
+        select: "-__v -_id -password",
+      })
+      .select("-__v ");
 
-      const mappedAuctions =  auctions.map(auction => {
-        let maxBid = {price: auction.starting_price};
+    const mappedAuctions = auctions.map((auction) => {
+      let maxBid = { price: auction.starting_price };
 
-        if(auction.bids.length !== 0)
-          maxBid = auction.bids.reduce((prev: { amount: number; }, current: { amount: number; }) => (prev.amount > current.amount) ? prev : current);
+      if (auction.bids.length !== 0)
+        maxBid = auction.bids.reduce(
+          (prev: { amount: number }, current: { amount: number }) =>
+            prev.amount > current.amount ? prev : current,
+        );
 
-        const isEnded = auction.end_date < new Date();
-        const isSuccessful = maxBid.price >= auction.reserve_price;
+      const isEnded = auction.end_date < new Date();
+      const isSuccessful = maxBid.price >= auction.reserve_price;
 
-        const auctionObject = auction.toObject();
+      const auctionObject = auction.toObject();
 
-        return {
-          ...auctionObject,
-          isEnded: isEnded,
-          isSuccessful: isSuccessful
-        };
-      });
+      return {
+        ...auctionObject,
+        isEnded: isEnded,
+        isSuccessful: isSuccessful,
+      };
+    });
 
-      return res.status(200).json(mappedAuctions);
-
-    }catch (e){
-        console.log(e);
-        return InternalException(req, res, "Error while getting auctions");
-    }
-}
+    return res.status(200).json(mappedAuctions);
+  } catch (e) {
+    console.log(e);
+    return InternalException(req, res, "Error while getting auctions");
+  }
+};

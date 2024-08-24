@@ -42,8 +42,6 @@ export const routes: Routes = [
     children: [],
   },
   {
-    // Ideally we'd have auction and then {path: create...} children
-    // but it's not possibile.
     path: 'create',
     component: AuctionFormComponent,
     pathMatch: 'full',

@@ -8,25 +8,22 @@ import cron from "node-cron";
 import { whitelistMiddleware } from "./middlewares/whitelist";
 import connectDB from "./config/db";
 import { checkAuctionsEnd } from "./utils/notifications";
-import http from "http"
-import {Server} from "socket.io"
-import { sendNotification} from "./utils/notifications";
+import http from "http";
+import { Server } from "socket.io";
+import { sendNotification } from "./utils/notifications";
 
 dotenv.config();
 
 const app: Express = express();
 
-connectDB();
-
 const port = process.env.PORT || 3000;
 
-
 const server = http.createServer(app);
-export const  io = new Server(server, {
-    cors: {
-        origin: "http://localhost:4200", // Angular app's URL
-        methods: ["GET", "POST"]
-    }
+export const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:4200", // Angular app's URL
+    methods: ["GET", "POST"],
+  },
 });
 
 io.on('connection', (socket) => {
@@ -57,14 +54,16 @@ io.on('connection', (socket) => {
     });
 });
 
-
-
-
-server.listen(3001, () => console.log('[socketIo] Server is running on port 3001'));
-
+server.listen(3001, () =>
+  console.log("[socketIo] Server is running on port 3001"),
+);
 
 const corsOptions = {
-  origin: ["http://localhost:4200", "http://localhost:3000", "http://localhost:3001"],
+  origin: [
+    "http://localhost:4200",
+    "http://localhost:3000",
+    "http://localhost:3001",
+  ],
   credentials: true, // Allows credentials (cookies) to be sent
 };
 
@@ -84,14 +83,19 @@ app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
 
-export function capitalizeFirstLetter(string:string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+export function capitalizeFirstLetter(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 // Schedule cron job to check auctions every 1 minute
-const job = cron.schedule("*/1 * * * *", () => {
-  checkAuctionsEnd().then((r) => {console.log("Auction checked")}).catch((e) => {console.error("Auction checking Error",e)});
-});
-
-job.start();
-
+cron
+  .schedule("*/1 * * * *", () => {
+    checkAuctionsEnd()
+      .then((r) => {
+        console.log("Auction checked");
+      })
+      .catch((e) => {
+        console.error("Auction checking Error", e);
+      });
+  })
+  .start();

@@ -4,7 +4,6 @@ import { AppComponent } from './app/app.component';
 import axios from 'axios';
 
 axios.defaults.withCredentials = true; // Set the default withCredentials property to true, to pass jwt cookie
-bootstrapApplication(AppComponent, appConfig)
-  .catch((err) => console.error(err));
-
-
+bootstrapApplication(AppComponent, appConfig).catch((err) =>
+  console.error(err),
+);
