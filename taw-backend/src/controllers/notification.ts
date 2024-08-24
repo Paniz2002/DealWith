@@ -5,6 +5,8 @@ import {getUserId} from "../utils/userID";
 import InternalException from "../exceptions/internal-exception";
 import BadRequestException from "../exceptions/bad-request";
 import connectDB from "../config/db";
+import NotFoundException from "../exceptions/not-found";
+import NotFound from "../exceptions/not-found";
 
 export const getNotificationsController = async (req: Request, res: Response) => {
     try {
@@ -13,7 +15,7 @@ export const getNotificationsController = async (req: Request, res: Response) =>
         const user = await User.findById(user_id);
 
         if(!user){
-            return BadRequestException(req, res, "User not found");
+            return NotFoundException(req, res, "User not found");
         }
 
         if(!user.notifications){
@@ -32,14 +34,14 @@ export const setNotificationReadController = async (req: Request, res: Response)
         const user = await User.findById(user_id);
 
         if(!user){
-            return BadRequestException(req, res, "User not found");
+            return NotFoundException(req, res, "User not found");
         }
 
         const notification_id = req.params.id;
         const notification = user.notifications.find((notification: { _id: { toString: () => string; }; }) => notification._id.toString() === notification_id);
 
         if(!notification){
-            return BadRequestException(req, res, "Notification not found");
+            return NotFoundException(req, res, "Notification not found");
         }
 
         notification.isRead = true;
@@ -58,14 +60,14 @@ export const deleteNotificationController = async (req: Request, res: Response) 
         const user = await User.findById(user_id);
 
         if(!user){
-            return BadRequestException(req, res, "User not found");
+            return NotFoundException(req, res, "User not found");
         }
 
         const notification_id = req.params.id;
         const notification = user.notifications.find((notification: { _id: { toString: () => string; }; }) => notification._id.toString() === notification_id);
 
         if(!notification){
-            return BadRequestException(req, res, "Notification not found");
+            return NotFoundException(req, res, "Notification not found");
         }
 
         notification.isVisible = false;
