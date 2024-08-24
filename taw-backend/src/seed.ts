@@ -5,29 +5,10 @@ import Auction from "../models/auction";
 import Book from "../models/book";
 import City from "../models/city";
 import Course from "../models/course";
-import Email from "../models/email";
 import University from "../models/university";
 import User from "../models/user";
 import connectDB from "./config/db";
 
-
-const seedEmails = async () => {
-  const emailsFilePath = path.join(__dirname, "data", "emails.json");
-  const emailsData = JSON.parse(fs.readFileSync(emailsFilePath, "utf-8"));
-
-  for (const emailData of emailsData) {
-    const { address, validated } = emailData;
-
-    // Check if the email already exists
-    let emailDoc = await Email.findOne({ address });
-    if (!emailDoc) {
-      emailDoc = await Email.create({ address, validated });
-      console.log(`Email created for address: ${address}`);
-    } else {
-      console.log(`Email already exists for address: ${address}`);
-    }
-  }
-};
 
 const seedUsers = async (): Promise<void> => {
   const usersFilePath = path.join(__dirname, "data", "users.json");
@@ -36,12 +17,7 @@ const seedUsers = async (): Promise<void> => {
   for (const userData of usersData) {
     const { profile, username, password, email, role } = userData;
 
-    // Check if the email exists
-    const emailDoc = await Email.findOne({ address: email });
-    if (!emailDoc) {
-      console.error(`Email not found for address: ${email}`);
-      continue;
-    }
+
 
     // Check if the user already exists
     let userDoc = await User.findOne({ username });
@@ -50,7 +26,7 @@ const seedUsers = async (): Promise<void> => {
         profile,
         username,
         password,
-        email: emailDoc._id,
+        email: username + '@example.com',
         role,
       });
       await userDoc.save();
@@ -271,12 +247,6 @@ const seedAuctions = async (): Promise<void> => {
 const seedData = async () => {
   await connectDB();
   console.log("Connected to DB");
-
-  try {
-    await seedEmails();
-  } catch (err) {
-    console.error("Error seeding Emails", err);
-  }
 
   try {
     await seedUsers();
