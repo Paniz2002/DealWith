@@ -1,112 +1,157 @@
 [
   {
-    "title" : "Introduction to the theory of computation",
-    "year" : 2012,
-    "ISBN" : "0000000001",
-    "author": "Michael Sipser",
+    "title" : "Effective Modern C++",
+    "year" : 2014,
+    "ISBN" : "9781491903995",
+    "author": "Scott Meyers",
     "condition" : "Mint",
     "auction_duration" : 7,
     "starting_price" : 20,
-    "start_date" : "2021-05-01",
-    "end_date" : "20232-05-08",
+    "start_date" : "2024-05-01",
+    "end_date" : "2024-10-08",
     "reserve_price" : 50,
-    "description" : "This book is a must have for any computer science student"
+    "description" : "Coming to grips with C++11 and C++14 is more than a matter of familiarizing yourself with the features they introduce (e.g., auto type declarations, move semantics, lambda expressions, and concurrency support). The challenge is learning to use those features effectively—so that your software is correct, efficient, maintainable, and portable. That’s where this practical book comes in. It describes how to write truly great software using C++11 and C++14—i.e. using modern C++.",
+    "images": [
+      "/app/src/data/images/sample/cpp.webp",
+      "/app/src/data/images/sample/cpp.webp",
+      "/app/src/data/images/sample/cpp.webp"
+    ]
   },
   {
-    "title" : "CPP Programming",
-    "year" : 2012,
-    "ISBN" : "0000000002",
-    "author": "Michael Sipser",
-    "condition" : "Mint",
-    "starting_price" : 20,
-    "reserve_price" : 50,
-    "start_date" : "2020-05-01",
-    "end_date" : "2022-05-08",
-    "description" : "This book is a must have for any computer science student"
-  },
-  {
-    "title" : "Java Programming",
+    "title" : "Head First Java: A Brain-Friendly Guide",
     "year" : 2022,
-    "ISBN" : "0000000003",
-    "condition" : "Good",
-    "starting_price" : 2000,
-    "reserve_price" : 50000,
-    "author": "Antony Gaddis",
-    "start_date" : "2021-05-01",
-    "end_date" : "2021-05-08",
-    "description" : "This book is a must have for any computer science student"
-  },
-  {
-    "title" : "Philosophy of Computer Science",
-    "year" : 2017,
-    "ISBN" : "0000000004",
+    "ISBN" : "9781491910771",
+    "author": "Kathy Sierra, Bert Bates, Trisha Gee",
     "condition" : "Mint",
-    "author": "Josh Aaronson",
-    "starting_price" : 2,
-    "start_date" : "2021-05-01",
-    "end_date" : "2024-08-08",
-    "reserve_price" : 540,
-    "description" : "This book is a must have for any computer science student"
-  },
-  {
-    "title" : "English for Computer Science",
-    "year" : 2012,
-    "ISBN" : "0000000005",
-    "condition" : "Mint",
-    "author": "Michael Sipser",
-    "starting_price" : 20,
-    "start_date" : "2021-05-01",
-    "end_date" : "2024-08-08",
-    "reserve_price" : 50,
-    "description" : "This book is a must have for any computer science student"
-  },
-  {
-    "title" : "Italy in the 21st Century",
-    "year" : 2012,
-    "ISBN" : "0000000006",
-    "condition" : "Fair",
-    "author": "Luca Morris",
-    "starting_price" : 20,
+    "starting_price" : 49,
+    "reserve_price" : 53,
     "start_date" : "2024-05-01",
-    "end_date" : "2024-08-08",
-    "reserve_price" : 50,
-    "description" : "This book is a must have for any computer science student"
+    "end_date" : "2024-10-31",
+    "description" : "Head First Java is a complete learning experience in Java and object-oriented programming. With this book, you'll learn the Java language with a unique method that goes beyond how-to manuals and helps you become a great programmer.",
+    "images": [
+      "/app/src/data/images/sample/java.webp",
+      "/app/src/data/images/sample/java.webp",
+      "/app/src/data/images/sample/java.webp"
+    ]
   },
   {
-    "title" : "DJ for Dummies",
-    "year" : 2012,
-    "ISBN" : "0000000007",
-    "condition" : "Mint",
-    "author": "Skrillex",
-    "starting_price" : 10.50,
-    "start_date" : "2024-07-01",
-    "end_date" : "2024-08-08",
-    "reserve_price" : 50.30,
-    "description" : "This book is a must have for any computer science student"
-  },
-  {
-    "title" : "How to be a Genius",
-    "year" : 2023,
-    "author": "Michael Sarto",
-    "ISBN" : "0000000008",
+    "title" : "Learning AngularJS, First Edition",
+    "year" : 2014,
+    "ISBN" : "9780134034546",
     "condition" : "Poor",
-    "starting_price" : 24,
-    "start_date" : "2024-10-01",
-    "end_date" : "2025-08-08",
-    "reserve_price" : 50,
-    "description" : "This book is a must have for any computer science student"
+    "author": "Brad Dayley",
+    "starting_price" : 10,
+    "start_date" : "2016-01-01",
+    "end_date" : "2016-02-10",
+    "reserve_price" : 22,
+    "description" : "Learning AngularJS Get started with AngularJS web development fast AngularJS is one of the most exciting and innovative new technologies emerging in the world of web development.",
+    "images": [
+      "/app/src/data/images/sample/angular-first.webp",
+      "/app/src/data/images/sample/angular-first.webp",
+      "/app/src/data/images/sample/angular-first.webp"
+    ]
   },
   {
-    "title" : "Introduction to everything",
-    "author": "Albert Einstein",
-    "year" : 1980,
-    "ISBN" : "0000000009",
+    "title" : "Learning Angular, Fourth Edition",
+    "year" : 2023,
+    "ISBN" : "9781803240602",
+    "condition" : "Near Mint",
+    "author": "Josh Aaronson",
+    "starting_price" : 15,
+    "start_date" : "2024-11-01",
+    "end_date" : "2025-02-10",
+    "reserve_price" : 30,
+    "description" : "Learning AngularJS Get started with AngularJS web development fast AngularJS is one of the most exciting and innovative new technologies emerging in the world of web development.",
+    "images": [
+      "/app/src/data/images/sample/angular.webp",
+      "/app/src/data/images/sample/angular.webp",
+      "/app/src/data/images/sample/angular.webp"
+    ]
+  },
+  {
+    "title" : "MongoDB: The Definitive Guide: Powerful and Scalable Data Storage",
+    "year" : 2019,
+    "ISBN" : "1491954469",
     "condition" : "Fair",
+    "author": "Shannon Bradshaw, Eoin Brazil, Kristina Chodorow",
     "starting_price" : 20,
+    "start_date" : "2024-06-01",
+    "end_date" : "2024-09-01",
+    "reserve_price" : 50,
+    "description" : "Manage your data with a system designed to support modern application development. Updated for MongoDB 4.2, the third edition of this authoritative and accessible guide shows you the advantages of using document-oriented databases. You’ll learn how this secure, high-performance system enables flexible data models, high availability, and horizontal scalability.",
+    "images": [
+      "/app/src/data/images/sample/mongodb.webp",
+      "/app/src/data/images/sample/mongodb.webp",
+      "/app/src/data/images/sample/mongodb.webp"
+    ]
+  },
+  {
+    "title" : "Node.js: The Comprehensive Guide",
+    "year" : 2022,
+    "ISBN" : "9781493222926",
+    "condition" : "Good",
+    "author": "Sebastian Springer",
+    "starting_price" : 25,
     "start_date" : "2024-05-01",
-    "end_date" : "2024-08-08",
-    "reserve_price" : 66,
-    "description" : "This book is a must have for any computer science student"
+    "end_date" : "2024-09-25",
+    "reserve_price" : 35,
+    "description" : "If you’re developing server-side JavaScript applications, you need Node.js! Start with the basics of the Node.js environment: installation, application structure, and modules. Then follow detailed code examples to learn about web development using frameworks like Express and Nest.js. Learn about different approaches to asynchronous programming, including RxJS and data streams. Details on peripheral topics such as testing, security, performance, and more, make this your all-in-one daily reference for Node.js!",
+    "images": [
+      "/app/src/data/images/sample/nodejs.webp",
+      "/app/src/data/images/sample/nodejs.webp",
+      "/app/src/data/images/sample/nodejs.webp"
+    ]
+  },
+  {
+    "title" : "High Performance PostgreSQL for Rails",
+    "year" : 2024,
+    "ISBN" : "9798888650387",
+    "condition" : "Mint",
+    "author": "Andrew Atkinson",
+    "starting_price" : 50,
+    "start_date" : "2024-09-31",
+    "end_date" : "2025-02-01",
+    "reserve_price" : 65,
+    "description" : "Build faster, more reliable Rails apps by taking the best advanced PostgreSQL and Active Record capabilities, and using them to solve your application scale and growth challenges. Gain the skills needed to comfortably work with multi-terabyte databases, and with complex Active Record, SQL, and specialized Indexes. Develop your skills with PostgreSQL on your laptop, then take them into production, while keeping everything in sync. Make slow queries fast, perform any schema or data migration without errors, use scaling techniques like read/write splitting, partitioning, and sharding, to meet demanding workload requirements from Internet scale consumer apps to enterprise SaaS.",
+    "images": [
+      "/app/src/data/images/sample/postgresql.webp",
+      "/app/src/data/images/sample/postgresql.webp",
+      "/app/src/data/images/sample/postgresql.webp"
+    ]
+  },
+  {
+    "title" : "Web Application Security",
+    "year" : 2020,
+    "author": "Andrew Hoffman",
+    "ISBN" : "9781492053118",
+    "condition" : "Near Mint",
+    "starting_price" : 20,
+    "start_date" : "2024-09-01",
+    "end_date" : "2024-12-31",
+    "reserve_price" : 35.50,
+    "description" : "n the first edition of this critically acclaimed book, Andrew Hoffman defined the three pillars of application security: reconnaissance, offense, and defense. In this revised and updated second edition, he examines dozens of related topics, from the latest types of attacks and mitigations to threat modeling, the secure software development lifecycle (SSDL/SDLC), and more.",
+    "images": [
+      "/app/src/data/images/sample/web.webp",
+      "/app/src/data/images/sample/web.webp",
+      "/app/src/data/images/sample/web.webp"
+    ]
+  },
+  {
+    "title" : "C Programming Language, Second Edition",
+    "author": "Brian W. Kernighan, Dennis M. Ritchie",
+    "year" : 1988,
+    "ISBN" : "9780131103627",
+    "condition" : "Near Mint",
+    "starting_price" : 40,
+    "start_date" : "2024-09-01",
+    "end_date" : "2025-02-08",
+    "reserve_price" : 75,
+    "description" : "The authors present the complete guide to ANSI standard C language programming. Written by the developers of C, this new version helps readers keep up with the finalized ANSI standard for C while showing how to take advantage of C's rich set of operators, economy of expression, improved control flow, and data structures. ",
+    "images": [
+      "/app/src/data/images/sample/c.webp",
+      "/app/src/data/images/sample/c.webp",
+      "/app/src/data/images/sample/c.webp"
+    ]
   }
 ]
 
