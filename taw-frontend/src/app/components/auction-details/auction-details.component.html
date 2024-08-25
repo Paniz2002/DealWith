@@ -83,9 +83,9 @@
             {{ this.auctionDetails.seller.profile.lastName }}
           </mat-card-subtitle>
         </mat-card-header>
-        <hr />
+        <hr/>
         <mat-card-content>
-          @if (this.endDate.getTime() > Date.now()) {
+          @if (this.isActive) {
             <label for="price">Current bid:</label>
             <span id="price" class="price"> {{ this.auctionPrice }} EUR </span>
           } @else {
@@ -100,40 +100,42 @@
             <span style="color: red"> You are the owner of this auction </span>
           }
         </mat-card-content>
-        <mat-card-actions [style.width.%]="100">
-          @if (this.isUserLoggedIn && this.userType === "student") {
-            @if (this.endDate.getTime() > Date.now() && !this.isOwner()) {
-              <form [formGroup]="form" style="width: 100%">
-                <div class="row justify-content-center" style="width: 100%">
-                  <div class="col-8 mt-3">
-                    <mat-form-field style="width: 100%" appearance="fill">
-                      <mat-label>Bid new price</mat-label>
-                      <input
-                        type="number"
-                        (change)="onPriceChange($event)"
-                        required
-                        matInput
-                        formControlName="bidPrice"
-                      />
-                      @if (form.invalid) {
-                        <mat-error>Please insert a price.</mat-error>
-                      }
-                    </mat-form-field>
-                  </div>
-                  <div class="col-4 mt-4">
-                    <button
-                      mat-raised-button
-                      color="primary"
-                      (click)="submitBid()"
-                    >
-                      Bid
-                    </button>
-                  </div>
+
+        @if (this.isUserLoggedIn && this.userType === "student") {
+          @if (this.isActive && !this.isOwner()) {
+            <mat-card-actions [style.width.%]="100">
+            <form [formGroup]="form" style="width: 100%">
+              <div class="row justify-content-center" style="width: 100%">
+                <div class="col-8 mt-3">
+                  <mat-form-field style="width: 100%" appearance="fill">
+                    <mat-label>Bid new price</mat-label>
+                    <input
+                      type="number"
+                      (change)="onPriceChange($event)"
+                      required
+                      matInput
+                      formControlName="bidPrice"
+                    />
+                    @if (form.invalid) {
+                      <mat-error>Please insert a price.</mat-error>
+                    }
+                  </mat-form-field>
                 </div>
-              </form>
-            }
+                <div class="col-4 mt-4">
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="submitBid()"
+                  >
+                    Bid
+                  </button>
+                </div>
+              </div>
+            </form>
+            </mat-card-actions>
           }
-        </mat-card-actions>
+        }
+
         <hr />
         <mat-card-content>
           <label for="auction-description"> <b> Description </b> </label>
@@ -145,7 +147,7 @@
         </mat-card-content>
         <mat-card-content>
           <!-- Get countdown from end date-->
-          @if (this.endDate.getTime() > Date.now()) {
+          @if (this.isActive) {
             <app-auction-details-countdown [targetDate]="this.endDate">
             </app-auction-details-countdown>
           } @else {

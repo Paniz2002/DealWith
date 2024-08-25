@@ -88,6 +88,7 @@ export class AuctionDetailsComponent implements OnInit {
   endDate!: Date;
   endDateTime!: any;
   auctionPrice: Number = -1;
+  isActive!: boolean;
   isLastBidOwner!: boolean;
   form: FormGroup = new FormGroup({
     bidPrice: new FormControl('', [Validators.required]),
@@ -171,6 +172,7 @@ export class AuctionDetailsComponent implements OnInit {
           this.auctionDetails.bids,
           this.auctionDetails.starting_price,
         );
+        this.isActive = details.data.isActive;
 
         this.isLastBidOwner = this.isClientLastBidOwner(
           this.auctionDetails.bids,

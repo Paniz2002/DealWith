@@ -4,12 +4,22 @@ mat-card {
 }
 
 #card-details{
-  border-right: 1px solid lightgray;
+  border-right: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+}
+
+#chat-details{
+  border-right: 1px solid #ddd;
 }
 
 .messages-container{
   overflow-y: auto;
-  border: 1px solid #ccc;
+  /*border: 1px solid #ddd;*/
+}
+
+hr{
+  color: #cccccc;
+  height: 1px;
 }
 
 .carousel{
