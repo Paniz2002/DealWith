@@ -1,7 +1,7 @@
 <mat-toolbar #header class="custom-toolbar" color="primary">
-  <div class="logo-container">
-    <mat-icon class="logo-icon">menu</mat-icon>
-    <span class="logo-text">My Application</span>
+  <div class="logo-container" [routerLink]="'/'">
+    <img ngSrc="assets/logo.png" height="43" width="60">
+    <span class="logo-text" >Deal With</span>
   </div>
   <span class="spacer"></span>
   <div class="button-container">
@@ -22,9 +22,7 @@
         </button>
       }
 
-      <button mat-button [routerLink]="'/'" class="header-button">
-        List Auction(s)
-      </button>
+
 
       <!-- Notification icon with counter -->
       @if (notifications && notifications.length > 0) {
