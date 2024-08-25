@@ -299,7 +299,7 @@ const searchAuctions = async function (req: Request, res: Response) {
         let priceFilteredAuctions = [];
 
         for (let auction of auctions) {
-            if(active && !auction.isActive()){
+            if (active && !auction.isActive()) {
                 continue;
             }
             let currentPrice = auction.currentPrice();
@@ -399,10 +399,7 @@ export const getAuctionDetailsController = async (
         }
 
         //add isActive() to result
-        const response={
-            ...auction,
-            isActive: auction.isActive(),
-        }
+        const response = {isActive: auction.isActive(), ...auction.toObject()}
 
 
         return res.status(200).json(response);

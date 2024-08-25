@@ -13,25 +13,25 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
-import { MatTabGroup, MatTabsModule } from '@angular/material/tabs';
-import { NgClass, NgForOf } from '@angular/common';
-import { AuctionDetailsCountdownComponent } from '../auction-details-countdown/auction-details-countdown.component';
-import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute } from '@angular/router';
-import { NotificationService } from '../../services/popup/notification.service';
-import { LocalStorageService } from '../../services/localStorage/localStorage.service';
+import {MatButtonModule} from '@angular/material/button';
+import {MatCardModule} from '@angular/material/card';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatInputModule} from '@angular/material/input';
+import {MatListModule} from '@angular/material/list';
+import {MatTabGroup, MatTabsModule} from '@angular/material/tabs';
+import {NgClass, NgForOf} from '@angular/common';
+import {AuctionDetailsCountdownComponent} from '../auction-details-countdown/auction-details-countdown.component';
+import {MatIconModule} from '@angular/material/icon';
+import {ActivatedRoute} from '@angular/router';
+import {NotificationService} from '../../services/popup/notification.service';
+import {LocalStorageService} from '../../services/localStorage/localStorage.service';
 import axios from 'axios';
-import { environments } from '../../../environments/environments';
-import { ChatComponent } from '../chat/chat.component';
-import { SocketService } from '../../socket.service';
+import {environments} from '../../../environments/environments';
+import {ChatComponent} from '../chat/chat.component';
+import {SocketService} from '../../socket.service';
 
-interface Course{
+interface Course {
   name: string;
   university: string;
   year1: number;
@@ -93,6 +93,7 @@ export class AuctionDetailsComponent implements OnInit {
   });
 
   coursesUniversities: Array<Course> = Array<Course>();
+
   constructor(
     private route: ActivatedRoute,
     private snackBar: NotificationService,
@@ -171,16 +172,18 @@ export class AuctionDetailsComponent implements OnInit {
           this.auctionPrice.valueOf() + 0.01,
         );
 
-        this.auctionDetails.book.courses.forEach((course: any) => {
-          this.coursesUniversities.push(
-            {
-              name: course.name,
-              university: course.university.name,
-              year1: course.year.year1,
-              year2: course.year.year2,
-            }
-          );
-        });
+        if (this.auctionDetails && this.auctionDetails.book && this.auctionDetails.book.courses) {
+          this.auctionDetails.book.courses.forEach((course: any) => {
+            this.coursesUniversities.push(
+              {
+                name: course.name,
+                university: course.university.name,
+                year1: course.year.year1,
+                year2: course.year.year2,
+              }
+            );
+          });
+        }
 
         this.loadAuctionImages();
       })
@@ -188,6 +191,7 @@ export class AuctionDetailsComponent implements OnInit {
         this.snackBar.notify(err.message);
       });
   }
+
   protected async submitBid(): Promise<void> {
     const params = {
       auctionID: this.auctionID,
