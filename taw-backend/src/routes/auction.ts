@@ -1,19 +1,19 @@
 import { Router } from "express";
 import { studentMiddleware } from "../middlewares/student";
 import {
-  getAuctionController,
-  getAuctionDetailsController,
-  newAuctionController,
-  uploadAuctionImagesController,
-  postAuctionBidController,
-  getAuctionCommentsController,
-  getAuctionImagesController,
-  patchAuctionController,
-  deleteAuctionController,
-  postAuctionCommentsController,
-  getMyParticipatedAuctionsController,
-  getMyAuctionsController,
-  getAuctionStatisticsController,
+    getAuctionController,
+    getAuctionDetailsController,
+    newAuctionController,
+    uploadAuctionImagesController,
+    postAuctionBidController,
+    getAuctionCommentsController,
+    getAuctionImagesController,
+    patchAuctionController,
+    deleteAuctionController,
+    postAuctionCommentsController,
+    getMyParticipatedAuctionsController,
+    getMyAuctionsController,
+    getAuctionStatisticsController, deleteCommentController,
 } from "../controllers/auction";
 import upload from "../config/multer";
 import { adminMiddleware } from "../middlewares/admin";
@@ -56,4 +56,8 @@ auctionRoutes.get("/:id", getAuctionDetailsController);
 auctionRoutes.post("/:id", [studentMiddleware], postAuctionBidController);
 auctionRoutes.patch("/:id", [adminMiddleware], patchAuctionController);
 auctionRoutes.delete("/:id", [adminMiddleware], deleteAuctionController);
+
+
+
+auctionRoutes.delete("/:id/comments/:idcomment", [authMiddleware], deleteCommentController);
 export default auctionRoutes;

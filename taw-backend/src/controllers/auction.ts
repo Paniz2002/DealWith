@@ -452,19 +452,22 @@ export const getAuctionCommentsController = async (
         $or: [{sender: userID}, {receiver: userID}],
         auction: auctionID,
     };
-    const  publicComments_tmp = await Comment.find({
+    let publicComments_tmp = await Comment.find({
         private: null,
         auction: auctionID,
     })
         .select("-__v -createdAt -updatedAt")
-        .populate({path: "sender", select: "username"})
+        .populate({path: "sender", select: "username _id"})
         .populate({path: "inReplyTo"})
         .sort({createdAt: 1})
         .exec();
-    let publicComments=[];
+    let publicComments = [];
     for (let comment of publicComments_tmp) {
+        const can_operate = await canOperate(comment.sender._id.toString(), userID);
+        // Delete sender _id from comment
+        delete comment.sender._id;
         publicComments.push({
-            canOperate: await canOperate(comment.sender._id, userID),
+            canOperate: can_operate,
             ...comment.toObject(),
         })
     }
@@ -473,20 +476,23 @@ export const getAuctionCommentsController = async (
 
     if (isPrivate) {
         filter.private = true;
-       const  privateComments_tmp= await Comment.find({
+        const privateComments_tmp = await Comment.find({
             private: true,
             auction: auctionID,
         })
             .select("-__v -createdAt -updatedAt")
-            .populate({path: "sender", select: "username"})
+            .populate({path: "sender", select: "username _id"})
             .populate({path: "receiver", select: "username"})
             .populate({path: "inReplyTo"})
             .sort({createdAt: 1})
             .exec();
 
         for (let comment of privateComments_tmp) {
+            const can_operate = await canOperate(comment.sender._id.toString(), userID);
+            //delete sender _id form comment
+            delete comment.sender._id;
             privateComments.push({
-                canOperate: await canOperate(comment.sender._id, userID),
+                canOperate: can_operate,
                 ...comment.toObject(),
             })
         }
@@ -501,6 +507,7 @@ export const postAuctionCommentsController = async (
     req: Request,
     res: Response,
 ) => {
+    console.log('new comment', req.body)
     const {isPrivate, replyTo, text, receiver} = req.body;
     const auctionID = req.params.id;
     const currentAuction = await Auction.findById(auctionID).exec();
@@ -751,14 +758,37 @@ export const getAuctionStatisticsController = async (
     }
 };
 
-async function canOperate(user_id_to_check:string, user_id: string) {
-    if(user_id_to_check === user_id) {
+export const deleteCommentController = async (req: Request, res: Response) => {
+    const user_id = getUserId(req, res);
+    const user = await User.findById(user_id);
+    if (!user) {
+        return NotFoundException(req, res, "User not found");
+    }
+    const auction = await Auction.findById(req.params.id)
+    if (!auction) {
+        return NotFoundException(req, res, "Auction not found");
+    }
+    const comment_id = req.params.idcomment;
+    const comment = await Comment.findById(comment_id);
+    if (!comment) {
+        return NotFoundException(req, res, "Comment not found");
+    }
+    if (!(await canOperate( comment.sender.toString(),user_id.toString()))) {
+        return UnauthorizedException(req, res, "Unauthorized: You are not the sender of this comment");
+    }
+    await comment.deleteOne();
+    return res.status(200).send("Comment deleted");
+
+}
+
+async function canOperate(user_id_to_check: string, user_id: string) {
+    if (user_id_to_check === user_id) {
         return true;
     }
     const user = await User.findById(user_id);
     if (!user) {
         throw new Error("User not found");
     }
-    return user.isModerator();
+    return await user.isModerator();
 }
 

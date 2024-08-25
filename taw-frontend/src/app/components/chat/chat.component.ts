@@ -1,9 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import axios from 'axios';
-import { environments } from '../../../environments/environments';
-import { FormsModule } from '@angular/forms';
-import { NotificationService } from '../../services/popup/notification.service';
-import { NgClass } from '@angular/common';
+import {environments} from '../../../environments/environments';
+import {FormsModule} from '@angular/forms';
+import {NotificationService} from '../../services/popup/notification.service';
+import {NgClass} from '@angular/common';
 import {
   MatExpansionPanel,
   MatExpansionPanelTitle,
@@ -13,7 +13,7 @@ import {
 import {MatIcon} from "@angular/material/icon";
 
 interface Message {
-  canOperate: boolean;
+  canOperate?: boolean;
   id: string;
   author: string;
   content: string;
@@ -37,7 +37,8 @@ interface Conversation {
 })
 export class ChatComponent implements OnInit {
 
-  constructor(private snackBar: NotificationService) {}
+  constructor(private snackBar: NotificationService) {
+  }
 
   @Input() isPrivate!: boolean; // Indica se la chat è privata
   @Input() auctionID!: string; // ID dell'asta
@@ -52,7 +53,7 @@ export class ChatComponent implements OnInit {
   replyToMessageData?: Message; // Messaggio a cui si sta rispondendo
 
   ngOnInit() {
-    if(this.isPrivate)
+    if (this.isPrivate)
       this.loadPrivateConversations(0);
     else
       this.loadPublicConversations();
@@ -73,7 +74,7 @@ export class ChatComponent implements OnInit {
           const conversationsMap: { [key: string]: Conversation } = {};
           for (const data of res.data.private_comments) {
             if (data.sender.username === this.whoAmI || data.receiver.username === this.whoAmI) {
-              const { _id, sender, text, receiver, inReplyTo } = data;
+              const {_id, sender, text, receiver, inReplyTo} = data;
 
               const isMeSender = sender.username === this.whoAmI;
               const isMeReceiver = receiver.username === this.whoAmI;
@@ -81,7 +82,7 @@ export class ChatComponent implements OnInit {
               const mappedUser = isMeSender ? receiver.username : sender.username;
               const mappedUserID = isMeSender ? receiver._id : sender._id;
 
-              if(!(isMeSender && isMeReceiver)) {
+              if (!(isMeSender && isMeReceiver)) {
                 if (!conversationsMap[mappedUser]) {
                   conversationsMap[mappedUser] = {
                     id: mappedUserID,
@@ -119,15 +120,16 @@ export class ChatComponent implements OnInit {
           if (this.conversations.length > 0) {
             this.noPrivateMessages = false;
             this.selectedConversation = this.conversations[defaultIndex];
-          }else{
+          } else {
             this.noPrivateMessages = true;
           }
-        } else {
+        }
+        else {
           let messages: Message[] = [];
 
           for (const data of res.data.private_comments) {
             if (data.sender.username === this.whoAmI || data.receiver.username === this.whoAmI) {
-              const { _id, sender, text, receiver, inReplyTo } = data;
+              const {_id, sender, text, receiver, inReplyTo} = data;
 
               let repliedMessage: Message | undefined;
               if (inReplyTo) {
@@ -173,18 +175,20 @@ export class ChatComponent implements OnInit {
       ).then((res) => {
         let messages: Message[] = [];
 
-        for(const data of res.data.public_comments){
-          const { _id, sender, text, inReplyTo } = data;
+        for (const data of res.data.public_comments) {
+          const {_id, sender, text, inReplyTo, canOperate} = data;
 
           let repliedMessage: Message | undefined;
           if (inReplyTo) {
             const getRepliedMessage = res.data.public_comments.find((m: any) => m._id === inReplyTo._id);
-            repliedMessage = {
-              canOperate: getRepliedMessage.canOperate,
-              id: getRepliedMessage._id,
-              author: getRepliedMessage.sender.username,
-              content: getRepliedMessage.text
-            };
+            if (getRepliedMessage) {
+              repliedMessage = {
+                //  canOperate: getRepliedMessage.canOperate,
+                id: getRepliedMessage._id,
+                author: getRepliedMessage.sender.username,
+                content: getRepliedMessage.text
+              };
+            }
           }
 
           messages.push({
@@ -192,11 +196,10 @@ export class ChatComponent implements OnInit {
             author: sender.username,
             content: text,
             replyTo: repliedMessage,
-            canOperate: data.canOperate
+            canOperate: canOperate
           });
 
         }
-
         this.selectedConversation = {
           id: 'public',
           name: 'Public Chat',
@@ -207,11 +210,18 @@ export class ChatComponent implements OnInit {
 
     } catch (error) {
       console.error('Error loading public conversations:', error);
+      this.selectedConversation = {
+        id: 'public',
+        name: 'Public Chat',
+        messages: []
+      }
     }
+
   }
 
 
   async sendMessage(replyToId?: string) {
+    console.log(this.selectedConversation)
     if (this.newMessage.trim() && this.selectedConversation) {
 
 
@@ -236,14 +246,13 @@ export class ChatComponent implements OnInit {
           // Aggiungi il nuovo messaggio alla conversazione selezionata
           this.selectedConversation.messages.push({
             id: response.data._id,
-            canOperate:response.data.canOperate,
             author: this.whoAmI,
             content: this.newMessage,
             receiver: this.selectedConversation.name,
             replyTo: this.replyToMessageData
           });
           this.replyToMessageData = undefined; // Reset reply data
-        }else{
+        } else {
           this.snackBar.notify('Error sending message');
         }
       } catch (error) {
@@ -268,24 +277,24 @@ export class ChatComponent implements OnInit {
     if (!messageId) return;
     const element = document.getElementById(messageId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      element.scrollIntoView({behavior: 'smooth', block: 'center'});
     }
   }
 
   reloadPrivateChat(comment: any) {
     let conversationToFind = null;
 
-    if(this.auctionOwner === this.whoAmI) {
-      if(comment.receiver === this.auctionOwnerID) {
+    if (this.auctionOwner === this.whoAmI) {
+      if (comment.receiver === this.auctionOwnerID) {
         conversationToFind = this.conversations.find((c) => c.id === comment.sender);
-      }else{
+      } else {
         conversationToFind = this.conversations.find((c) => c.id === comment.receiver);
       }
     }
 
     let index = 0;
     // find index of conversation
-    if(conversationToFind)
+    if (conversationToFind)
       index = this.conversations.indexOf(conversationToFind);
 
     this.loadPrivateConversations(index);
@@ -296,4 +305,17 @@ export class ChatComponent implements OnInit {
     this.loadPublicConversations();
   }
 
+  deleteComment(id: string) {
+    axios.delete(environments.BACKEND_URL + '/api/auctions/' + this.auctionID + '/comments/' + id).then((res) => {
+      if (res.status === 200) {
+        this.snackBar.notify('Comment deleted successfully');
+      } else {
+        this.snackBar.notify('Error deleting comment');
+      }
+    }).catch(error => {
+      this.snackBar.notify('Error deleting comment');
+      console.error('Error deleting comment', error);
+    })
+
+  }
 }

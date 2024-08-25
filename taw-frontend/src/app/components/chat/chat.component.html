@@ -69,10 +69,8 @@
             </button>
             @if (message.canOperate) {
               <div class="actions">
-                <!-- trash icon -->
                 <mat-icon style="margin-right:5pt">edit</mat-icon>
-
-                <mat-icon>delete_forever</mat-icon>
+                <mat-icon (click)="deleteComment(message.id)">delete_forever</mat-icon>
               </div>
             }
           </div>
