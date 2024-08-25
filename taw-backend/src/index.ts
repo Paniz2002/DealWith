@@ -14,8 +14,8 @@ import { sendNotification } from "./utils/notifications";
 
 dotenv.config();
 
-const app: Express = express();
 connectDB();
+const app: Express = express();
 const port = process.env.PORT || 3000;
 const server = http.createServer(app);
 export const io = new Server(server, {

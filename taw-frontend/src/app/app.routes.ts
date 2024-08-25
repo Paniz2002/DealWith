@@ -9,10 +9,9 @@ import { RouteNotFoundComponent } from './components/route-not-found/route-not-f
 import { UpdatePasswordComponent } from './components/update-password/updatepassword.component';
 import { AdminGuard } from './guards/admin/adminGuard';
 import { AuthenticationGuard } from './guards/auth/authentication.guard';
-import { LogoutGuard } from './guards/logout/logout.guard';
 import { StudentGuard } from './guards/student/student.guard';
-import {StatisticsStudentComponent} from "./components/statistics-student/statistics-student.component";
-import {StatisticsModeratorComponent} from "./components/statistics-moderator/statistics-moderator.component";
+import { StatisticsStudentComponent } from './components/statistics-student/statistics-student.component';
+import { StatisticsModeratorComponent } from './components/statistics-moderator/statistics-moderator.component';
 export const routes: Routes = [
   {
     path: 'register',
@@ -29,12 +28,6 @@ export const routes: Routes = [
     canActivate: [AuthenticationGuard],
     component: UpdatePasswordComponent,
     pathMatch: 'full',
-  },
-  {
-    path: 'logout',
-    canActivate: [LogoutGuard],
-    pathMatch: 'full',
-    children: [],
   },
   {
     path: 'admin',

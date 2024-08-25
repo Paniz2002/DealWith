@@ -18,7 +18,6 @@ import { Router } from '@angular/router';
 import { NotificationService } from '../../services/popup/notification.service';
 import { RegisterComponent } from '../register/register.component';
 import { LocalStorageService } from '../../services/localStorage/localStorage.service';
-import { EventManagerService } from '../../services/eventManager/event-manager.service';
 
 import { SocketService } from '../../socket.service';
 
@@ -47,7 +46,6 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private snackBar: NotificationService,
     private localStorage: LocalStorageService,
-    private eventManager: EventManagerService,
     private socketService: SocketService,
   ) {}
 
@@ -91,7 +89,6 @@ export class LoginComponent implements OnInit {
       this.socketService.sendMessage(res.data._id, 'User has logged in');
 
       this.localStorage.set('notification', res.data.notification);
-      this.eventManager.loginOk.emit();
       if (!res.data.is_moderator) {
         return await this.router.navigate(['/']);
       }
