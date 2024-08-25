@@ -1,61 +1,61 @@
 [
   {
-    "name": "computer science",
+    "name": "data science",
     "year": { "year1": 2023, "year2": 2024 },
     "university": "Sapienza University of Rome"
   },
   {
-    "name": "computer science",
+    "name": "data science",
     "year": { "year1": 2022, "year2": 2023 },
     "university": "Politecnico di Milano"
   },
   {
-    "name": "computer science",
+    "name": "data science",
     "year": { "year1": 2023, "year2": 2024 },
     "university": "Federico II University of Naples"
   },
   {
-    "name": "mechanical engineering",
+    "name": "data science",
     "year": { "year1": 2010, "year2": 2011 },
     "university": "Politecnico di Torino"
   },
   {
-    "name": "electrical engineering",
+    "name": "data science",
     "year": { "year1": 2023, "year2": 2024 },
     "university": "University of Palermo"
   },
   {
-    "name": "civil engineering",
+    "name": "data science",
     "year": { "year1": 1991, "year2": 1992 },
     "university": "University of Genova"
   },
   {
-    "name": "business administration",
+    "name": "data science",
     "year": { "year1": 2000, "year2": 2001 },
     "university": "University of Bologna"
   },
   {
-    "name": "psychology",
+    "name": "data science",
     "year": { "year1": 2023, "year2": 2024 },
     "university": "University of Florence"
   },
   {
-    "name": "economics",
+    "name": "data science",
     "year": { "year1": 2023, "year2": 2024 },
     "university": "University of Verona"
   },
   {
-    "name": "biology",
+    "name": "data science",
     "year": { "year1": 2024, "year2": 2025 },
     "university": "Ca'Foscari University of Venice"
   },
   {
-    "name": "chemistry",
+    "name": "data science",
     "year": { "year1": 2023, "year2": 2024 },
     "university": "Ca'Foscari University of Venice"
   },
   {
-    "name": "physics",
+    "name": "data science",
     "year": { "year1": 2004, "year2": 2005 },
     "university": "Ca'Foscari University of Venice"
   }

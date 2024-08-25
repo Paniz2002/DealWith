@@ -1,7 +1,7 @@
 <!-- TODO: fare due col-6, la col-6 di destra ha le chat -->
 <div class="container-fluid">
   <div class="row">
-    <div class="col-12 col-md-6">
+    <div class="col-12 col-md-6" style="min-height: 130vh; border-right: 1px solid grey">
       <mat-card class="auction-card" appearance="outlined">
 
         <div
@@ -129,7 +129,7 @@
     @if (this.localStorage.get("userType") === "student") {
       <div class="col-12 col-md-6">
         <mat-card>
-          <mat-card-title style="text-align: center">Comments</mat-card-title>
+          <mat-card-title style="text-align: center">Chat</mat-card-title>
           <mat-tab-group #tabs>
             <mat-tab label="Private">
               <app-chat [isPrivate]="true" [auctionID]="this.auctionID" [whoAmI]="this.whoAmI" [auctionOwner]="this.auctionDetails.seller.username" [auctionOwnerID]="this.auctionDetails.seller._id"></app-chat>
