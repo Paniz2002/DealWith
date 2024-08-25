@@ -1,7 +1,7 @@
 <mat-card class="auction-card" appearance="outlined">
-  <mat-card-header>
-    <mat-card-title [routerLink]="['/', this.auctionID]">
-      <span class="title"> {{ this.bookTitle }} </span>
+  <mat-card-header class="text-oneline">
+    <mat-card-title class="title" [routerLink]="['/', this.auctionID]">
+       {{ this.bookTitle }}
     </mat-card-title>
     <mat-card-subtitle>{{ this.bookAuthor }}</mat-card-subtitle>
   </mat-card-header>
