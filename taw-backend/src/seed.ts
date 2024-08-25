@@ -17,8 +17,6 @@ const seedUsers = async (): Promise<void> => {
     for (const userData of usersData) {
         const { profile, username, password, email, role } = userData;
 
-
-
         // Check if the user already exists
         let userDoc = await User.findOne({ username });
         if (!userDoc) {
@@ -61,24 +59,6 @@ const seedCourses = async (): Promise<void> => {
             } else {
                 console.log(`Course already exists: ${existingCourse.name}`);
             }
-
-            const newExistingCourse = await Course.findOne({ name: courseData.name });
-            // Add the Course to the University
-            /* const university = await University.findOne({
-               name: courseData.university,
-             });
-             if (!university) {
-               console.log(`University not found for course: ${courseData.name}`);
-             } else {
-               // Check if the course is already in the university
-               if (!university.courses.includes(newExistingCourse._id)) {
-                 university.courses.push(newExistingCourse);
-                 await university.save();
-                 console.log(`Course added to university: ${newExistingCourse.name}`);
-               } else {
-                 console.log(`Course already in university: ${existingCourse.name}`);
-               }
-             } */
         } catch (err) {
             console.error(`Error saving course: ${courseData.name}`, err);
         }
@@ -118,24 +98,6 @@ const seedUniversities = async (): Promise<void> => {
             const newExistingUniversity = await University.findOne({
                 name: universityData.name,
             });
-            // Add the University to the City
-            /*const city = await City.findOne({ name: universityData.city });
-            if (!city) {
-              console.log(`City not found for university: ${universityData.name}`);
-            } else {
-              // Check if the university is already in the city
-              if (!city.universities.includes(newExistingUniversity._id)) {
-                city.universities.push(newExistingUniversity);
-                await city.save();
-                console.log(
-                  `University added to city: ${newExistingUniversity.name}`,
-                );
-              } else {
-                console.log(
-                  `University already in city: ${newExistingUniversity.name}`,
-                );
-              }
-            } */
         } catch (err) {
             console.error(`Error saving university: ${universityData.name}`, err);
         }
@@ -202,17 +164,22 @@ const seedBooks = async (): Promise<void> => {
 };
 
 const seedAuctions = async (): Promise<void> => {
-    const imagesPath = path.join(__dirname, "data", "images", "sample");
+  /*const imagesPath = path.join(__dirname, "data", "images", "sample");
     const images = ["sample1.webp", "sample2.webp", "sample3.webp"].map((image) =>
         path.join(imagesPath, image),
-    );
+  );*/
 
     const booksFilePath = path.join(__dirname, "data", "books.json");
     const booksData = JSON.parse(fs.readFileSync(booksFilePath, "utf-8"));
 
     for (const bookData of booksData) {
-        bookData.images = images;
-
+    // bookData.images = images;
+    if(!bookData.images){
+      const imagesPath = path.join(__dirname, "data", "images", "sample");
+      bookData.images = ["sample1.webp", "sample2.webp", "sample3.webp"].map((image) =>
+          path.join(imagesPath, image),
+      );
+    }
         try {
             const book = await Book.findOne({ ISBN: bookData.ISBN });
             //create auction if not present with current book id

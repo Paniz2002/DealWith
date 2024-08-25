@@ -26,6 +26,8 @@ export const io = new Server(server, {
   },
 });
 
+connectDB();
+
 io.on('connection', (socket) => {
     console.log('New client connected (no room yet)');
 

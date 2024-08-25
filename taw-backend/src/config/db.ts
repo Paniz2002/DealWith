@@ -15,8 +15,8 @@ export default async function connectDB() {
     }
     const dbConnection = mongoose.connection;
 
-    // event listeners for mongoDB connection
-    dbConnection.once("open", (_) => {
+  // event listeners for mongoDB connection
+  dbConnection.once("open", () => {
         console.log("Database connected to " + url);
     });
 
