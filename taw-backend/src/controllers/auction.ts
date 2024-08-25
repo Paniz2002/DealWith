@@ -716,23 +716,17 @@ export const getAuctionStatisticsController = async (
             .select("-__v ");
 
         const mappedAuctions = auctions.map((auction) => {
-            let maxBid = {price: auction.starting_price};
 
-            if (auction.bids.length !== 0)
-                maxBid = auction.bids.reduce(
-                    (prev: { amount: number }, current: { amount: number }) =>
-                        prev.amount > current.amount ? prev : current,
-                );
 
             const isActive = auction.isActive();
-            const isSuccessful = maxBid.price >= auction.reserve_price;
+            const isSold = auction.isSold();
 
             const auctionObject = auction.toObject();
 
             return {
                 ...auctionObject,
                 isActive: isActive,
-                isSuccessful: isSuccessful,
+                isSold: isSold,
             };
         });
 
