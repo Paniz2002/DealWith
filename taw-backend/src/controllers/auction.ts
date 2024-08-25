@@ -259,17 +259,11 @@ const searchAuctions = async function (req: Request, res: Response) {
             $and: [
                 {condition: {$in: superior_conditions}},
                 {
-                    end_date: active
-                        ? {$gt: Date.now()}
-                        : {$gt: new Date("1970-01-01T00:00:00Z")},
-                },
-                {
                     _id: q
                         ? {
                             $in: searchedAuctions.map(
                                 (auction: { _id: any }) => auction._id,
                             ),
-                            // .concat(books),
                         }
                         : {$in: allAuctions.map((auction) => auction._id)},
                 },
@@ -305,6 +299,9 @@ const searchAuctions = async function (req: Request, res: Response) {
         let priceFilteredAuctions = [];
 
         for (let auction of auctions) {
+            if(active && !auction.isActive()){
+                continue;
+            }
             let currentPrice = auction.currentPrice();
             if (currentPrice >= min && currentPrice <= max) {
                 priceFilteredAuctions.push(auction);
@@ -720,14 +717,14 @@ export const getAuctionStatisticsController = async (
                         prev.amount > current.amount ? prev : current,
                 );
 
-            const isEnded = auction.end_date < new Date();
+            const isActive = auction.isActive();
             const isSuccessful = maxBid.price >= auction.reserve_price;
 
             const auctionObject = auction.toObject();
 
             return {
                 ...auctionObject,
-                isEnded: isEnded,
+                isActive: isActive,
                 isSuccessful: isSuccessful,
             };
         });
