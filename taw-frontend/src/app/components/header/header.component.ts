@@ -9,7 +9,7 @@ import { SocketService } from '../../socket.service';
 import axios from 'axios';
 import { environments } from '../../../environments/environments';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
-import { NgClass } from '@angular/common';
+import {NgClass, NgOptimizedImage} from '@angular/common';
 import {HeaderHeightService} from "../../services/header/header-height.service";
 
 interface Notification {
@@ -31,6 +31,7 @@ interface Notification {
     MatMenuTrigger,
     MatIconButton,
     NgClass,
+    NgOptimizedImage,
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
