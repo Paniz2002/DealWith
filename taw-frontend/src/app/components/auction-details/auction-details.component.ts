@@ -1,4 +1,11 @@
-import {Component, OnInit, inject, ViewChild, ViewChildren, QueryList} from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  ViewChild,
+  ViewChildren,
+  QueryList,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -12,17 +19,17 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
-import {MatTabGroup, MatTabsModule} from '@angular/material/tabs';
-import {NgClass, NgForOf} from "@angular/common";
-import {AuctionDetailsCountdownComponent} from "../auction-details-countdown/auction-details-countdown.component";
+import { MatTabGroup, MatTabsModule } from '@angular/material/tabs';
+import { NgClass, NgForOf } from '@angular/common';
+import { AuctionDetailsCountdownComponent } from '../auction-details-countdown/auction-details-countdown.component';
 import { MatIconModule } from '@angular/material/icon';
-import {ActivatedRoute} from "@angular/router";
-import {NotificationService} from "../../services/popup/notification.service";
-import {LocalStorageService} from "../../services/localStorage/localStorage.service";
-import axios from "axios";
-import {environments} from "../../../environments/environments";
-import {ChatComponent} from "../chat/chat.component";
-import {SocketService} from "../../socket.service";
+import { ActivatedRoute } from '@angular/router';
+import { NotificationService } from '../../services/popup/notification.service';
+import { LocalStorageService } from '../../services/localStorage/localStorage.service';
+import axios from 'axios';
+import { environments } from '../../../environments/environments';
+import { ChatComponent } from '../chat/chat.component';
+import { SocketService } from '../../socket.service';
 @Component({
   selector: 'app-auction-details',
   standalone: true,
@@ -49,15 +56,26 @@ export class AuctionDetailsComponent implements OnInit {
   @ViewChildren(ChatComponent) chatComponents!: QueryList<ChatComponent>;
   @ViewChild('tabs') tabGroup!: MatTabGroup;
   months: Array<string> = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
-
+  protected userType: string | null = '';
+  protected isUserLoggedIn: boolean = false;
   protected whoAmI!: string;
   protected myId!: string;
   auctionID: string;
   auctionDetails!: any;
-  endDate!: Date ;
+  endDate!: Date;
   endDateTime!: any;
   auctionPrice: Number = -1;
   isLastBidOwner!: boolean;
@@ -76,6 +94,8 @@ export class AuctionDetailsComponent implements OnInit {
     axios.get(environments.BACKEND_URL + '/api/auth/me').then((res: any) => {
       this.whoAmI = res.data.username;
       this.myId = res.data._id;
+      this.isUserLoggedIn = true;
+      this.userType = res.data.is_moderator ? 'moderator' : 'student';
     });
   }
 
@@ -88,12 +108,12 @@ export class AuctionDetailsComponent implements OnInit {
     return currMax >= startingPrice ? currMax : startingPrice;
   }
 
-  isOwner(): boolean{
+  isOwner(): boolean {
     return this.auctionDetails.seller._id === this.myId;
   }
 
-  private isClientLastBidOwner(bids: any):any {
-    if(bids.length === 0) {
+  private isClientLastBidOwner(bids: any): any {
+    if (bids.length === 0) {
       return false;
     }
 
@@ -107,17 +127,16 @@ export class AuctionDetailsComponent implements OnInit {
     });
 
     return this.myId === lastBidOwner;
-
   }
 
   ngOnInit(): void {
     this.initSocket();
-    this.socketService.receivePublicComment( (comment) => {
+    this.socketService.receivePublicComment((comment) => {
       console.log('Received public comment');
       this.reloadPublicChatContent(comment);
     });
 
-    this.socketService.receivePrivateComment( (comment) => {
+    this.socketService.receivePrivateComment((comment) => {
       console.log('Received private comment');
       this.reloadPrivateChatContent(comment);
     });
@@ -135,9 +154,13 @@ export class AuctionDetailsComponent implements OnInit {
           this.auctionDetails.starting_price,
         );
 
-        this.isLastBidOwner = this.isClientLastBidOwner(this.auctionDetails.bids);
+        this.isLastBidOwner = this.isClientLastBidOwner(
+          this.auctionDetails.bids,
+        );
 
-        this.form.controls['bidPrice'].setValue(this.auctionPrice.valueOf() + 0.01);
+        this.form.controls['bidPrice'].setValue(
+          this.auctionPrice.valueOf() + 0.01,
+        );
 
         this.auctionDetails.book.courses.forEach((course: any) => {
           this.coursesUniversities.push(
@@ -146,7 +169,6 @@ export class AuctionDetailsComponent implements OnInit {
         });
 
         this.loadAuctionImages();
-
       })
       .catch((err) => {
         this.snackBar.notify(err.message);
@@ -167,14 +189,18 @@ export class AuctionDetailsComponent implements OnInit {
 
   private loadAuctionImages(): void {
     try {
-      const response = axios.get(
-        `${environments.BACKEND_URL}/api/auctions/${this.auctionID}/images`,
-      ).then((res) => {
-        this.auctionDetails.base64Images = res.data.images;
-      });
-
+      const response = axios
+        .get(
+          `${environments.BACKEND_URL}/api/auctions/${this.auctionID}/images`,
+        )
+        .then((res) => {
+          this.auctionDetails.base64Images = res.data.images;
+        });
     } catch (error) {
-      console.error(`Error loading images for auction ${this.auctionID}`, error);
+      console.error(
+        `Error loading images for auction ${this.auctionID}`,
+        error,
+      );
     }
   }
 
@@ -191,21 +217,18 @@ export class AuctionDetailsComponent implements OnInit {
   }
 
   initSocket() {
-      this.socketService.joinAuctionRoom('auction_' + this.auctionID);
+    this.socketService.joinAuctionRoom('auction_' + this.auctionID);
   }
 
   reloadPrivateChatContent(comment: any) {
-    if(comment.receiver === this.myId || comment.sender === this.myId) {
-      if(this.tabGroup.selectedIndex !== 0)
-        this.tabGroup.selectedIndex = 0;
+    if (comment.receiver === this.myId || comment.sender === this.myId) {
+      if (this.tabGroup.selectedIndex !== 0) this.tabGroup.selectedIndex = 0;
       this.chatComponents.toArray()[0].reloadPrivateChat(comment);
     }
   }
 
   reloadPublicChatContent(comment: any) {
-    if(this.tabGroup.selectedIndex !== 1)
-      this.tabGroup.selectedIndex = 1;
+    if (this.tabGroup.selectedIndex !== 1) this.tabGroup.selectedIndex = 1;
     this.chatComponents.toArray()[1].reloadPublicChat();
   }
-
 }

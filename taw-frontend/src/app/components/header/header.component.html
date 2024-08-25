@@ -21,7 +21,7 @@
           Create Auction
         </button>
       }
-      @if (this.userType !== "admin") {
+      @if (this.userType !== "moderator") {
         <button mat-button [routerLink]="'/'" class="header-button">
           List Auction(s)
         </button>
