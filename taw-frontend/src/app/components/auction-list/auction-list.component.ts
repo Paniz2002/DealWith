@@ -74,13 +74,19 @@ export class AuctionListComponent implements OnInit {
       minStartingPrice: [0, [Validators.required]],
       maxStartingPrice: [100, [Validators.required]],
       condition: ['', [Validators.required]],
-      active: [''],
+      active: [true],
     });
   }
 
   ngOnInit(): void {
+    let params = <Filter>{};
+
+    if (this.form.value.active) {
+      params.active = true;
+    }
+
     axios
-      .get(environments.BACKEND_URL + '/api/auctions')
+      .get(environments.BACKEND_URL + '/api/auctions', { params })
       .then(async (auctions: any) => {
         for (const auction of auctions.data) {
           this.availableAuctions.push(<AuctionCard>{
