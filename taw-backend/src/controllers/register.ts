@@ -67,7 +67,7 @@ export const registerController = async (req: Request, res: Response) => {
     const user = await UserModel.findOne({
       _id: payload._id,
     });
-    if (!user || !user.isModerator()) {
+    if ((!user || !user.isModerator()) && req.body.role == "moderator") {
       return UnauthorizedException(
         req,
         res,

@@ -11,6 +11,12 @@
   transition: 0.3s;
 }
 
+.text-oneline ::ng-deep * {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 .title:hover {
   text-decoration: underline black;
 }
