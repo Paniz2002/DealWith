@@ -398,7 +398,14 @@ export const getAuctionDetailsController = async (
             return NotFound(req, res, "Auction not found");
         }
 
-        return res.status(200).json(auction);
+        //add isActive() to result
+        const response={
+            ...auction,
+            isActive: auction.isActive(),
+        }
+
+
+        return res.status(200).json(response);
     } catch (err) {
         return InternalException(req, res, "Error while getting auction details");
     }

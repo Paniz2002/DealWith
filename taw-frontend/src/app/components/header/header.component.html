@@ -21,11 +21,11 @@
           Create Auction
         </button>
       }
-      @if (this.userType !== "moderator") {
-        <button mat-button [routerLink]="'/'" class="header-button">
-          List Auction(s)
-        </button>
-      }
+
+      <button mat-button [routerLink]="'/'" class="header-button">
+        List Auction(s)
+      </button>
+
       <!-- Notification icon with counter -->
       @if (notifications && notifications.length > 0) {
         <!-- Notification icon with counter -->
@@ -92,10 +92,22 @@
         </button>
       }
 
+      @if (this.userType === "student") {
+        <button mat-button [routerLink]="'/statistics'" class="header-button">
+          <mat-icon>trending_up</mat-icon>
+        </button>
 
-      <button mat-button [routerLink]="'/statistics'" class="header-button">
-        <mat-icon>trending_up</mat-icon>
-      </button>
+      } @else if (this.userType === "moderator") {
+        <button mat-button [routerLink]="'/admin/statistics'" class="header-button">
+          <mat-icon>trending_up</mat-icon>
+        </button>
+      }
+
+      @if (this.userType === "moderator") {
+        <button mat-button [routerLink]="'/admin'" class="header-button">
+          <mat-icon>warning</mat-icon>
+        </button>
+      }
 
     }
   </div>
