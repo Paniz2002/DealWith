@@ -61,8 +61,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         const res = await axios.get(environments.BACKEND_URL + '/api/auth/me');
         this.isUserLoggedIn = res.status === 200;
         if (this.isUserLoggedIn) {
-          this.userType =
-            res.data.is_moderator === 200 ? 'moderator' : 'student';
+          this.userType = res.data.is_moderator  ? 'moderator' : 'student';
         }
       }
     });
