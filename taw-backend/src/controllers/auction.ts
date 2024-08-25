@@ -17,6 +17,8 @@ import sharp from "sharp";
 import Course from "../../models/course";
 import NotFoundException from "../exceptions/not-found";
 import NotFound from "../exceptions/not-found";
+import User from "../../models/user";
+import comment from "../../models/comment";
 
 const conditions = ["Mint", "Near Mint", "Excellent", "Good", "Fair", "Poor"];
 
@@ -450,7 +452,7 @@ export const getAuctionCommentsController = async (
         $or: [{sender: userID}, {receiver: userID}],
         auction: auctionID,
     };
-    const publicComments = await Comment.find({
+    const  publicComments_tmp = await Comment.find({
         private: null,
         auction: auctionID,
     })
@@ -459,11 +461,19 @@ export const getAuctionCommentsController = async (
         .populate({path: "inReplyTo"})
         .sort({createdAt: 1})
         .exec();
+    let publicComments=[];
+    for (let comment of publicComments_tmp) {
+        publicComments.push({
+            canOperate: canOperate(comment.sender._id, userID),
+            ...comment.toObject(),
+        })
+    }
+
     let privateComments: any[] = [];
 
     if (isPrivate) {
         filter.private = true;
-        privateComments = await Comment.find({
+       const  privateComments_tmp= await Comment.find({
             private: true,
             auction: auctionID,
         })
@@ -473,6 +483,13 @@ export const getAuctionCommentsController = async (
             .populate({path: "inReplyTo"})
             .sort({createdAt: 1})
             .exec();
+
+        for (let comment of privateComments_tmp) {
+            privateComments.push({
+                canOperate: canOperate(comment.sender._id, userID),
+                ...comment.toObject(),
+            })
+        }
     }
     return res.status(200).json({
         private_comments: privateComments,
@@ -733,3 +750,15 @@ export const getAuctionStatisticsController = async (
         return InternalException(req, res, "Error while getting auctions");
     }
 };
+
+async function canOperate(user_id_to_check:string, user_id: string) {
+    if(user_id_to_check === user_id) {
+        return true;
+    }
+    const user = await User.findById(user_id);
+    if (!user) {
+        throw new Error("User not found");
+    }
+    return user.isModerator();
+}
+
