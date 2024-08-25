@@ -1,5 +1,5 @@
-import {CommonModule} from '@angular/common';
-import {Component, OnInit} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,15 +7,15 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import {environments} from '../../../environments/environments';
+import { environments } from '../../../environments/environments';
 import axios from 'axios';
-import {MatSelectModule} from '@angular/material/select';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatButtonModule} from '@angular/material/button';
-import {MatIconModule} from '@angular/material/icon';
-import {Router} from '@angular/router';
-import {NotificationService} from '../../services/popup/notification.service';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { Router } from '@angular/router';
+import { NotificationService } from '../../services/popup/notification.service';
 
 @Component({
   selector: 'app-register',
@@ -45,9 +45,12 @@ export class RegisterComponent implements OnInit {
   ) {
     //check if current route is /register
     if (this.router.url !== '/register') {
-      axios.get(environments.BACKEND_URL + '/api/auth/me').then((res) => {
-        this.isUserModerator = res.data.is_moderator;
-      }).catch((e) => {/*avoid printing in console*/});
+      axios
+        .get(environments.BACKEND_URL + '/api/auth/me')
+        .then((res) => {
+          this.isUserModerator = res.data.is_moderator;
+        })
+        .catch(() => {});
     }
     //TODO logged student must logout before see register page again
   }
@@ -187,7 +190,7 @@ export class RegisterComponent implements OnInit {
     this.form.reset({
       username: '',
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
     });
   }
 }

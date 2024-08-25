@@ -12,40 +12,46 @@ export class AuctionService {
 
   constructor(private snackBar: NotificationService) {}
 
-  addAuction(auctionForm: FormGroup) {
-    return axios
-      .post(`${this.apiUrl}/api/auctions`, auctionForm.value)
-      .then((res) => res.data)
-      .catch((err) => {
-        console.error('Error adding auction:', err);
-        if (err.response.data.message) {
-          this.snackBar.notify(err.response.data.message);
-        } else {
-          this.snackBar.notify('Error adding auction');
-        }
-        return false;
-      });
+  async addAuction(auctionForm: FormGroup) {
+    try {
+      const res = await axios.post(
+        `${this.apiUrl}/api/auctions`,
+        auctionForm.value,
+      );
+      return res.data;
+    } catch (err: any) {
+      console.error('Error adding auction:', err);
+      if (err.response.data.message) {
+        this.snackBar.notify(err.response.data.message);
+      } else {
+        this.snackBar.notify('Error adding auction');
+      }
+      return false;
+    }
   }
 
-  uploadImages(auctionId: string, files: File[]) {
+  async uploadImages(auctionId: string, files: File[]) {
     const formData = new FormData();
     for (let file of files) {
       formData.append('images', file);
     }
 
     formData.set('auction_id', auctionId);
-    return axios
-      .post(`${this.apiUrl}/api/auctions/images`, formData)
-      .then((res) => res.data)
-      .catch((err) => {
-        console.error('Error uploading images:', err);
-        if (err.response.data.message) {
-          this.snackBar.notify(err.response.data.message);
-        } else {
-          this.snackBar.notify('Error uploading images');
-        }
-        return false;
-      });
+    try {
+      const res = await axios.post(
+        `${this.apiUrl}/api/auctions/images`,
+        formData,
+      );
+      return res.data;
+    } catch (err: any) {
+      console.error('Error uploading images:', err);
+      if (err.response.data.message) {
+        this.snackBar.notify(err.response.data.message);
+      } else {
+        this.snackBar.notify('Error uploading images');
+      }
+      return false;
+    }
   }
 
   async getBooks(to_search: string = '') {

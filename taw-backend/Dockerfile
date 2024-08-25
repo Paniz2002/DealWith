@@ -19,4 +19,3 @@ EXPOSE 3001
 
 # Instead while developing run this.
 CMD ["sh", "-c", "npm run seed:init && npm run dev"]
-
