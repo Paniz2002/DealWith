@@ -24,7 +24,9 @@ export class StatisticsStudentComponent implements OnInit {
 
   // Participated Auctions Chart Data
   public participatedChartData: ChartDataset[] = [
-    {data: [], label: 'Participated Auctions', hidden: false}
+    {data: [], label: 'Participated Auctions', hidden: false},
+    {data: [], label: 'Won Auctions', hidden: false,},
+    {data: [], label: 'Lost Auctions', hidden: false,},
   ];
   public participatedChartLabels: string[] = [];
 
@@ -111,6 +113,8 @@ export class StatisticsStudentComponent implements OnInit {
 
   processParticipatedAuctionsData(data: any): void {
     const participatedAuctions: { [key: string]: number } = {};
+    const wonAuctions: { [key: string]: number } = {};
+    const lostAuctions: { [key: string]: number } = {};
 
     data.forEach((auction: any) => {
       const endDate = new Date(auction.end_date);
@@ -124,15 +128,25 @@ export class StatisticsStudentComponent implements OnInit {
       this.participatedChartLabels.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
       participatedAuctions[monthYear] = (participatedAuctions[monthYear] || 0) + 1;
+
+      if (auction.isWinning) {
+        wonAuctions[monthYear] = (wonAuctions[monthYear] || 0) + 1;
+      } else {
+        lostAuctions[monthYear] = (lostAuctions[monthYear] || 0) + 1;
+      }
     });
 
     this.participatedChartData[0].data = this.participatedChartLabels.map(month => participatedAuctions[month] || 0);
+    this.participatedChartData[1].data = this.participatedChartLabels.map(month => wonAuctions[month] || 0);
+    this.participatedChartData[2].data = this.participatedChartLabels.map(month => lostAuctions[month] || 0);
 
     setTimeout(() => {
       this.participatedChartData = [...this.participatedChartData];
     }, 500);
+
     this.participatedAuctions = data.sort((a: any, b: any) => new Date(b.end_date).getTime() - new Date(a.end_date).getTime());
   }
+
 
   viewAuction(auctionId: string) {
     this.router.navigate(['/' + auctionId]); // or wherever you want to navigate after submission
