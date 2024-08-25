@@ -507,7 +507,6 @@ export const postAuctionCommentsController = async (
     req: Request,
     res: Response,
 ) => {
-    console.log('new comment', req.body)
     const {isPrivate, replyTo, text, receiver} = req.body;
     const auctionID = req.params.id;
     const currentAuction = await Auction.findById(auctionID).exec();
@@ -773,12 +772,65 @@ export const deleteCommentController = async (req: Request, res: Response) => {
     if (!comment) {
         return NotFoundException(req, res, "Comment not found");
     }
-    if (!(await canOperate( comment.sender.toString(),user_id.toString()))) {
+    if (!(await canOperate(comment.sender.toString(), user_id.toString()))) {
         return UnauthorizedException(req, res, "Unauthorized: You are not the sender of this comment");
     }
     await comment.deleteOne();
     return res.status(200).send("Comment deleted");
 
+}
+
+export const editCommentController = async (req: Request, res: Response) => {
+    try {
+        const userID = getUserId(req, res);
+        const user = await User.findById(userID);
+        if (!user) {
+            return NotFoundException(req, res, "User not found");
+        }
+        const auctionID = req.params.id;
+        const currentAuction = await Auction.findById(auctionID).exec();
+        if (!currentAuction) {
+            return BadRequestException(req, res, "Bad request: invalid auction.");
+        }
+        const comment_id = req.params.idcomment;
+        const comment = await Comment.findById(comment_id);
+        if (!comment) {
+            return NotFoundException(req, res, "Comment not found");
+        }
+        if (!(await canOperate(comment.sender.toString(), userID.toString()))) {
+            return UnauthorizedException(req, res, "Unauthorized: You are not the sender of this comment");
+        }
+        const {text, replyTo, isPrivate, receiver} = req.body;
+        if (!text) {
+            return BadRequestException(req, res, "Bad request: text is required");
+        }
+       comment.text = text;
+        let repliedComment;
+        if (replyTo) {
+            repliedComment = await Comment.findById(replyTo).exec();
+            if (!repliedComment) {
+                return BadRequestException(req, res, "Bad request: invalid parameters");
+            }
+            comment.inReplyTo = repliedComment;
+            comment.private = repliedComment.private;
+        } else {
+            comment.inReplyTo = undefined;
+            comment.private = undefined;
+        }
+        if (Boolean(isPrivate)) {
+            comment.private = true;
+           // comment.receiver = receiver; //FIXME: probably we dont have to change if im a moderator, so leave it as it is, so leave the comment
+        } else {
+            comment.private = undefined;
+            comment.receiver = undefined;
+        }
+
+        comment.save();
+        return res.status(200).send("Comment edited");
+    } catch (err) {
+        console.error(err);
+        return InternalException(req, res, "Unknown error while editing comment.");
+    }
 }
 
 async function canOperate(user_id_to_check: string, user_id: string) {
