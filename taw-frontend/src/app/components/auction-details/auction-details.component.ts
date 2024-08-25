@@ -30,6 +30,15 @@ import axios from 'axios';
 import { environments } from '../../../environments/environments';
 import { ChatComponent } from '../chat/chat.component';
 import { SocketService } from '../../socket.service';
+
+interface Course{
+  name: string;
+  university: string;
+  year1: number;
+  year2: number;
+}
+
+
 @Component({
   selector: 'app-auction-details',
   standalone: true,
@@ -83,7 +92,7 @@ export class AuctionDetailsComponent implements OnInit {
     bidPrice: new FormControl('', [Validators.required]),
   });
 
-  coursesUniversities: Array<string> = Array<string>();
+  coursesUniversities: Array<Course> = Array<Course>();
   constructor(
     private route: ActivatedRoute,
     private snackBar: NotificationService,
@@ -164,7 +173,12 @@ export class AuctionDetailsComponent implements OnInit {
 
         this.auctionDetails.book.courses.forEach((course: any) => {
           this.coursesUniversities.push(
-            course.name + ', ' + course.university.name,
+            {
+              name: course.name,
+              university: course.university.name,
+              year1: course.year.year1,
+              year2: course.year.year2,
+            }
           );
         });
 

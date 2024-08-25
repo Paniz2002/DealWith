@@ -1,7 +1,7 @@
 <!-- TODO: fare due col-6, la col-6 di destra ha le chat -->
 <div class="container-fluid">
   <div class="row">
-    <div class="col-12 col-md-6" style="min-height: 130vh; border-right: 1px solid grey">
+    <div id="card-details" class="col-12 col-md-6">
       <mat-card class="auction-card" appearance="outlined">
         <div
           [id]="'auctionCarousel' + this.auctionID"
@@ -61,14 +61,23 @@
           <mat-card-subtitle
             >Author: {{ this.auctionDetails.book.author }}</mat-card-subtitle
           >
-          @for (
-            courseUniversity of this.coursesUniversities;
-            track courseUniversity
-          ) {
-            <mat-card-subtitle
-              >Course: {{ courseUniversity }}</mat-card-subtitle
-            >
-          }
+          <mat-card-subtitle>
+            ISBN: {{ this.auctionDetails.book.ISBN }}
+          </mat-card-subtitle>
+          <mat-card-subtitle>
+            @if(this.coursesUniversities.length === 1){
+              Course:
+            } @else {
+              Courses:
+            }
+            @for ( courseUniversity of this.coursesUniversities; track courseUniversity) {
+              <span>{{ courseUniversity.name }} {{ courseUniversity.year1}}/{{ courseUniversity.year2}}, {{courseUniversity.university}}</span>
+              @if(this.coursesUniversities.length > 1){
+                <span> | </span>
+              }
+            }
+          </mat-card-subtitle>
+
           <mat-card-subtitle>
             Seller: {{ this.auctionDetails.seller.profile.firstName }}
             {{ this.auctionDetails.seller.profile.lastName }}

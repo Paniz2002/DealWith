@@ -3,6 +3,11 @@ mat-card {
   height: 100vh;
 }
 
+#card-details{
+  min-height: 130vh;
+  border-right: 1px solid lightgray;
+}
+
 .messages-container{
   height: 80vh;
   overflow-y: auto;
