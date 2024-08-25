@@ -62,10 +62,19 @@
                 </div>
               }
               {{ message.content }}
+
             </div>
             <button class="reply-button" (click)="replyToMessage(message)">
               Reply
             </button>
+            @if (message.canOperate) {
+              <div class="actions">
+                <!-- trash icon -->
+                <mat-icon style="margin-right:5pt">edit</mat-icon>
+
+                <mat-icon>delete_forever</mat-icon>
+              </div>
+            }
           </div>
         }
       }
@@ -86,7 +95,7 @@
 
     <!-- Input del messaggio -->
     <div class="message-input">
-      <input [(ngModel)]="newMessage" placeholder="Type a message..." />
+      <input [(ngModel)]="newMessage" placeholder="Type a message..."/>
       <button (click)="sendMessage(replyToMessageData?.id)">Send</button>
     </div>
   }

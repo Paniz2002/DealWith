@@ -169,3 +169,25 @@
 .message-input button:hover {
   background-color: #303f9f; /* Indigo-700 */
 }
+
+
+.actions {
+  display:flex;
+  flex-direction:row
+}
+
+.sent .actions {
+  position: absolute;
+  bottom:5px;
+  right: 85%; /* Adjust this value to control the distance from the right edge */
+  cursor: pointer;
+  color: #3f51b5; /* Indigo-500 */
+}
+
+.received .actions {
+  position: absolute;
+  bottom:5px;
+  left: 85%; /* Adjust this value to control the distance from the right edge */
+  cursor: pointer;
+  color: #3f51b5; /* Indigo-500 */
+}

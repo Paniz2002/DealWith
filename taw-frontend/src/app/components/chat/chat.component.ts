@@ -10,8 +10,10 @@ import {
   MatExpansionPanelHeader,
   MatExpansionPanelDescription
 } from "@angular/material/expansion";
+import {MatIcon} from "@angular/material/icon";
 
 interface Message {
+  canOperate: boolean;
   id: string;
   author: string;
   content: string;
@@ -30,7 +32,7 @@ interface Conversation {
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   standalone: true,
-  imports: [FormsModule, NgClass, MatExpansionPanel, MatExpansionPanelTitle, MatExpansionPanelHeader, MatExpansionPanelDescription],
+  imports: [FormsModule, NgClass, MatExpansionPanel, MatExpansionPanelTitle, MatExpansionPanelHeader, MatExpansionPanelDescription, MatIcon],
   styleUrls: ['./chat.component.css'],
 })
 export class ChatComponent implements OnInit {
@@ -93,6 +95,7 @@ export class ChatComponent implements OnInit {
                 if (inReplyTo) {
                   const getRepliedMessage = res.data.private_comments.find((m: any) => m._id === inReplyTo._id);
                   repliedMessage = {
+                    canOperate: getRepliedMessage.canOperate,
                     id: getRepliedMessage._id,
                     author: getRepliedMessage.sender.username,
                     content: getRepliedMessage.text,
@@ -101,6 +104,7 @@ export class ChatComponent implements OnInit {
                 }
 
                 conversationsMap[mappedUser].messages.push({
+                  canOperate: data.canOperate,
                   id: _id,
                   author: sender.username,
                   content: text,
@@ -129,6 +133,7 @@ export class ChatComponent implements OnInit {
               if (inReplyTo) {
                 const getRepliedMessage = res.data.private_comments.find((m: any) => m._id === inReplyTo._id);
                 repliedMessage = {
+                  canOperate: getRepliedMessage.canOperate,
                   id: getRepliedMessage._id,
                   author: getRepliedMessage.sender.username,
                   content: getRepliedMessage.text,
@@ -141,7 +146,8 @@ export class ChatComponent implements OnInit {
                 author: sender.username,
                 content: text,
                 receiver: receiver.username,
-                replyTo: repliedMessage
+                replyTo: repliedMessage,
+                canOperate: data.canOperate
               });
             }
           }
@@ -174,6 +180,7 @@ export class ChatComponent implements OnInit {
           if (inReplyTo) {
             const getRepliedMessage = res.data.public_comments.find((m: any) => m._id === inReplyTo._id);
             repliedMessage = {
+              canOperate: getRepliedMessage.canOperate,
               id: getRepliedMessage._id,
               author: getRepliedMessage.sender.username,
               content: getRepliedMessage.text
@@ -184,7 +191,8 @@ export class ChatComponent implements OnInit {
             id: _id,
             author: sender.username,
             content: text,
-            replyTo: repliedMessage
+            replyTo: repliedMessage,
+            canOperate: data.canOperate
           });
 
         }
@@ -228,6 +236,7 @@ export class ChatComponent implements OnInit {
           // Aggiungi il nuovo messaggio alla conversazione selezionata
           this.selectedConversation.messages.push({
             id: response.data._id,
+            canOperate:response.data.canOperate,
             author: this.whoAmI,
             content: this.newMessage,
             receiver: this.selectedConversation.name,

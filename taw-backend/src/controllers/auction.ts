@@ -464,7 +464,7 @@ export const getAuctionCommentsController = async (
     let publicComments=[];
     for (let comment of publicComments_tmp) {
         publicComments.push({
-            canOperate: canOperate(comment.sender._id, userID),
+            canOperate: await canOperate(comment.sender._id, userID),
             ...comment.toObject(),
         })
     }
@@ -486,7 +486,7 @@ export const getAuctionCommentsController = async (
 
         for (let comment of privateComments_tmp) {
             privateComments.push({
-                canOperate: canOperate(comment.sender._id, userID),
+                canOperate: await canOperate(comment.sender._id, userID),
                 ...comment.toObject(),
             })
         }
