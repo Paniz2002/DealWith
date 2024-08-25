@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
-  AbstractControlOptions,
   FormBuilder,
   FormGroup,
   FormsModule,
@@ -98,7 +97,7 @@ export class AuctionFormComponent implements OnInit {
       },
       {
         validators: this.reservePriceGreaterThanStartingPrice(),
-      } as AbstractControlOptions,
+      },
     );
 
     // Fetch books and courses from the service
@@ -118,30 +117,33 @@ export class AuctionFormComponent implements OnInit {
       if (result) {
         this.books.push(result);
         this.auctionForm.controls['book_id'].setValue(result.id);
+        this.auctionForm.controls['book_id'].setErrors(null);
         this.displayBookTitle(result.id);
       }
     });
   }
 
-  onSubmit(): void {
-    if (this.auctionForm.valid) {
-      this.auctionService.addAuction(this.auctionForm).then((result) => {
-        if (result) {
-          if (result._id) {
-            result = this.auctionService.uploadImages(
-              result._id,
-              this.selectedFiles,
-            );
-            if (!result) {
-              this.snackBar.notify('Error uploading images');
-              return;
-            }
-            this.snackBar.notify('Auction added successfully');
-            this.router.navigate(['/' + result._id]); // or wherever you want to navigate after submission
-          }
-        }
-      });
+  async onSubmit(): Promise<boolean> {
+    if (!this.auctionForm.valid) {
+      this.snackBar.notify('Invalid form.');
+      return false;
     }
+    const auction = await this.auctionService.addAuction(this.auctionForm);
+    if (!auction) {
+      this.snackBar.notify('Could not add new auction, please try later.');
+      return false;
+    }
+    const imagesOk = await this.auctionService.uploadImages(
+      auction._id,
+      this.selectedFiles,
+    );
+
+    if (!imagesOk) {
+      this.snackBar.notify('Error while uploading images.');
+      return false;
+    }
+    this.snackBar.notify('Auction added successfully');
+    return await this.router.navigate(['/', auction._id]);
   }
 
   onFileSelected() {
