@@ -1,7 +1,5 @@
 import mongoose, {Model} from "mongoose";
 import {BidSchema} from "./bid";
-import auction from "../src/routes/auction";
-import {boolean} from "zod";
 import User from "./user";
 
 const AuctionSchema = new mongoose.Schema(
