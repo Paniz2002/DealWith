@@ -3,7 +3,6 @@
   <div class="row">
     <div class="col-12 col-md-6" style="min-height: 130vh; border-right: 1px solid grey">
       <mat-card class="auction-card" appearance="outlined">
-
         <div
           [id]="'auctionCarousel' + this.auctionID"
           class="carousel slide"
@@ -11,7 +10,10 @@
         >
           <div class="carousel-indicators">
             <button
-              *ngFor="let image of this.auctionDetails.base64Images; let i = index"
+              *ngFor="
+                let image of this.auctionDetails.base64Images;
+                let i = index
+              "
               type="button"
               [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
               [attr.data-bs-slide-to]="i"
@@ -21,7 +23,10 @@
           </div>
           <div class="carousel-inner">
             <div
-              *ngFor="let image of this.auctionDetails.base64Images; let i = index"
+              *ngFor="
+                let image of this.auctionDetails.base64Images;
+                let i = index
+              "
               class="carousel-item"
               [ngClass]="{ active: i === 0 }"
             >
@@ -47,95 +52,122 @@
             [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
             data-bs-slide="next"
           >
-            <span class="carousel-control-next-icon"  aria-hidden="true"></span>
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
           </a>
         </div>
         <mat-card-header>
           <mat-card-title>{{ this.auctionDetails.book.title }}</mat-card-title>
-          <mat-card-subtitle>Author: {{
-              this.auctionDetails.book.author
-            }}</mat-card-subtitle>
+          <mat-card-subtitle
+            >Author: {{ this.auctionDetails.book.author }}</mat-card-subtitle
+          >
           @for (
-              courseUniversity of this.coursesUniversities;
+            courseUniversity of this.coursesUniversities;
             track courseUniversity
-            ) {
-            <mat-card-subtitle>Course: {{ courseUniversity }}</mat-card-subtitle>
+          ) {
+            <mat-card-subtitle
+              >Course: {{ courseUniversity }}</mat-card-subtitle
+            >
           }
           <mat-card-subtitle>
-            Seller: {{ this.auctionDetails.seller.profile.firstName }} {{ this.auctionDetails.seller.profile.lastName }}
+            Seller: {{ this.auctionDetails.seller.profile.firstName }}
+            {{ this.auctionDetails.seller.profile.lastName }}
           </mat-card-subtitle>
         </mat-card-header>
-        <hr>
+        <hr />
         <mat-card-content>
           @if (this.endDate.getTime() > Date.now()) {
             <label for="price">Current bid:</label>
             <span id="price" class="price"> {{ this.auctionPrice }} EUR </span>
-          }@else{
+          } @else {
             <label for="price2">Last bid:</label>
             <span id="price2" class="price"> {{ this.auctionPrice }} EUR </span>
           }
-          @if(this.isLastBidOwner){
+          @if (this.isLastBidOwner) {
             <span style="color: green">You are the highest bidder</span>
           }
 
-          @if(this.isOwner()){
+          @if (this.isOwner()) {
             <span style="color: red"> You are the owner of this auction </span>
           }
-
         </mat-card-content>
         <mat-card-actions [style.width.%]="100">
-          @if (this.localStorage.get("userType") === "student") {
-            @if(this.endDate.getTime() > Date.now() && !this.isOwner()){
-              <form [formGroup]="form" style="width:100%">
-                <div class="row justify-content-center" style="width:100%">
+          @if (this.isUserLoggedIn && this.userType === "student") {
+            @if (this.endDate.getTime() > Date.now() && !this.isOwner()) {
+              <form [formGroup]="form" style="width: 100%">
+                <div class="row justify-content-center" style="width: 100%">
                   <div class="col-8 mt-3">
-                    <mat-form-field style="width:100%" appearance="fill">
+                    <mat-form-field style="width: 100%" appearance="fill">
                       <mat-label>Bid new price</mat-label>
-                      <input type="number" (change)="onPriceChange($event)" required matInput formControlName="bidPrice" />
+                      <input
+                        type="number"
+                        (change)="onPriceChange($event)"
+                        required
+                        matInput
+                        formControlName="bidPrice"
+                      />
                       @if (form.invalid) {
                         <mat-error>Please insert a price.</mat-error>
                       }
                     </mat-form-field>
                   </div>
                   <div class="col-4 mt-4">
-                    <button mat-raised-button color="primary" (click)="submitBid()">Bid</button>
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      (click)="submitBid()"
+                    >
+                      Bid
+                    </button>
                   </div>
                 </div>
               </form>
             }
-
           }
         </mat-card-actions>
-        <hr>
+        <hr />
         <mat-card-content>
           <label for="auction-description"> <b> Description </b> </label>
-          <div id="auction-description" class="auction-description" [innerHTML]="this.auctionDetails.description"></div>
+          <div
+            id="auction-description"
+            class="auction-description"
+            [innerHTML]="this.auctionDetails.description"
+          ></div>
         </mat-card-content>
         <mat-card-content>
           <!-- Get countdown from end date-->
           @if (this.endDate.getTime() > Date.now()) {
-            <app-auction-details-countdown
-              [targetDate]="this.endDate"
-            >
+            <app-auction-details-countdown [targetDate]="this.endDate">
             </app-auction-details-countdown>
-          }@else{
-            <p style="text-align: center; color:red">This Auction is expired on {{ this.endDateTime }}</p>
+          } @else {
+            <p style="text-align: center; color: red">
+              This Auction is expired on {{ this.endDateTime }}
+            </p>
           }
         </mat-card-content>
       </mat-card>
     </div>
 
-    @if (this.localStorage.get("userType") === "student") {
+    @if (this.isUserLoggedIn && this.userType === "student") {
       <div class="col-12 col-md-6">
         <mat-card>
           <mat-card-title style="text-align: center">Chat</mat-card-title>
           <mat-tab-group #tabs>
             <mat-tab label="Private">
-              <app-chat [isPrivate]="true" [auctionID]="this.auctionID" [whoAmI]="this.whoAmI" [auctionOwner]="this.auctionDetails.seller.username" [auctionOwnerID]="this.auctionDetails.seller._id"></app-chat>
+              <app-chat
+                [isPrivate]="true"
+                [auctionID]="this.auctionID"
+                [whoAmI]="this.whoAmI"
+                [auctionOwner]="this.auctionDetails.seller.username"
+                [auctionOwnerID]="this.auctionDetails.seller._id"
+              ></app-chat>
             </mat-tab>
             <mat-tab label="Public">
-              <app-chat [isPrivate]="false" [auctionID]="this.auctionID" [whoAmI]="this.whoAmI" ></app-chat>
+              <app-chat
+                [isPrivate]="false"
+                [auctionID]="this.auctionID"
+                [whoAmI]="this.whoAmI"
+              ></app-chat>
             </mat-tab>
           </mat-tab-group>
         </mat-card>
@@ -143,4 +175,3 @@
     }
   </div>
 </div>
-

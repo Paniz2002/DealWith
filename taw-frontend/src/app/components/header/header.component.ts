@@ -36,9 +36,8 @@ interface Notification {
   styleUrl: './header.component.css',
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-  protected userType: string | null = this.localStorage.get('userType');
-  protected isUserLoggedIn: string | null =
-    this.localStorage.get('isUserLoggedIn');
+  protected userType: string | null = '';
+  protected isUserLoggedIn: boolean = false;
   protected changes: Subscription = new Subscription();
   private menuTimeout: any; // Timer for closing the menu
   protected notifications: Array<Notification> = []; // Array to hold notification messages
@@ -52,11 +51,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    axios.get(environments.BACKEND_URL + '/api/auth/me').then((res: any) => {
+      if (res.status === 200) {
+        this.isUserLoggedIn = true;
+        this.userType = res.data.is_moderator ? 'moderator' : 'student';
+      }
+    });
     this.changes.add(
       this.eventManager.loginOk.subscribe(() => {
         this.notifications = []; // Reset notifications
-        this.userType = this.localStorage.get('userType');
-        this.isUserLoggedIn = this.localStorage.get('isUserLoggedIn');
         this.initSocket();
         this.socketService.receiveMessage((message) => {
           this.setNotificationCnt(message);
@@ -66,9 +69,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     this.changes.add(
       this.eventManager.logoutOk.subscribe(() => {
+        this.localStorage.clean();
         this.notifications = []; // Clear notifications
-        this.userType = this.localStorage.get('userType');
-        this.isUserLoggedIn = this.localStorage.get('isUserLoggedIn');
       }),
     );
 
@@ -164,7 +166,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   initSocket() {
-
     if (this.isUserLoggedIn) {
       axios.get(environments.BACKEND_URL + '/api/auth/me').then((res) => {
         if (res.status === 200 && res.data && res.data._id) {
