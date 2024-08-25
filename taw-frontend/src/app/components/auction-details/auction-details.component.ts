@@ -30,6 +30,7 @@ import axios from 'axios';
 import {environments} from '../../../environments/environments';
 import {ChatComponent} from '../chat/chat.component';
 import {SocketService} from '../../socket.service';
+import {HeaderHeightService} from "../../services/header/header-height.service";
 
 interface Course {
   name: string;
@@ -94,11 +95,14 @@ export class AuctionDetailsComponent implements OnInit {
 
   coursesUniversities: Array<Course> = Array<Course>();
 
+  auctionDetailsColumnHeight: string = '100vh';
+
   constructor(
     private route: ActivatedRoute,
     private snackBar: NotificationService,
     protected localStorage: LocalStorageService,
     protected socketService: SocketService,
+    private headerHeightService: HeaderHeightService,
   ) {
     this.auctionID = this.route.snapshot.paramMap.get('id')!;
     axios.get(environments.BACKEND_URL + '/api/auth/me').then((res: any) => {
@@ -140,6 +144,10 @@ export class AuctionDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.headerHeightService.headerHeight$.subscribe((height) => {
+      this.auctionDetailsColumnHeight = `calc(100vh - ${height}px)`;
+      console.log('navbard height', height);
+    });
     this.initSocket();
     this.socketService.receivePublicComment((comment) => {
       console.log('Received public comment');

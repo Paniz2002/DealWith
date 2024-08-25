@@ -4,12 +4,12 @@
       class="col-lg-2 col-md-3 col-6 d-flex align-items-center justify-content-center"
     >
       <mat-form-field class="form-field" appearance="outline">
-        <mat-label>Book name</mat-label>
+        <mat-label>Search</mat-label>
         <input
           matInput
           type="text"
           formControlName="bookName"
-          placeholder="Filter books by name."
+          placeholder=""
         />
         @if (this.form.controls["bookName"].errors) {
           <mat-error>Please write atleast 1 character.</mat-error>
@@ -17,7 +17,6 @@
       </mat-form-field>
     </div>
 
-      <!-- TODO: css -->
       <div class="col-lg-2 col-md-3 col-3 d-flex align-items-center justify-content-center">
       <mat-form-field class="form-field">
         <mat-label>Min. price</mat-label>

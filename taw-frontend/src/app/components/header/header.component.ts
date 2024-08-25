@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef} from '@angular/core';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -10,6 +10,7 @@ import axios from 'axios';
 import { environments } from '../../../environments/environments';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { NgClass } from '@angular/common';
+import {HeaderHeightService} from "../../services/header/header-height.service";
 
 interface Notification {
   isRead: boolean;
@@ -34,7 +35,9 @@ interface Notification {
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })
-export class HeaderComponent implements OnInit, OnDestroy {
+export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('header', { static: true }) header!: ElementRef;
+
   protected userType: string | null = '';
   protected isUserLoggedIn: boolean = false;
   protected changes: Subscription = new Subscription();
@@ -46,7 +49,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
     protected localStorage: LocalStorageService,
     protected socketService: SocketService,
     private router: Router,
+    private headerHeightService: HeaderHeightService,
+    private cdr: ChangeDetectorRef,
+    private el: ElementRef,
   ) {}
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.cdr.detectChanges();
+      const headerHeight = this.el.nativeElement.offsetHeight;
+      this.headerHeightService.setHeaderHeight(headerHeight);
+    },0);
+  }
 
   async ngOnInit(): Promise<void> {
     this.notifications = []; // Reset notifications

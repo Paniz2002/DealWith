@@ -4,12 +4,10 @@ mat-card {
 }
 
 #card-details{
-  min-height: 130vh;
   border-right: 1px solid lightgray;
 }
 
 .messages-container{
-  height: 80vh;
   overflow-y: auto;
   border: 1px solid #ccc;
 }
@@ -32,7 +30,7 @@ mat-card {
 }
 
 .carousel-item {
-  height: 300px; /* Imposta l'altezza fissa per l'elemento carousel */
+  height: 50vh;
 }
 
 .carousel-image {

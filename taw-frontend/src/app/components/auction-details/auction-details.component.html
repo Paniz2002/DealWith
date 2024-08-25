@@ -1,7 +1,7 @@
 <!-- TODO: fare due col-6, la col-6 di destra ha le chat -->
 <div class="container-fluid">
-  <div class="row">
-    <div id="card-details" class="col-12 col-md-6">
+  <div [style.height]="auctionDetailsColumnHeight" class="row">
+    <div [style.height]="auctionDetailsColumnHeight" id="card-details" class="col-12 col-md-6 overflow-scroll">
       <mat-card class="auction-card" appearance="outlined">
         <div
           [id]="'auctionCarousel' + this.auctionID"
@@ -158,11 +158,9 @@
     </div>
 
     @if (this.isUserLoggedIn) {
-      <div class="col-12 col-md-6">
-        <mat-card>
-          <mat-card-title style="text-align: center">Chat</mat-card-title>
+      <div [style.height]="auctionDetailsColumnHeight" id="chat-details" class="col-12 col-md-6">
           <mat-tab-group #tabs>
-            <mat-tab label="Private">
+            <mat-tab label="Private Chat">
               <app-chat
                 [isPrivate]="true"
                 [auctionID]="this.auctionID"
@@ -171,7 +169,7 @@
                 [auctionOwnerID]="this.auctionDetails.seller._id"
               ></app-chat>
             </mat-tab>
-            <mat-tab label="Public">
+            <mat-tab label="Public Chat">
               <app-chat
                 [isPrivate]="false"
                 [auctionID]="this.auctionID"
@@ -179,7 +177,6 @@
               ></app-chat>
             </mat-tab>
           </mat-tab-group>
-        </mat-card>
       </div>
     }
   </div>
