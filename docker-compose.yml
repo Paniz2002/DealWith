@@ -3,6 +3,7 @@ services:
     container_name: taw-frontend
     hostname: taw-frontend
     build: ./taw-frontend
+    restart: always
     volumes:
       - ./taw-frontend/src:/app/src
     ports:
@@ -14,6 +15,7 @@ services:
   backend:
     container_name: taw-backend
     hostname: taw-backend
+    restart: always
     build: ./taw-backend
     volumes:
       - ./taw-backend/src:/app/src
@@ -30,6 +32,7 @@ services:
     depends_on: [mongodb]
   mongodb:
     image: mongo:latest
+    restart: always
     ports:
       - 27017:27017
     volumes:

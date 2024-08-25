@@ -11,6 +11,8 @@ import { AdminGuard } from './guards/admin/adminGuard';
 import { AuthenticationGuard } from './guards/auth/authentication.guard';
 import { LogoutGuard } from './guards/logout/logout.guard';
 import { StudentGuard } from './guards/student/student.guard';
+import {StatisticsStudentComponent} from "./components/statistics-student/statistics-student.component";
+import {StatisticsModeratorComponent} from "./components/statistics-moderator/statistics-moderator.component";
 export const routes: Routes = [
   {
     path: 'register',
@@ -46,6 +48,18 @@ export const routes: Routes = [
     component: AuctionFormComponent,
     pathMatch: 'full',
     canActivate: [StudentGuard],
+  },
+  {
+    path: 'statistics',
+    component: StatisticsStudentComponent,
+    pathMatch: 'full',
+    canActivate: [StudentGuard],
+  },
+  {
+    path: 'admin/statistics',
+    component: StatisticsModeratorComponent,
+    pathMatch: 'full',
+    canActivate: [AdminGuard],
   },
   {
     path: ':id',
