@@ -13,7 +13,7 @@
         Register
       </button>
     } @else {
-      <button mat-button [routerLink]="'/logout'" class="header-button">
+      <button mat-button (click)="logout()" class="header-button">
         Logout
       </button>
       @if (this.userType === "student") {
@@ -96,9 +96,12 @@
         <button mat-button [routerLink]="'/statistics'" class="header-button">
           <mat-icon>trending_up</mat-icon>
         </button>
-
       } @else if (this.userType === "moderator") {
-        <button mat-button [routerLink]="'/admin/statistics'" class="header-button">
+        <button
+          mat-button
+          [routerLink]="'/admin/statistics'"
+          class="header-button"
+        >
           <mat-icon>trending_up</mat-icon>
         </button>
       }
@@ -108,7 +111,6 @@
           <mat-icon>warning</mat-icon>
         </button>
       }
-
     }
   </div>
 </mat-toolbar>

@@ -2,10 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { Router, RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { LocalStorageService } from '../../services/localStorage/localStorage.service';
 import { Subscription } from 'rxjs';
-import { EventManagerService } from '../../services/eventManager/event-manager.service';
 import { SocketService } from '../../socket.service';
 import axios from 'axios';
 import { environments } from '../../../environments/environments';
@@ -45,41 +44,28 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   constructor(
     protected localStorage: LocalStorageService,
-    protected eventManager: EventManagerService,
     protected socketService: SocketService,
     private router: Router,
   ) {}
 
-  ngOnInit(): void {
-    axios.get(environments.BACKEND_URL + '/api/auth/me').then((res: any) => {
-      if (res.status === 200) {
-        this.isUserLoggedIn = true;
-        this.userType = res.data.is_moderator ? 'moderator' : 'student';
-      }
-    });
-    this.changes.add(
-      this.eventManager.loginOk.subscribe(() => {
-        this.notifications = []; // Reset notifications
-        this.initSocket();
-        this.socketService.receiveMessage((message) => {
-          this.setNotificationCnt(message);
-        });
-      }),
-    );
-
-    this.changes.add(
-      this.eventManager.logoutOk.subscribe(() => {
-        this.localStorage.clean();
-        this.notifications = []; // Clear notifications
-      }),
-    );
-
+  async ngOnInit(): Promise<void> {
+    this.notifications = []; // Reset notifications
     if (this.isUserLoggedIn) {
       this.initSocket();
       this.socketService.receiveMessage((message) => {
         this.setNotificationCnt(message);
       });
     }
+    this.changes = this.router.events.subscribe(async (event) => {
+      if (event instanceof NavigationEnd) {
+        const res = await axios.get(environments.BACKEND_URL + '/api/auth/me');
+        this.isUserLoggedIn = res.status === 200;
+        if (this.isUserLoggedIn) {
+          this.userType =
+            res.data.is_moderator === 200 ? 'moderator' : 'student';
+        }
+      }
+    });
   }
 
   private setNotificationCnt(notification: Notification[]) {
@@ -172,6 +158,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
           this.socketService.joinRoom(res.data._id);
         }
       });
+    }
+  }
+  async logout() {
+    try {
+      await axios.post(environments.BACKEND_URL + '/api/auth/logout');
+    } finally {
+      // Disconnect from the Socket.IO server
+      this.socketService.disconnect();
+      this.localStorage.clean();
+      this.isUserLoggedIn = false;
+      this.userType = '';
+      return this.router.navigate(['/login']);
     }
   }
 }
