@@ -61,8 +61,6 @@ interface Filter {
 export class AuctionListComponent implements OnInit {
   form: FormGroup;
   availableAuctions: Array<AuctionCard> = Array<AuctionCard>();
-  minPrice: Number = 0;
-  searchText: string = '';
   condition: string = '';
   showOnlyActive: boolean = false;
   constructor(
