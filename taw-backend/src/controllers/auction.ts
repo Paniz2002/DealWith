@@ -656,12 +656,11 @@ export const getMyParticipatedAuctionsController = async (
                 select:
                     "-__v -_id -password -email -role -notifications -createdAt -updatedAt",
             })
-            .select("-__v -reserve_price -start_date");
+            .select("-__v -reserve_price");
 
         let mappedAuctions = [];
         for (const auction of auctions) {
             const lastBidder = await auction.lastBidder();
-            console.log(lastBidder);
 
             const isWinning = lastBidder._id.toString() === user_id.toString();
             const isActive = auction.isActive();
