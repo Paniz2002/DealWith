@@ -64,7 +64,6 @@ export class AuctionListComponent implements OnInit {
   minPrice: Number = 0;
   searchText: string = '';
   condition: string = '';
-  maxPrice: Number = Number.MAX_SAFE_INTEGER;
   showOnlyActive: boolean = false;
   constructor(
     private snackBar: NotificationService,
@@ -73,15 +72,21 @@ export class AuctionListComponent implements OnInit {
     this.form = this.filterFormBuilder.group({
       bookName: ['', [Validators.required, Validators.minLength(1)]],
       minStartingPrice: [0, [Validators.required]],
-      maxStartingPrice: [Number.MAX_SAFE_INTEGER, [Validators.required]],
+      maxStartingPrice: [100, [Validators.required]],
       condition: ['', [Validators.required]],
-      active: [''],
+      active: [true],
     });
   }
 
   ngOnInit(): void {
+    let params = <Filter>{};
+
+    if (this.form.value.active) {
+      params.active = true;
+    }
+
     axios
-      .get(environments.BACKEND_URL + '/api/auctions')
+      .get(environments.BACKEND_URL + '/api/auctions', { params })
       .then(async (auctions: any) => {
         for (const auction of auctions.data) {
           this.availableAuctions.push(<AuctionCard>{
@@ -97,6 +102,15 @@ export class AuctionListComponent implements OnInit {
           });
           this.loadAuctionImages();
         }
+
+        let maxPrice: Number = 0;
+        for(const auction of this.availableAuctions){
+          if(auction.currentPrice > maxPrice){
+            maxPrice = auction.currentPrice;
+          }
+        }
+        this.form.get('maxStartingPrice')?.setValue(maxPrice);
+
       })
       .catch((err) => {
         this.snackBar.notify(err.message);

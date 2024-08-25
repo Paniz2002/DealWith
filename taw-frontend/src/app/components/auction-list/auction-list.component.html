@@ -1,8 +1,7 @@
 <mat-card>
   <div class="row" [formGroup]="form">
-    <div class="col-lg-auto col-0"></div>
     <div
-      class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center"
+      class="col-lg-2 col-md-3 col-6 d-flex align-items-center justify-content-center"
     >
       <mat-form-field class="form-field" appearance="outline">
         <mat-label>Book name</mat-label>
@@ -17,19 +16,23 @@
         }
       </mat-form-field>
     </div>
-    <div
-      class="col-lg-2 col-md-4 col-6 mx-auto my-auto d-flex align-items-center justify-content-center"
-    >
+
       <!-- TODO: css -->
+      <div class="col-lg-2 col-md-3 col-3 d-flex align-items-center justify-content-center">
       <mat-form-field class="form-field">
+        <mat-label>Min. price</mat-label>
         <input type="number" matInput formControlName="minStartingPrice" />
       </mat-form-field>
-      <mat-form-field class="form-field">
-        <input type="number" matInput formControlName="maxStartingPrice" />
-      </mat-form-field>
-    </div>
+      </div>
+      <div class="col-lg-2 col-md-3 col-3 mx-auto my-auto d-flex align-items-center justify-content-center">
+        <mat-form-field class="form-field">
+          <mat-label>Max. price</mat-label>
+          <input type="number" matInput formControlName="maxStartingPrice" />
+        </mat-form-field>
+      </div>
+
     <div
-      class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center"
+      class="col-lg-2 col-md-3 col-6 d-flex align-items-center justify-content-center"
     >
       <mat-form-field class="form-field">
         <mat-label>Minimum condition</mat-label>
@@ -60,7 +63,6 @@
         Filter
       </button>
     </div>
-    <div class="col-lg-auto col-0"></div>
   </div>
 </mat-card>
 <div class="row">
