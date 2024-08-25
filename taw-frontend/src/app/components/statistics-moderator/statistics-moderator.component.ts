@@ -17,7 +17,9 @@ export class StatisticsModeratorComponent implements OnInit {
   // Auction Statistics Chart Data
   public lineChartData: ChartDataset[] = [
     {data: [], label: 'Closed and Sold Auctions', hidden: false},
-    {data: [], label: 'Closed and Not Sold Auctions', hidden: false}
+    {data: [], label: 'Closed and Not Sold Auctions', hidden: false},
+    {data: [], label: 'Open and Sold Auctions', hidden: false},
+    {data: [], label: 'Open and Not Sold Auctions', hidden: false}
   ];
   public lineChartLabels: string[] = [];
 
@@ -58,6 +60,8 @@ export class StatisticsModeratorComponent implements OnInit {
   processAuctionsData(data: any): void {
     const closedSoldAuctions: { [key: string]: number } = {};
     const closedNotSoldAuctions: { [key: string]: number } = {};
+    const openNotSoldAuctions: { [key: string]: number } = {};
+    const openSoldAuctions: { [key: string]: number } = {};
 
     data.forEach((auction: any) => {
       const endDate = new Date(auction.end_date);
@@ -70,15 +74,25 @@ export class StatisticsModeratorComponent implements OnInit {
       // Sorting labels by date
       this.lineChartLabels.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
-      if (auction.isSold) {
-        closedSoldAuctions[monthYear] = (closedSoldAuctions[monthYear] || 0) + 1;
-      } else if (!auction.isSold && !auction.isActive) {
-        closedNotSoldAuctions[monthYear] = (closedNotSoldAuctions[monthYear] || 0) + 1;
+      if (auction.isActive) {
+        if (auction.isSold) {
+          openSoldAuctions[monthYear] = (openSoldAuctions[monthYear] || 0) + 1;
+        } else {
+          openNotSoldAuctions[monthYear] = (openNotSoldAuctions[monthYear] || 0) + 1;
+        }
+      } else {
+        if (auction.isSold) {
+          closedSoldAuctions[monthYear] = (closedSoldAuctions[monthYear] || 0) + 1;
+        } else {
+          closedNotSoldAuctions[monthYear] = (closedNotSoldAuctions[monthYear] || 0) + 1;
+        }
       }
     });
 
     this.lineChartData[0].data = this.lineChartLabels.map(month => closedSoldAuctions[month] || 0);
     this.lineChartData[1].data = this.lineChartLabels.map(month => closedNotSoldAuctions[month] || 0);
+    this.lineChartData[2].data = this.lineChartLabels.map(month => openSoldAuctions[month] || 0);
+    this.lineChartData[3].data = this.lineChartLabels.map(month => openNotSoldAuctions[month] || 0);
 
     // Force update chart
     setTimeout(() => {

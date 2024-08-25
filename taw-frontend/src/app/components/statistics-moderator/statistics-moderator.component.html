@@ -1,7 +1,7 @@
 <div class="statistics-container">
   <div class="panel">
     <h1>Auction Statistics</h1>
-    <h2 class="subtitle">Closed Auctions</h2>
+    <h2 class="subtitle">Auctions</h2>
 
     <div class="chart-container">
       <canvas baseChart
@@ -23,6 +23,7 @@
         <th>Reserve Price</th>
         <th>Seller</th>
         <th>Is Sold</th>
+        <th>Is Active</th>
         <th>Action</th>
       </tr>
       </thead>
@@ -35,6 +36,7 @@
             <td>{{ auction.reserve_price }}€</td>
             <td>{{ auction.seller.profile.firstName }} {{ auction.seller.profile.lastName }}</td>
             <td>{{ auction.isSold ? 'Yes' : 'No' }}</td>
+            <td>{{ auction.isActive ? 'Yes' : 'No' }}</td>
             <td>
               <button (click)="viewAuction(auction._id)">
                 <span class="material-icons">visibility</span>
