@@ -10,6 +10,7 @@ export class AuctionDetailsCountdownComponent implements AfterViewInit {
   date: any;
   now: any;
   @Input() targetDate!: any;
+  @Input() isEndDate!: boolean;
   targetTime: any;
   difference!: number;
   months: Array<string> = [

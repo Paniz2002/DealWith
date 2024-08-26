@@ -88,9 +88,12 @@
           @if (this.isActive) {
             <label for="price">Current bid:</label>
             <span id="price" class="price"> {{ this.auctionPrice }} EUR </span>
-          } @else {
+          } @else if(endDate.getTime() < Date.now()) {
             <label for="price2">Last bid:</label>
             <span id="price2" class="price"> {{ this.auctionPrice }} EUR </span>
+          } @else {
+            <label for="price3">Starting price:</label>
+            <span id="price3" class="price"> {{ this.auctionPrice }} EUR </span>
           }
           @if (this.isLastBidOwner) {
             <span style="color: green">You are the highest bidder</span>
@@ -150,15 +153,15 @@
           @if (this.isActive) {
             <app-auction-details-countdown [targetDate]="this.endDate">
             </app-auction-details-countdown>
-          } @else if(this.endDate.getTime() > Date.now()) {
+          } @else if(this.endDate.getTime() < Date.now()) {
             <p style="text-align: center; color: red">
-              This Auction is expired on {{ this.endDateTime }}
+              This Auction has expired on {{ this.endDateTime }}
             </p>
           } @else {
             <p style="text-align: center; color: red">
               This Auction isn't started yet, it will start on {{ this.startDateTime }}
             </p>
-            <app-auction-details-countdown [targetDate]="this.startDate">
+            <app-auction-details-countdown [targetDate]="this.startDate" [isEndDate]="this.endDate.getTime() < Date.now()">
             </app-auction-details-countdown>
           }
         </mat-card-content>

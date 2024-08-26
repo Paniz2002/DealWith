@@ -8,10 +8,10 @@
         <input
           matInput
           type="text"
-          formControlName="bookName"
+          formControlName="queryString"
           placeholder=""
         />
-        @if (this.form.controls["bookName"].errors) {
+        @if (this.form.controls["queryString"].errors) {
           <mat-error>Please write atleast 1 character.</mat-error>
         }
       </mat-form-field>
