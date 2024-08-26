@@ -370,6 +370,14 @@ export const getAuctionDetailsController = async (
   }
 
   try {
+    if (!(await Auction.exists({ _id: auction_id }))) {
+      return NotFound(req, res, "Auction not found");
+    }
+  } catch (e) {
+    return NotFound(req, res, "Auction not found");
+  }
+
+  try {
     const auction = await Auction.findById(auction_id)
       .populate({
         path: "book",
@@ -396,11 +404,13 @@ export const getAuctionDetailsController = async (
     if (!auction) {
       return NotFound(req, res, "Auction not found");
     }
-
-    const canClientOperate = await canOperate(
-      auction.seller._id.toString(),
-      getUserId(req, res),
-    );
+    let userId = undefined;
+    if (req.cookies.jwt) {
+      userId = getUserId(req, res);
+    }
+    const canClientOperate = userId
+      ? await canOperate(auction.seller._id.toString(), userId)
+      : false;
     const response = {
       isActive: auction.isActive(),
       canOperate: canClientOperate,
@@ -564,38 +574,38 @@ export const postAuctionCommentsController = async (
   }
 };
 
-// export const deleteAuctionController = async (req: Request, res: Response) => {
-//   const auction_id = req.params.id;
-//   await connectDB();
-//   const session: ClientSession = await mongoose.startSession();
-//   try {
-//     const userID = getUserId(req, res);
-//     const auction = await Auction.findById(auction_id);
-//     const user = await User.findById(userID);
-//     if (!auction) {
-//       return NotFoundException(req, res, "Auction not found");
-//     }
-//     if (!user) {
-//       return NotFoundException(req, res, "User not found");
-//     }
-//     if (!user.isModerator() || auction.seller !== userID)
-//       return BadRequestException(
-//         req,
-//         res,
-//         "Bad request: You cannot delete this auction.",
-//       );
+export const deleteAuctionController = async (req: Request, res: Response) => {
+  const auction_id = req.params.id;
+  await connectDB();
+  const session: ClientSession = await mongoose.startSession();
+  try {
+    const userID = getUserId(req, res);
+    const auction = await Auction.findById(auction_id);
+    const user = await User.findById(userID);
+    if (!auction) {
+      return NotFoundException(req, res, "Auction not found");
+    }
+    if (!user) {
+      return NotFoundException(req, res, "User not found");
+    }
+    if (!user.isModerator() || auction.seller !== userID)
+      return BadRequestException(
+        req,
+        res,
+        "Bad request: You cannot delete this auction.",
+      );
 
-//     await Auction.deleteOne({ _id: auction_id });
-//     await Comment.deleteMany({ auction: auction_id });
-//     await session.commitTransaction();
-//     return res.sendStatus(200);
-//   } catch (e) {
-//     session.abortTransaction();
-//     return InternalException(req, res, "Error while deleting auction");
-//   } finally {
-//     session.endSession();
-//   }
-// };
+    await Auction.deleteOne({ _id: auction_id });
+    await Comment.deleteMany({ auction: auction_id });
+    await session.commitTransaction();
+    return res.sendStatus(200);
+  } catch (e) {
+    session.abortTransaction();
+    return InternalException(req, res, "Error while deleting auction");
+  } finally {
+    session.endSession();
+  }
+};
 
 export const getMyAuctionsController = async (req: Request, res: Response) => {
   try {
@@ -882,6 +892,7 @@ export const patchAuctionController = async (req: Request, res: Response) => {
 };
 
 async function canOperate(user_id_to_check: string, user_id: string) {
+  console.log("canOperate", user_id_to_check, user_id);
   if (user_id_to_check === user_id) {
     return true;
   }

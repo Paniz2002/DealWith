@@ -5,6 +5,7 @@ import { JWT_SECRET } from "../secret";
 import BadRequestException from "../exceptions/bad-request";
 import UserModel from "../../models/user";
 import connectDB from "../config/db";
+import { getUserId } from "../utils/userID";
 
 const authMiddleware = async (
   req: Request,
@@ -21,13 +22,10 @@ const authMiddleware = async (
     return BadRequestException(req, res, "Bad Request: Missing JWT");
   }
   try {
-    //  3.   if token is present, decode the token and extract the payload
-    const payload = jwt.verify(token, JWT_SECRET) as any;
-    const user = await UserModel.exists({
-      _id: payload._id,
-    });
-    if (!user) {
-      return UnauthorizedException(req, res, "Unauthorized: Invalid JWT");
+    //  3.   if token is present, decode the token check for user existence
+    let ret = getUserId(req, res);
+    if (typeof ret !== "string") {
+      return ret;
     }
     return next();
   } catch (error) {
