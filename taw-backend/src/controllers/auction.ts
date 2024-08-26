@@ -862,7 +862,6 @@ export const patchAuctionController = async (req: Request, res: Response) => {
 
 
 async function canOperate(user_id_to_check: string, user_id: string) {
-    console.log('canOperate', user_id_to_check, user_id);
     if (user_id_to_check === user_id) {
         return true;
     }

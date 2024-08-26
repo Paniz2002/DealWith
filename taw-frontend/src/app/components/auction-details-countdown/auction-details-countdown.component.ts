@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, ViewChild} from '@angular/core';
 
 @Component({
   selector: 'app-auction-details-countdown',
@@ -19,6 +19,8 @@ export class AuctionDetailsCountdownComponent implements AfterViewInit {
   ];
   currentTime!: string;
 
+  constructor(private cdRef:ChangeDetectorRef) {}
+
   @ViewChild('days', { static: true }) days!: ElementRef;
   @ViewChild('hours', { static: true }) hours!: ElementRef;
   @ViewChild('minutes', { static: true }) minutes!: ElementRef;
@@ -28,6 +30,8 @@ export class AuctionDetailsCountdownComponent implements AfterViewInit {
     this.currentTime = `${
       this.months[this.targetDate.getMonth()]
     } ${this.targetDate.getDate()}, ${this.targetDate.getFullYear()}`;
+    this.cdRef.detectChanges();
+
 
     setInterval(() => {
       this.tickTock();

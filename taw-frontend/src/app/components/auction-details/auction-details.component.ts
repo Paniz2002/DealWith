@@ -103,6 +103,7 @@ export class AuctionDetailsComponent implements OnInit {
 
   auctionDetailsColumnHeight: string = '100vh';
   isClientEditingAuction: boolean = false;
+  auctionId: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -112,12 +113,8 @@ export class AuctionDetailsComponent implements OnInit {
     private headerHeightService: HeaderHeightService,
   ) {
     this.auctionID = this.route.snapshot.paramMap.get('id')!;
-    axios.get(environments.BACKEND_URL + '/api/auth/me').then((res: any) => {
-      this.whoAmI = res.data.username;
-      this.myId = res.data._id;
-      this.isUserLoggedIn = true;
-      this.userType = res.data.is_moderator ? 'moderator' : 'student';
-    });
+
+
   }
 
   // TODO: import from auctionlist
@@ -151,70 +148,82 @@ export class AuctionDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.headerHeightService.headerHeight$.subscribe((height) => {
-      this.auctionDetailsColumnHeight = `calc(100vh - ${height}px)`;
-    });
-    this.initSocket();
-    this.socketService.receivePublicComment((comment) => {
-      console.log('Received public comment');
-      this.reloadPublicChatContent(comment);
-    });
+    this.auctionID = this.route.snapshot.paramMap.get('id')!;
+    axios.get(environments.BACKEND_URL + '/api/auth/me').then((res: any) => {
+      this.whoAmI = res.data.username;
+      this.myId = res.data._id;
+      this.isUserLoggedIn = true;
+      this.userType = res.data.is_moderator ? 'moderator' : 'student';
 
-    this.socketService.receivePrivateComment((comment) => {
-      console.log('Received private comment');
-      this.reloadPrivateChatContent(comment);
-    });
-
-    axios
-      .get(environments.BACKEND_URL + '/api/auctions/' + this.auctionID)
-      .then((details: any) => {
-        this.auctionDetails = details.data;
-        this.endDate = new Date(this.auctionDetails.end_date);
-        this.startDate = new Date(this.auctionDetails.start_date);
-        this.endDateTime = `${
-          this.months[this.endDate.getMonth()]
-        } ${this.endDate.getDate()}, ${this.endDate.getFullYear()}`;
-        this.startDateTime = `${
-          this.months[this.endDate.getMonth()]
-        } ${this.endDate.getDate()}, ${this.endDate.getFullYear()}`;
-        this.auctionPrice = this.getLastBidPrice(
-          this.auctionDetails.bids,
-          this.auctionDetails.starting_price,
-        );
-        this.isActive = details.data.isActive;
-
-        this.isLastBidOwner = this.isClientLastBidOwner(
-          this.auctionDetails.bids,
-        );
-
-        this.form.controls['bidPrice'].setValue(
-          this.auctionPrice.valueOf() + 0.01,
-        );
-
-        if (this.auctionDetails && this.auctionDetails.book && this.auctionDetails.book.courses) {
-          this.auctionDetails.book.courses.forEach((course: any) => {
-            this.coursesUniversities.push(
-              {
-                name: course.name,
-                university: course.university.name,
-                year1: course.year.year1,
-                year2: course.year.year2,
-              }
-            );
-          });
-        }
-
-        this.loadAuctionImages();
-      })
-      .catch((err) => {
-        //if is 404
-        if (err.response.status === 404) {
-         //navigate to 404 page
-          this.router.navigate(['/notfound']);
-          return;
-        }
-        this.snackBar.notify(err.message);
+      this.headerHeightService.headerHeight$.subscribe((height) => {
+        this.auctionDetailsColumnHeight = `calc(100vh - ${height}px)`;
       });
+      this.initSocket();
+      this.socketService.receivePublicComment((comment) => {
+        console.log('Received public comment');
+        this.reloadPublicChatContent(comment);
+      });
+
+      this.socketService.receivePrivateComment((comment) => {
+        console.log('Received private comment');
+        this.reloadPrivateChatContent(comment);
+      });
+
+      this.socketService.receiveNewBid((comment) => {
+        window.location.reload();
+      });
+
+      axios
+        .get(environments.BACKEND_URL + '/api/auctions/' + this.auctionID)
+        .then((details: any) => {
+          this.auctionDetails = details.data;
+          this.endDate = new Date(this.auctionDetails.end_date);
+          this.startDate = new Date(this.auctionDetails.start_date);
+          this.endDateTime = `${
+            this.months[this.endDate.getMonth()]
+          } ${this.endDate.getDate()}, ${this.endDate.getFullYear()}`;
+          this.startDateTime = `${
+            this.months[this.endDate.getMonth()]
+          } ${this.endDate.getDate()}, ${this.endDate.getFullYear()}`;
+          this.auctionPrice = this.getLastBidPrice(
+            this.auctionDetails.bids,
+            this.auctionDetails.starting_price,
+          );
+          this.isActive = details.data.isActive;
+
+          this.isLastBidOwner = this.isClientLastBidOwner(
+            this.auctionDetails.bids,
+          );
+
+          this.form.controls['bidPrice'].setValue(
+            this.auctionPrice.valueOf() + 0.01,
+          );
+
+          if (this.auctionDetails && this.auctionDetails.book && this.auctionDetails.book.courses) {
+            this.auctionDetails.book.courses.forEach((course: any) => {
+              this.coursesUniversities.push(
+                {
+                  name: course.name,
+                  university: course.university.name,
+                  year1: course.year.year1,
+                  year2: course.year.year2,
+                }
+              );
+            });
+          }
+
+          this.loadAuctionImages();
+        })
+        .catch((err) => {
+          //if is 404
+          if (err.response.status === 404) {
+            //navigate to 404 page
+            this.router.navigate(['/notfound']);
+            return;
+          }
+          this.snackBar.notify(err.message);
+        });
+    });
   }
 
   protected async submitBid(): Promise<void> {
@@ -249,11 +258,11 @@ export class AuctionDetailsComponent implements OnInit {
 
   protected readonly Date = Date;
 
-  openAuctionEdit(){
+  openAuctionEdit() {
     this.isClientEditingAuction = true;
   }
 
-  closeAuctionEdit(){
+  closeAuctionEdit() {
     this.isClientEditingAuction = false;
   }
 

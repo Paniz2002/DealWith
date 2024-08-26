@@ -1,191 +1,196 @@
-<!-- TODO: fare due col-6, la col-6 di destra ha le chat -->
 <div class="container-fluid">
   <div [style.height]="auctionDetailsColumnHeight" class="row">
+
     <div [style.height]="auctionDetailsColumnHeight" id="card-details" class="col-12 col-md-6 overflow-scroll">
-      <mat-card class="auction-card" appearance="outlined">
-        <div
-          [id]="'auctionCarousel' + this.auctionID"
-          class="carousel slide"
-          data-bs-ride="carousel"
-        >
-          <div class="carousel-indicators">
-            <button
-              *ngFor="
+      @if (auctionDetails) {
+        <mat-card class="auction-card" appearance="outlined">
+          <div
+            [id]="'auctionCarousel' + this.auctionID"
+            class="carousel slide"
+            data-bs-ride="carousel"
+          >
+            <div class="carousel-indicators">
+              <button
+                *ngFor="
                 let image of this.auctionDetails.base64Images;
                 let i = index
               "
+                type="button"
+                [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
+                [attr.data-bs-slide-to]="i"
+                [ngClass]="{ active: i === 0 }"
+                [attr.aria-label]="'Slide ' + (i + 1)"
+              ></button>
+            </div>
+            <div class="carousel-inner">
+              <div
+                *ngFor="
+                let image of this.auctionDetails.base64Images;
+                let i = index
+              "
+                class="carousel-item"
+                [ngClass]="{ active: i === 0 }"
+              >
+                <img
+                  [src]="'data:image/webp;base64,' + image"
+                  class="carousel-image object-fit-contain"
+                  alt="Auction Image"
+                />
+              </div>
+            </div>
+            <a
+              class="carousel-control-prev"
               type="button"
               [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
-              [attr.data-bs-slide-to]="i"
-              [ngClass]="{ active: i === 0 }"
-              [attr.aria-label]="'Slide ' + (i + 1)"
-            ></button>
-          </div>
-          <div class="carousel-inner">
-            <div
-              *ngFor="
-                let image of this.auctionDetails.base64Images;
-                let i = index
-              "
-              class="carousel-item"
-              [ngClass]="{ active: i === 0 }"
+              data-bs-slide="prev"
             >
-              <img
-                [src]="'data:image/webp;base64,' + image"
-                class="carousel-image object-fit-contain"
-                alt="Auction Image"
-              />
-            </div>
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </a>
+            <a
+              class="carousel-control-next"
+              type="button"
+              [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
+              data-bs-slide="next"
+            >
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </a>
           </div>
-          <a
-            class="carousel-control-prev"
-            type="button"
-            [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
-            data-bs-slide="prev"
-          >
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </a>
-          <a
-            class="carousel-control-next"
-            type="button"
-            [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
-            data-bs-slide="next"
-          >
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-          </a>
-        </div>
-        <mat-card-header>
-          <mat-card-title>
-            {{ this.auctionDetails.book.title }}
-            @if(this.auctionDetails.canOperate){
-              @if(!this.isClientEditingAuction){
-                <mat-icon style="margin-right:5pt" (click)="openAuctionEdit()">edit</mat-icon>
+
+          <mat-card-header>
+            <mat-card-title>
+              {{ this.auctionDetails.book.title }}
+              @if (this.auctionDetails.canOperate) {
+                @if (!this.isClientEditingAuction ) {
+                  <mat-icon style="margin-right:5pt" (click)="openAuctionEdit()">edit</mat-icon>
+                } @else {
+                  <mat-icon style="margin-right:5pt" (click)="closeAuctionEdit()">close</mat-icon>
+                }
+              }
+            </mat-card-title>
+            <mat-card-subtitle
+            >Author: {{ this.auctionDetails.book.author }}
+            </mat-card-subtitle
+            >
+            <mat-card-subtitle>
+              ISBN: {{ this.auctionDetails.book.ISBN }}
+            </mat-card-subtitle>
+            <mat-card-subtitle>
+              @if (this.coursesUniversities.length === 1) {
+                Course:
               } @else {
-              <mat-icon style="margin-right:5pt" (click)="closeAuctionEdit()">close</mat-icon>
+                Courses:
               }
-            }
-          </mat-card-title>
-          <mat-card-subtitle
-            >Author: {{ this.auctionDetails.book.author }}</mat-card-subtitle
-          >
-          <mat-card-subtitle>
-            ISBN: {{ this.auctionDetails.book.ISBN }}
-          </mat-card-subtitle>
-          <mat-card-subtitle>
-            @if(this.coursesUniversities.length === 1){
-              Course:
+              @for (courseUniversity of this.coursesUniversities; track courseUniversity) {
+                <span>{{ courseUniversity.name }} {{ courseUniversity.year1 }}/{{ courseUniversity.year2 }}
+                  , {{ courseUniversity.university }}</span>
+                @if (this.coursesUniversities.length > 1) {
+                  <span> | </span>
+                }
+              }
+            </mat-card-subtitle>
+
+            <mat-card-subtitle>
+              Seller: {{ this.auctionDetails.seller.profile.firstName }}
+              {{ this.auctionDetails.seller.profile.lastName }}
+            </mat-card-subtitle>
+            <mat-card-subtitle>
+              Condition: {{ this.auctionDetails.condition }}
+            </mat-card-subtitle>
+          </mat-card-header>
+          <hr/>
+          <mat-card-content>
+            @if (this.isActive) {
+              <label for="price">Current bid:</label>
+              <span id="price" class="price"> {{ this.auctionPrice }} EUR </span>
+            } @else if (endDate.getTime() < Date.now()) {
+              <label for="price2">Last bid:</label>
+              <span id="price2" class="price"> {{ this.auctionPrice }} EUR </span>
             } @else {
-              Courses:
+              <label for="price3">Starting price:</label>
+              <span id="price3" class="price"> {{ this.auctionPrice }} EUR </span>
             }
-            @for ( courseUniversity of this.coursesUniversities; track courseUniversity) {
-              <span>{{ courseUniversity.name }} {{ courseUniversity.year1}}/{{ courseUniversity.year2}}, {{courseUniversity.university}}</span>
-              @if(this.coursesUniversities.length > 1){
-                <span> | </span>
-              }
+            @if (this.isLastBidOwner) {
+              <span style="color: green">You are the highest bidder</span>
             }
-          </mat-card-subtitle>
 
-          <mat-card-subtitle>
-            Seller: {{ this.auctionDetails.seller.profile.firstName }}
-            {{ this.auctionDetails.seller.profile.lastName }}
-          </mat-card-subtitle>
-          <mat-card-subtitle>
-            Condition: {{ this.auctionDetails.condition }}
-          </mat-card-subtitle>
-        </mat-card-header>
-        <hr/>
-        <mat-card-content>
-          @if (this.isActive) {
-            <label for="price">Current bid:</label>
-            <span id="price" class="price"> {{ this.auctionPrice }} EUR </span>
-          } @else if(endDate.getTime() < Date.now()) {
-            <label for="price2">Last bid:</label>
-            <span id="price2" class="price"> {{ this.auctionPrice }} EUR </span>
-          } @else {
-            <label for="price3">Starting price:</label>
-            <span id="price3" class="price"> {{ this.auctionPrice }} EUR </span>
-          }
-          @if (this.isLastBidOwner) {
-            <span style="color: green">You are the highest bidder</span>
+            @if (this.isOwner()) {
+              <span style="color: red"> You are the owner of this auction </span>
+            }
+          </mat-card-content>
+
+          @if (this.isUserLoggedIn && this.userType === "student") {
+            @if (this.isActive && !this.isOwner()) {
+              <mat-card-actions [style.width.%]="100">
+                <form [formGroup]="form" style="width: 100%">
+                  <div class="row justify-content-center" style="width: 100%">
+                    <div class="col-8 mt-3">
+                      <mat-form-field style="width: 100%" appearance="fill">
+                        <mat-label>Bid new price</mat-label>
+                        <input
+                          type="number"
+                          (change)="onPriceChange($event)"
+                          required
+                          matInput
+                          formControlName="bidPrice"
+                        />
+                        @if (form.invalid) {
+                          <mat-error>Please insert a price.</mat-error>
+                        }
+                      </mat-form-field>
+                    </div>
+                    <div class="col-4 mt-4">
+                      <button
+                        mat-raised-button
+                        color="primary"
+                        (click)="submitBid()"
+                      >
+                        Bid
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </mat-card-actions>
+            }
           }
 
-          @if (this.isOwner()) {
-            <span style="color: red"> You are the owner of this auction </span>
-          }
-        </mat-card-content>
-
-        @if (this.isUserLoggedIn && this.userType === "student") {
-          @if (this.isActive && !this.isOwner()) {
-            <mat-card-actions [style.width.%]="100">
-            <form [formGroup]="form" style="width: 100%">
-              <div class="row justify-content-center" style="width: 100%">
-                <div class="col-8 mt-3">
-                  <mat-form-field style="width: 100%" appearance="fill">
-                    <mat-label>Bid new price</mat-label>
-                    <input
-                      type="number"
-                      (change)="onPriceChange($event)"
-                      required
-                      matInput
-                      formControlName="bidPrice"
-                    />
-                    @if (form.invalid) {
-                      <mat-error>Please insert a price.</mat-error>
-                    }
-                  </mat-form-field>
-                </div>
-                <div class="col-4 mt-4">
-                  <button
-                    mat-raised-button
-                    color="primary"
-                    (click)="submitBid()"
-                  >
-                    Bid
-                  </button>
-                </div>
-              </div>
-            </form>
-            </mat-card-actions>
-          }
-        }
-
-        <hr />
-        <mat-card-content>
-          <label for="auction-description"> <b> Description </b> </label>
-          <div
-            id="auction-description"
-            class="auction-description"
-            [innerHTML]="this.auctionDetails.description"
-          ></div>
-        </mat-card-content>
-        <mat-card-content>
-          <!-- Get countdown from end date-->
-          @if (this.isActive) {
-            <app-auction-details-countdown [targetDate]="this.endDate">
-            </app-auction-details-countdown>
-          } @else if(this.endDate.getTime() < Date.now()) {
-            <p style="text-align: center; color: red">
-              This Auction has expired on {{ this.endDateTime }}
-            </p>
-          } @else {
-            <p style="text-align: center; color: red">
-              This Auction isn't started yet, it will start on {{ this.startDateTime }}
-            </p>
-            <app-auction-details-countdown [targetDate]="this.startDate" [isEndDate]="this.endDate.getTime() < Date.now()">
-            </app-auction-details-countdown>
-          }
-        </mat-card-content>
-      </mat-card>
+          <hr/>
+          <mat-card-content>
+            <label for="auction-description"> <b> Description </b> </label>
+            <div
+              id="auction-description"
+              class="auction-description"
+              [innerHTML]="this.auctionDetails.description"
+            ></div>
+          </mat-card-content>
+          <mat-card-content>
+            <!-- Get countdown from end date-->
+            @if (this.isActive) {
+              <app-auction-details-countdown [targetDate]="this.endDate">
+              </app-auction-details-countdown>
+            } @else if (this.endDate.getTime() < Date.now()) {
+              <p style="text-align: center; color: red">
+                This Auction has expired on {{ this.endDateTime }}
+              </p>
+            } @else {
+              <p style="text-align: center; color: red">
+                This Auction isn't started yet, it will start on {{ this.startDateTime }}
+              </p>
+              <app-auction-details-countdown [targetDate]="this.startDate"
+                                             [isEndDate]="this.endDate.getTime() < Date.now()">
+              </app-auction-details-countdown>
+            }
+          </mat-card-content>
+        </mat-card>
+      }
     </div>
 
     @if (this.isUserLoggedIn) {
       <div [style.height]="auctionDetailsColumnHeight" id="chat-details" class="col-12 col-md-6">
-        @if(this.isClientEditingAuction){
-          <app-auction-edit [auctionId]="this.auctionID"  ></app-auction-edit>
-        }
-        @else {
+        @if (this.isClientEditingAuction && this.auctionID) {
+          <app-auction-edit [auctionId]="this.auctionID"></app-auction-edit>
+        } @else if(this.whoAmI && this.auctionDetails && this.auctionDetails.seller) {
           <mat-tab-group #tabs>
             <mat-tab label="Private Chat">
               <app-chat

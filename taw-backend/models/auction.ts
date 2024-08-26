@@ -1,6 +1,7 @@
 import mongoose, {Model} from "mongoose";
 import {BidSchema} from "./bid";
 import User from "./user";
+import {io} from "../src";
 
 const AuctionSchema = new mongoose.Schema(
     {
@@ -77,7 +78,7 @@ AuctionSchema.methods.lastBidPrice = function () {
     }
     return this.bids[this.bids.length - 1].price;
 }
-AuctionSchema.methods.lastBidder =  function () {
+AuctionSchema.methods.lastBidder = function () {
     if (this.bids.length === 0) {
         return {}  // Return a resolved promise with an empty object if there are no bids
     }
@@ -90,13 +91,29 @@ AuctionSchema.methods.lastBidder =  function () {
 
     user_id = user_id.toString();
 
-   return User.findById(user_id)
-       .select("-__v -password -notifications -role")
-       .populate({
-           path: "email",
-           select: "-__v -_id"
-       });
+    return User.findById(user_id)
+        .select("-__v -password -notifications -role")
+        .populate({
+            path: "email",
+            select: "-__v -_id"
+        });
 };
+
+
+let test_bids = [];
+AuctionSchema.pre('save', function (next) {
+    //save all bids in an array
+    test_bids.push(this.bids);
+    return next();
+});
+AuctionSchema.post('save', async function (doc) {
+    if (test_bids.length != this.bids.length) {
+        //send notification
+        io.to('auction_' + this._id.toString()).emit('new-bid', 'New bid');
+        console.log("Notification sent new bid");
+    }
+    test_bids = [];
+});
 
 
 const Auction: Model<any> = mongoose.model("Auction", AuctionSchema);

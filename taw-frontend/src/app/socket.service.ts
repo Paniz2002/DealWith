@@ -55,6 +55,11 @@ export class SocketService {
     this.socket.on('private-comment', callback);
   }
 
+  receiveNewBid(callback: (message: any) => void) {
+    console.log('Receiving new bid');
+    this.socket.on('new-bid', callback);
+  }
+
   disconnect() {
     if (this.socket) {
       this.socket.disconnect();
