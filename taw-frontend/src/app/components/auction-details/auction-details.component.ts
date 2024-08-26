@@ -86,7 +86,10 @@ export class AuctionDetailsComponent implements OnInit {
   auctionID: string;
   auctionDetails!: any;
   endDate!: Date;
+  startDate!: Date;
+
   endDateTime!: any;
+  startDateTime!: any;
   auctionPrice: Number = -1;
   isActive!: boolean;
   isLastBidOwner!: boolean;
@@ -165,7 +168,11 @@ export class AuctionDetailsComponent implements OnInit {
       .then((details: any) => {
         this.auctionDetails = details.data;
         this.endDate = new Date(this.auctionDetails.end_date);
+        this.startDate = new Date(this.auctionDetails.start_date);
         this.endDateTime = `${
+          this.months[this.endDate.getMonth()]
+        } ${this.endDate.getDate()}, ${this.endDate.getFullYear()}`;
+        this.startDateTime = `${
           this.months[this.endDate.getMonth()]
         } ${this.endDate.getDate()}, ${this.endDate.getFullYear()}`;
         this.auctionPrice = this.getLastBidPrice(

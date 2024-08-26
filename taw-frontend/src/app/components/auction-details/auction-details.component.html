@@ -150,10 +150,16 @@
           @if (this.isActive) {
             <app-auction-details-countdown [targetDate]="this.endDate">
             </app-auction-details-countdown>
-          } @else {
+          } @else if(this.endDate.getTime() > Date.now()) {
             <p style="text-align: center; color: red">
               This Auction is expired on {{ this.endDateTime }}
             </p>
+          } @else {
+            <p style="text-align: center; color: red">
+              This Auction isn't started yet, it will start on {{ this.startDateTime }}
+            </p>
+            <app-auction-details-countdown [targetDate]="this.startDate">
+            </app-auction-details-countdown>
           }
         </mat-card-content>
       </mat-card>
