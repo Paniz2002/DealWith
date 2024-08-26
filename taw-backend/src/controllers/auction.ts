@@ -18,7 +18,6 @@ import Course from "../../models/course";
 import NotFoundException from "../exceptions/not-found";
 import NotFound from "../exceptions/not-found";
 import User from "../../models/user";
-import comment from "../../models/comment";
 
 const conditions = ["Mint", "Near Mint", "Excellent", "Good", "Fair", "Poor"];
 
@@ -136,23 +135,22 @@ export const uploadAuctionImagesController = async (
 
         const user_id = getUserId(req, res);
 
-        if (!auction.isOwner(user_id)) {
-            return BadRequestException(
-                req,
-                res,
-                "The seller is not the owner of the auction",
-            );
-        }
-
-        if (auction.seller.toString() !== user_id) {
+        if (!await canOperate(auction.seller.toString(), user_id)) {
             return UnauthorizedException(
                 req,
                 res,
-                "Unauthorized: You are not the seller of this auction",
+                "Unauthorized",
             );
         }
 
         const files = req.files as Express.Multer.File[];
+
+        /*
+        Check if the auction already has images, if it does, delete them (necessary to edit auction images)
+        */
+        if(auction.images){
+            auction.images = [];
+        }
 
         for (const file of files) {
             // Genera un percorso temporaneo per l'output del file convertito ( workaround per un errore )
@@ -321,6 +319,7 @@ const searchAuctions = async function (req: Request, res: Response) {
 };
 
 export const getAuctionController = async (req: Request, res: Response) => {
+    await connectDB();
     if (Object.keys(req.query).length === 0) {
         const auctions = await Auction.find()
             .populate({
@@ -366,6 +365,7 @@ export const getAuctionDetailsController = async (
     req: Request,
     res: Response,
 ) => {
+    await connectDB();
     const auction_id = req.params.id;
 
     if (!auction_id) {
@@ -400,12 +400,12 @@ export const getAuctionDetailsController = async (
             return NotFound(req, res, "Auction not found");
         }
 
-        //add isActive() to result
-        const response = {isActive: auction.isActive(), ...auction.toObject()}
-
+        const canClientOperate = await canOperate(auction.seller._id.toString(), getUserId(req, res));
+        const response = {isActive: auction.isActive(),canOperate:canClientOperate, ...auction.toObject()}
 
         return res.status(200).json(response);
     } catch (err) {
+        console.log(err);
         return InternalException(req, res, "Error while getting auction details");
     }
 };
@@ -488,7 +488,7 @@ export const getAuctionCommentsController = async (
             .exec();
 
         for (let comment of privateComments_tmp) {
-            const can_operate = await canOperate(comment.sender._id.toString(), userID);
+            const can_operate = await canOperate(comment.sender._id.toString(), userID.toString());
             //delete sender _id form comment
             delete comment.sender._id;
             privateComments.push({
@@ -507,7 +507,6 @@ export const postAuctionCommentsController = async (
     req: Request,
     res: Response,
 ) => {
-    console.log('new comment', req.body)
     const {isPrivate, replyTo, text, receiver} = req.body;
     const auctionID = req.params.id;
     const currentAuction = await Auction.findById(auctionID).exec();
@@ -551,38 +550,6 @@ export const postAuctionCommentsController = async (
     } catch (err) {
         console.log(err);
         return InternalException(req, res, "Unknown error while creating comment.");
-    }
-};
-export const patchAuctionController = async (req: Request, res: Response) => {
-    try {
-        const auction_id = req.params.id;
-        const {description, condition, book_id} = req.body;
-
-        await connectDB();
-        const auction = await Auction.findById(auction_id);
-        if (!auction) {
-            return NotFoundException(req, res, "Auction not found");
-        }
-
-        if (description) auction.description = description;
-
-        if (condition) {
-            if (!conditions.includes(condition))
-                return BadRequestException(req, res, "Invalid condition");
-            auction.condition = condition;
-        }
-
-        if (book_id) {
-            const book = await Book.findById(book_id);
-            if (!book) return NotFoundException(req, res, "Book not found");
-            auction.book = book_id;
-        }
-
-        await auction.save();
-
-        return res.status(200).send("Auction updated");
-    } catch (e) {
-        return InternalException(req, res, "Error while updating auction");
     }
 };
 
@@ -773,13 +740,114 @@ export const deleteCommentController = async (req: Request, res: Response) => {
     if (!comment) {
         return NotFoundException(req, res, "Comment not found");
     }
-    if (!(await canOperate( comment.sender.toString(),user_id.toString()))) {
+    if (!(await canOperate(comment.sender.toString(), user_id.toString()))) {
         return UnauthorizedException(req, res, "Unauthorized: You are not the sender of this comment");
     }
     await comment.deleteOne();
     return res.status(200).send("Comment deleted");
 
 }
+
+export const editCommentController = async (req: Request, res: Response) => {
+    try {
+        const userID = getUserId(req, res);
+        const user = await User.findById(userID);
+        if (!user) {
+            return NotFoundException(req, res, "User not found");
+        }
+        const auctionID = req.params.id;
+        const currentAuction = await Auction.findById(auctionID).exec();
+        if (!currentAuction) {
+            return BadRequestException(req, res, "Bad request: invalid auction.");
+        }
+        const comment_id = req.params.idcomment;
+        const comment = await Comment.findById(comment_id);
+        if (!comment) {
+            return NotFoundException(req, res, "Comment not found");
+        }
+        if (!(await canOperate(comment.sender.toString(), userID.toString()))) {
+            return UnauthorizedException(req, res, "Unauthorized: You are not the sender of this comment");
+        }
+        const {text, replyTo, isPrivate, receiver} = req.body;
+        if (!text) {
+            return BadRequestException(req, res, "Bad request: text is required");
+        }
+       comment.text = text;
+        let repliedComment;
+        if (replyTo) {
+            repliedComment = await Comment.findById(replyTo).exec();
+            if (!repliedComment) {
+                return BadRequestException(req, res, "Bad request: invalid parameters");
+            }
+            comment.inReplyTo = repliedComment;
+            comment.private = repliedComment.private;
+        } else {
+            comment.inReplyTo = undefined;
+            comment.private = undefined;
+        }
+        if (Boolean(isPrivate)) {
+            comment.private = true;
+           // comment.receiver = receiver; //FIXME: probably we dont have to change if im a moderator, so leave it as it is, so leave the comment
+        } else {
+            comment.private = undefined;
+            comment.receiver = undefined;
+        }
+
+        comment.save();
+        return res.status(200).send("Comment edited");
+    } catch (err) {
+        console.error(err);
+        return InternalException(req, res, "Unknown error while editing comment.");
+    }
+}
+
+export const patchAuctionController = async (req: Request, res: Response) => {
+    try {
+        const user_id = getUserId(req, res);
+
+        const auction_id = req.params.id;
+        const {description, condition, book_title, book_author, ISBN } = req.body;
+
+        await connectDB();
+        const auction = await Auction.findById(auction_id);
+        const book = await Book.findById(auction.book);
+
+        if(!await canOperate(auction.seller.toString(), user_id)){
+            return UnauthorizedException(req, res, "Unauthorized: You are not the seller of this auction");
+        }
+
+        if (!auction) {
+            return NotFoundException(req, res, "Auction not found");
+        }
+
+        if(!book){
+            return NotFoundException(req, res, "Book not found");
+        }
+
+        if (description) auction.description = description;
+
+        if (condition) {
+            if (!conditions.includes(condition))
+                return BadRequestException(req, res, "Invalid condition");
+            auction.condition = condition;
+        }
+
+        if(book_title) book.title = book_title;
+
+        if(book_author) book.author = book_author;
+
+        if(ISBN) book.ISBN = ISBN;
+
+        await book.save();
+
+        await auction.save();
+
+        return res.status(200).send("Auction updated");
+    } catch (e) {
+        return InternalException(req, res, "Error while updating auction");
+    }
+};
+
 
 async function canOperate(user_id_to_check: string, user_id: string) {
     if (user_id_to_check === user_id) {

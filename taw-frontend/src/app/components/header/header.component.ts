@@ -10,15 +10,15 @@ import {
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { LocalStorageService } from '../../services/localStorage/localStorage.service';
 import { Subscription } from 'rxjs';
 import { SocketService } from '../../socket.service';
 import axios from 'axios';
 import { environments } from '../../../environments/environments';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
-import { NgClass } from '@angular/common';
 import { HeaderHeightService } from '../../services/header/header-height.service';
+import { NgClass, NgOptimizedImage } from '@angular/common';
 
 interface Notification {
   isRead: boolean;
@@ -39,6 +39,7 @@ interface Notification {
     MatMenuTrigger,
     MatIconButton,
     NgClass,
+    NgOptimizedImage,
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',

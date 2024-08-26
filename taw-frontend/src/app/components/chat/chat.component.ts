@@ -45,6 +45,8 @@ export class ChatComponent implements OnInit {
   @Input() auctionOwner!: string; // Proprietario dell'asta
   @Input() auctionOwnerID!: string; // ID del proprietario dell'asta
   @Input() whoAmI!: string; // Utente corrente
+  editingMessage?: Message; // Message currently being edited
+  editedContent: string = ''; // Stores the edited message content
   conversations: Conversation[] = []; // Lista delle conversazioni per il possessore
   isConversationListVisible: boolean = true; // Indica se la lista delle conversazioni è visibile
   noPrivateMessages: boolean = false; // Indica se non ci sono messaggi privati
@@ -219,38 +221,27 @@ export class ChatComponent implements OnInit {
 
   }
 
+  private  buildParams (text:string,replyToId?: string)  {
+    const isMeOwner = this.whoAmI === this.auctionOwner;
+    return  {
+      isPrivate: this.isPrivate ? true : null,
+      text: text,
+      receiver: this.isPrivate ? isMeOwner ? this.selectedConversation.receiver_id : this.auctionOwnerID : null,
+      replyTo: replyToId || null,
+    };
+  }
 
   async sendMessage(replyToId?: string) {
-    console.log(this.selectedConversation)
     if (this.newMessage.trim() && this.selectedConversation) {
-
-
       try {
-        const isMeOwner = this.whoAmI === this.auctionOwner;
-
-        const params = {
-          isPrivate: this.isPrivate ? true : null,
-          text: this.newMessage,
-          receiver: this.isPrivate ? isMeOwner ? this.selectedConversation.receiver_id : this.auctionOwnerID : null,
-          replyTo: replyToId || null,
-        };
-
         const response = await axios.post(
           environments.BACKEND_URL + '/api/auctions/' + this.auctionID + '/comments',
-          params
+          this.buildParams(this.newMessage.trim(), replyToId)
         );
 
         if (response.status === 200) {
           this.snackBar.notify('Message sent successfully');
           this.newMessage = '';
-          // Aggiungi il nuovo messaggio alla conversazione selezionata
-          this.selectedConversation.messages.push({
-            id: response.data._id,
-            author: this.whoAmI,
-            content: this.newMessage,
-            receiver: this.selectedConversation.name,
-            replyTo: this.replyToMessageData
-          });
           this.replyToMessageData = undefined; // Reset reply data
         } else {
           this.snackBar.notify('Error sending message');
@@ -318,4 +309,44 @@ export class ChatComponent implements OnInit {
     })
 
   }
+
+  async saveEdit(replyToId?: string) {
+    console.log(this.editingMessage, this.newMessage.trim())
+    if (this.editingMessage && this.newMessage.trim()) {
+      try {
+        const response = await axios.put(
+          `${environments.BACKEND_URL}/api/auctions/${this.auctionID}/comments/${this.editingMessage.id}`,
+          this.buildParams(this.newMessage.trim(),replyToId)
+        );
+
+        if (response.status === 200) {
+          this.snackBar.notify('Message updated successfully');
+          this.editingMessage.content = '';
+          this.cancelEdit(); // Clear editing state
+        } else {
+          this.snackBar.notify('Error updating message');
+        }
+      } catch (error) {
+        console.error('Error updating message:', error);
+        this.snackBar.notify('Error updating message');
+      }
+    }
+  }
+
+  editMessage(message: Message) {
+    if(message.replyTo) {
+      this.replyToMessageData = message.replyTo;
+    }
+
+    this.editingMessage = message;
+    this.newMessage= message.content;
+  }
+
+  cancelEdit() {
+    this.replyToMessageData = undefined;
+    this.editingMessage = undefined;
+    this.newMessage = '';
+    this.editedContent = '';
+  }
+
 }

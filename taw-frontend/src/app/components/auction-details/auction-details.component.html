@@ -57,7 +57,16 @@
           </a>
         </div>
         <mat-card-header>
-          <mat-card-title>{{ this.auctionDetails.book.title }}</mat-card-title>
+          <mat-card-title>
+            {{ this.auctionDetails.book.title }}
+            @if(this.auctionDetails.canOperate){
+              @if(!this.isClientEditingAuction){
+                <mat-icon style="margin-right:5pt" (click)="openAuctionEdit()">edit</mat-icon>
+              } @else {
+              <mat-icon style="margin-right:5pt" (click)="closeAuctionEdit()">close</mat-icon>
+              }
+            }
+          </mat-card-title>
           <mat-card-subtitle
             >Author: {{ this.auctionDetails.book.author }}</mat-card-subtitle
           >
@@ -82,15 +91,21 @@
             Seller: {{ this.auctionDetails.seller.profile.firstName }}
             {{ this.auctionDetails.seller.profile.lastName }}
           </mat-card-subtitle>
+          <mat-card-subtitle>
+            Condition: {{ this.auctionDetails.condition }}
+          </mat-card-subtitle>
         </mat-card-header>
         <hr/>
         <mat-card-content>
           @if (this.isActive) {
             <label for="price">Current bid:</label>
             <span id="price" class="price"> {{ this.auctionPrice }} EUR </span>
-          } @else {
+          } @else if(endDate.getTime() < Date.now()) {
             <label for="price2">Last bid:</label>
             <span id="price2" class="price"> {{ this.auctionPrice }} EUR </span>
+          } @else {
+            <label for="price3">Starting price:</label>
+            <span id="price3" class="price"> {{ this.auctionPrice }} EUR </span>
           }
           @if (this.isLastBidOwner) {
             <span style="color: green">You are the highest bidder</span>
@@ -150,10 +165,16 @@
           @if (this.isActive) {
             <app-auction-details-countdown [targetDate]="this.endDate">
             </app-auction-details-countdown>
+          } @else if(this.endDate.getTime() < Date.now()) {
+            <p style="text-align: center; color: red">
+              This Auction has expired on {{ this.endDateTime }}
+            </p>
           } @else {
             <p style="text-align: center; color: red">
-              This Auction is expired on {{ this.endDateTime }}
+              This Auction isn't started yet, it will start on {{ this.startDateTime }}
             </p>
+            <app-auction-details-countdown [targetDate]="this.startDate" [isEndDate]="this.endDate.getTime() < Date.now()">
+            </app-auction-details-countdown>
           }
         </mat-card-content>
       </mat-card>
@@ -161,6 +182,10 @@
 
     @if (this.isUserLoggedIn) {
       <div [style.height]="auctionDetailsColumnHeight" id="chat-details" class="col-12 col-md-6">
+        @if(this.isClientEditingAuction){
+          <app-auction-edit [auctionId]="this.auctionID"  ></app-auction-edit>
+        }
+        @else {
           <mat-tab-group #tabs>
             <mat-tab label="Private Chat">
               <app-chat
@@ -179,6 +204,7 @@
               ></app-chat>
             </mat-tab>
           </mat-tab-group>
+        }
       </div>
     }
   </div>

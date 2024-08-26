@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { RouterLink } from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { MatChipsModule } from '@angular/material/chips';
 import { NgClass, NgForOf, NgOptimizedImage } from '@angular/common';
 export interface AuctionCard {
@@ -36,4 +36,11 @@ export class AuctionCardComponent {
   @Input({ required: true }) bookAuthor!: string;
   @Input({ required: true }) bidDescription!: string;
   @Input() base64Images?: string[];
+  constructor(
+    private router: Router,
+  ){};
+
+  viewDetails() {
+    this.router.navigate(['/', this.auctionID]);
+  }
 }

@@ -87,3 +87,11 @@
 .notification-unread {
   background-color: rgba(33, 203, 243, 0.1);
 }
+
+.logo-container{
+  cursor: pointer;
+}
+
+.logo-text{
+  cursor: pointer;
+}

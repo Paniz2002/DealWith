@@ -1,0 +1,82 @@
+<div class="auction-edit-container">
+  <div class="mt-5 mx-3 text-center">
+    <h3> Edit Auction Information </h3>
+    <p style="color:grey"> It is not necessary to fill in all the fields, the unfilled ones will remain the same as before </p>
+  </div>
+  <form [formGroup]="auctionFormEdit" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="fill">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description"></textarea>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Condition</mat-label>
+      <mat-select formControlName="condition">
+        <mat-option value="Mint">Mint</mat-option>
+        <mat-option value="Near Mint">Near Mint</mat-option>
+        <mat-option value="Excellent">Excellent</mat-option>
+        <mat-option value="Good">Good</mat-option>
+        <mat-option value="Fair">Fair</mat-option>
+        <mat-option value="Poor">Poor</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Book title</mat-label>
+      <input matInput formControlName="book_title" />
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Book author</mat-label>
+      <input matInput formControlName="book_author" />
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>ISBN</mat-label>
+      <input matInput formControlName="ISBN">
+    </mat-form-field>
+
+    <div class="row align-items-center">
+      <div class="col-auto">
+        <button
+          type="button"
+          mat-raised-button
+          color="accent"
+          (click)="fileInput.click()"
+        >
+          Add image(s)
+        </button>
+
+        <input
+          hidden
+          (change)="onFileSelected()"
+          multiple="multiple"
+          #fileInput
+          type="file"
+          id="files"
+        />
+      </div>
+    </div>
+    @if (imagePreviews.length > 0) {
+      <mat-label>Preview</mat-label>
+      <mat-grid-list cols="3" rowHeight="1:1" gutterSize="5px">
+        @for (img of imagePreviews; track img) {
+          <mat-grid-tile style="border: 1px solid #f06292">
+            <img [src]="img" class="preview-img" alt="preview" />
+          </mat-grid-tile>
+        }
+      </mat-grid-list>
+    }
+
+    <!-- Submit Button -->
+    <div class="row">
+      <div class="col-12">
+        <button
+          style="width: 100%"
+          mat-raised-button
+          color="primary"
+          type="submit"
+        >
+          Edit Auction
+        </button>
+      </div>
+    </div>
+
+  </form>
+</div>

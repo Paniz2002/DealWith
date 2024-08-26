@@ -14,8 +14,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import { NotificationService } from '../../services/popup/notification.service';
+import {HeaderHeightService} from "../../services/header/header-height.service";
 
 @Component({
   selector: 'app-register',
@@ -29,6 +30,7 @@ import { NotificationService } from '../../services/popup/notification.service';
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
+    RouterLink,
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
@@ -37,11 +39,13 @@ export class RegisterComponent implements OnInit {
   form!: FormGroup;
   isFormValid!: Boolean;
   isUserModerator: Boolean = false;
+  registerHeight: string = '100vh';
 
   constructor(
     private registerFormBuilder: FormBuilder,
     private router: Router,
     private snackBar: NotificationService,
+    private headerHeightService: HeaderHeightService
   ) {
     //check if current route is /register
     if (this.router.url !== '/register') {
@@ -56,6 +60,9 @@ export class RegisterComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.headerHeightService.headerHeight$.subscribe((height) => {
+      this.registerHeight = `calc(100vh - ${height}px)`;
+    });
     this.isFormValid = false;
     this.form = this.registerFormBuilder.group({
       name: ['', [Validators.required, Validators.minLength(2)]],

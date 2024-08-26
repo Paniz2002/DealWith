@@ -18,9 +18,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
 import { MatButton } from '@angular/material/button';
+import {ActivatedRoute, Router} from "@angular/router";
 
 interface Filter {
   q: string | null;
@@ -59,63 +60,39 @@ interface Filter {
  * fetches again the data and reloads the component.
  */
 export class AuctionListComponent implements OnInit {
-  form: FormGroup;
+  form!: FormGroup;
   availableAuctions: Array<AuctionCard> = Array<AuctionCard>();
-  minPrice: Number = 0;
-  searchText: string = '';
   condition: string = '';
   showOnlyActive: boolean = false;
   constructor(
     private snackBar: NotificationService,
     private filterFormBuilder: FormBuilder,
-  ) {
+    private route: ActivatedRoute,
+    private router: Router,
+  ) {}
+
+  ngOnInit(): void {
     this.form = this.filterFormBuilder.group({
-      bookName: ['', [Validators.required, Validators.minLength(1)]],
-      minStartingPrice: [0, [Validators.required]],
-      maxStartingPrice: [100, [Validators.required]],
+      queryString: ['', [Validators.required, Validators.minLength(1)]],
+      minStartingPrice: ['', [Validators.required]],
+      maxStartingPrice: ['', [Validators.required]],
       condition: ['', [Validators.required]],
       active: [true],
     });
-  }
 
-  ngOnInit(): void {
-    let params = <Filter>{};
-
-    if (this.form.value.active) {
-      params.active = true;
-    }
-
-    axios
-      .get(environments.BACKEND_URL + '/api/auctions', { params })
-      .then(async (auctions: any) => {
-        for (const auction of auctions.data) {
-          this.availableAuctions.push(<AuctionCard>{
-            ID: auction._id,
-            bookTitle: auction.book.title,
-            bidDescription: auction.description,
-            base64Images: [],
-            bookAuthor: auction.book.author,
-            currentPrice:
-              auction.bids.length > 0
-                ? this.getLastBidPrice(auction.bids, auction.starting_price)
-                : auction.starting_price,
-          });
-          this.loadAuctionImages();
-        }
-
-        let maxPrice: Number = 0;
-        for(const auction of this.availableAuctions){
-          if(auction.currentPrice > maxPrice){
-            maxPrice = auction.currentPrice;
-          }
-        }
-        this.form.get('maxStartingPrice')?.setValue(maxPrice);
-
-      })
-      .catch((err) => {
-        this.snackBar.notify(err.message);
+    this.route.queryParams.subscribe(params => {
+      this.form.patchValue({
+        queryString: params['q'] || '',
+        minStartingPrice: params['min_price'] || '',
+        maxStartingPrice: params['max_price'] || '',
+        condition: params['min_condition'] || '',
+        active: params['active'] === 'true' || false,
       });
+    });
+
+    this.searchWithFilters();
   }
+
 
   private loadAuctionImages(): void {
     // Iterates on all available acutions to load images
@@ -140,27 +117,49 @@ export class AuctionListComponent implements OnInit {
     return currMax >= startingPrice ? currMax : startingPrice;
   }
 
-  async searchWithFilters(): Promise<void> {
+  searchWithFilters(): void {
     this.availableAuctions.length = 0;
-    const params = <Filter>{
-      min_price: this.form.value.minStartingPrice,
-      max_price: this.form.value.maxStartingPrice,
-    };
+    const params = <Filter>{};
 
-    if (this.form.value.active) {
-      params.active = true;
+    if (this.form.value.queryString !== '' && this.form.value.queryString) {
+      params.q = this.form.value.queryString;
+    }else{
+      params.q = null;
     }
 
-    if (this.form.value.bookName) {
-      params.q = this.form.value.bookName;
+    if (this.form.value.minStartingPrice) {
+      params.min_price = this.form.value.minStartingPrice;
+    }else{
+      params.min_price = null;
     }
+
+    if (this.form.value.maxStartingPrice) {
+      params.max_price = this.form.value.maxStartingPrice;
+    }else{
+      params.max_price = null;
+    }
+
     if (this.form.value.condition) {
       params.min_condition = this.form.value.condition;
     }
+
+    if (this.form.value.active) {
+      params.active = this.form.value.active;
+    }else{
+      params.active = null;
+    }
+
+    // Aggiorna l'URL con i parametri di query filtrati
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: params,
+      queryParamsHandling: 'merge', // Unisce i nuovi parametri con quelli esistenti
+    });
+
     axios
       .get(environments.BACKEND_URL + '/api/auctions', { params })
       .then((auctions: any) => {
-        auctions.data.forEach((auction: any) => {
+        for(const auction of auctions.data){
           this.availableAuctions.push(<AuctionCard>{
             ID: auction._id,
             bookTitle: auction.book.title,
@@ -171,7 +170,7 @@ export class AuctionListComponent implements OnInit {
                 ? this.getLastBidPrice(auction.bids, auction.starting_price)
                 : auction.starting_price,
           });
-        });
+        }
         this.loadAuctionImages();
       })
       .catch((err) => {

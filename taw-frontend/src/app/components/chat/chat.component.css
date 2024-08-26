@@ -18,7 +18,7 @@ mat-expansion-panel {
 /* chat.component.css */
 .conversations-list {
   width: 100%;
-  background-color: #ffffff; /* Pink-100 */
+  background-color: #ffffff;
   overflow: hidden;
   border: 1px solid #ddd;
 }
@@ -56,7 +56,7 @@ mat-expansion-panel {
   flex: 1;
   padding: 10px;
   overflow-y: auto;
-  background-color: #f9f9f9;
+  background-color: #f5f5ff;
   border-bottom: 1px solid #ddd;
 }
 
@@ -170,10 +170,22 @@ mat-expansion-panel {
   cursor: pointer;
 }
 
+.message-input .cancel-edit-button{
+  background-color: #c62828 !important; /* Red-800 */
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 .message-input button:hover {
   background-color: #303f9f; /* Indigo-700 */
 }
 
+.message-input .cancel-edit-button:hover{
+  background-color: #b71c1c !important; /* Red-900 */
+}
 
 .actions {
   display:flex;
@@ -201,3 +213,5 @@ mat-expansion-panel {
 .received .actions mat-icon:hover{
   color:  #1a237e; /* Indigo-900 */
 }
+
+

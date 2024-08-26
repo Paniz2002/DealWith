@@ -31,6 +31,7 @@ import {environments} from '../../../environments/environments';
 import {ChatComponent} from '../chat/chat.component';
 import {SocketService} from '../../socket.service';
 import {HeaderHeightService} from "../../services/header/header-height.service";
+import {AuctionEditComponent} from "../auction-edit/auction-edit.component";
 
 interface Course {
   name: string;
@@ -58,6 +59,7 @@ interface Course {
     NgClass,
     AuctionDetailsCountdownComponent,
     ChatComponent,
+    AuctionEditComponent,
   ],
   templateUrl: './auction-details.component.html',
   styleUrl: './auction-details.component.css',
@@ -86,7 +88,10 @@ export class AuctionDetailsComponent implements OnInit {
   auctionID: string;
   auctionDetails!: any;
   endDate!: Date;
+  startDate!: Date;
+
   endDateTime!: any;
+  startDateTime!: any;
   auctionPrice: Number = -1;
   isActive!: boolean;
   isLastBidOwner!: boolean;
@@ -97,6 +102,7 @@ export class AuctionDetailsComponent implements OnInit {
   coursesUniversities: Array<Course> = Array<Course>();
 
   auctionDetailsColumnHeight: string = '100vh';
+  isClientEditingAuction: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -147,7 +153,6 @@ export class AuctionDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.headerHeightService.headerHeight$.subscribe((height) => {
       this.auctionDetailsColumnHeight = `calc(100vh - ${height}px)`;
-      console.log('navbard height', height);
     });
     this.initSocket();
     this.socketService.receivePublicComment((comment) => {
@@ -165,7 +170,11 @@ export class AuctionDetailsComponent implements OnInit {
       .then((details: any) => {
         this.auctionDetails = details.data;
         this.endDate = new Date(this.auctionDetails.end_date);
+        this.startDate = new Date(this.auctionDetails.start_date);
         this.endDateTime = `${
+          this.months[this.endDate.getMonth()]
+        } ${this.endDate.getDate()}, ${this.endDate.getFullYear()}`;
+        this.startDateTime = `${
           this.months[this.endDate.getMonth()]
         } ${this.endDate.getDate()}, ${this.endDate.getFullYear()}`;
         this.auctionPrice = this.getLastBidPrice(
@@ -233,6 +242,14 @@ export class AuctionDetailsComponent implements OnInit {
   }
 
   protected readonly Date = Date;
+
+  openAuctionEdit(){
+    this.isClientEditingAuction = true;
+  }
+
+  closeAuctionEdit(){
+    this.isClientEditingAuction = false;
+  }
 
   onPriceChange($event: any) {
     let value = $event.target.value;
