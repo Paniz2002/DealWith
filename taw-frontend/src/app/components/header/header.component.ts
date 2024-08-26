@@ -1,16 +1,24 @@
-import {Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef} from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  AfterViewInit,
+  ElementRef,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { LocalStorageService } from '../../services/localStorage/localStorage.service';
 import { Subscription } from 'rxjs';
 import { SocketService } from '../../socket.service';
 import axios from 'axios';
 import { environments } from '../../../environments/environments';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
-import {NgClass, NgOptimizedImage} from '@angular/common';
-import {HeaderHeightService} from "../../services/header/header-height.service";
+import { HeaderHeightService } from '../../services/header/header-height.service';
+import { NgClass, NgOptimizedImage } from '@angular/common';
 
 interface Notification {
   isRead: boolean;
@@ -60,7 +68,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       this.cdr.detectChanges();
       const headerHeight = this.el.nativeElement.offsetHeight;
       this.headerHeightService.setHeaderHeight(headerHeight);
-    },0);
+    }, 0);
   }
 
   async ngOnInit(): Promise<void> {
@@ -72,12 +80,10 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     }
     this.changes = this.router.events.subscribe(async (event) => {
-      if (event instanceof NavigationEnd) {
-        const res = await axios.get(environments.BACKEND_URL + '/api/auth/me');
-        this.isUserLoggedIn = res.status === 200;
-        if (this.isUserLoggedIn) {
-          this.userType = res.data.is_moderator  ? 'moderator' : 'student';
-        }
+      const res = await axios.get(environments.BACKEND_URL + '/api/auth/me');
+      this.isUserLoggedIn = res.status === 200;
+      if (this.isUserLoggedIn) {
+        this.userType = res.data.is_moderator ? 'moderator' : 'student';
       }
     });
   }

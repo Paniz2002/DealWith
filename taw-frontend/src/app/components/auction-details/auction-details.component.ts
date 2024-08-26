@@ -1,7 +1,6 @@
 import {
   Component,
   OnInit,
-  inject,
   ViewChild,
   ViewChildren,
   QueryList,
@@ -13,25 +12,25 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import {MatButtonModule} from '@angular/material/button';
-import {MatCardModule} from '@angular/material/card';
-import {MatChipsModule} from '@angular/material/chips';
-import {MatDividerModule} from '@angular/material/divider';
-import {MatInputModule} from '@angular/material/input';
-import {MatListModule} from '@angular/material/list';
-import {MatTabGroup, MatTabsModule} from '@angular/material/tabs';
-import {NgClass, NgForOf} from '@angular/common';
-import {AuctionDetailsCountdownComponent} from '../auction-details-countdown/auction-details-countdown.component';
-import {MatIconModule} from '@angular/material/icon';
-import {ActivatedRoute, Router} from '@angular/router';
-import {NotificationService} from '../../services/popup/notification.service';
-import {LocalStorageService} from '../../services/localStorage/localStorage.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatTabGroup, MatTabsModule } from '@angular/material/tabs';
+import { NgClass, NgForOf } from '@angular/common';
+import { AuctionDetailsCountdownComponent } from '../auction-details-countdown/auction-details-countdown.component';
+import { MatIconModule } from '@angular/material/icon';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NotificationService } from '../../services/popup/notification.service';
+import { LocalStorageService } from '../../services/localStorage/localStorage.service';
 import axios from 'axios';
-import {environments} from '../../../environments/environments';
-import {ChatComponent} from '../chat/chat.component';
-import {SocketService} from '../../socket.service';
-import {HeaderHeightService} from "../../services/header/header-height.service";
-import {AuctionEditComponent} from "../auction-edit/auction-edit.component";
+import { environments } from '../../../environments/environments';
+import { ChatComponent } from '../chat/chat.component';
+import { SocketService } from '../../socket.service';
+import { HeaderHeightService } from '../../services/header/header-height.service';
+import { AuctionEditComponent } from '../auction-edit/auction-edit.component';
 
 interface Course {
   name: string;
@@ -39,7 +38,6 @@ interface Course {
   year1: number;
   year2: number;
 }
-
 
 @Component({
   selector: 'app-auction-details',
@@ -199,16 +197,18 @@ export class AuctionDetailsComponent implements OnInit {
             this.auctionPrice.valueOf() + 0.01,
           );
 
-          if (this.auctionDetails && this.auctionDetails.book && this.auctionDetails.book.courses) {
+        if (
+          this.auctionDetails &&
+          this.auctionDetails.book &&
+          this.auctionDetails.book.courses
+        ) {
             this.auctionDetails.book.courses.forEach((course: any) => {
-              this.coursesUniversities.push(
-                {
+            this.coursesUniversities.push({
                   name: course.name,
                   university: course.university.name,
                   year1: course.year.year1,
                   year2: course.year.year2,
-                }
-              );
+            });
             });
           }
 
@@ -290,5 +290,19 @@ export class AuctionDetailsComponent implements OnInit {
   reloadPublicChatContent(comment: any) {
     if (this.tabGroup.selectedIndex !== 1) this.tabGroup.selectedIndex = 1;
     this.chatComponents.toArray()[1].reloadPublicChat();
+  }
+
+  async deleteAuction() {
+    try {
+      const res = await axios.delete(
+        environments.BACKEND_URL + '/api/auctions/' + this.auctionID,
+      );
+      if (res.status === 200) return await this.router.navigate(['/']);
+      return false;
+    } catch (err) {
+      console.log(err);
+      this.snackBar.notify('Error while deleting auction');
+      return false;
+    }
   }
 }

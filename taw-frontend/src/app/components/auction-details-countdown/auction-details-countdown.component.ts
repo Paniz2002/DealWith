@@ -4,7 +4,7 @@ import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, ViewChil
   selector: 'app-auction-details-countdown',
   templateUrl: './auction-details-countdown.component.html',
   standalone: true,
-  styleUrls: ['./auction-details-countdown.component.scss'] // Correzione del nome della proprietà
+  styleUrls: ['./auction-details-countdown.component.scss'], // Correzione del nome della proprietà
 })
 export class AuctionDetailsCountdownComponent implements AfterViewInit {
   date: any;
@@ -14,8 +14,18 @@ export class AuctionDetailsCountdownComponent implements AfterViewInit {
   targetTime: any;
   difference!: number;
   months: Array<string> = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
   currentTime!: string;
 
@@ -40,7 +50,9 @@ export class AuctionDetailsCountdownComponent implements AfterViewInit {
       this.difference = this.difference / (1000 * 60 * 60 * 24);
 
       if (!isNaN(this.days.nativeElement.innerText)) {
-        this.days.nativeElement.innerText = Math.floor(this.difference).toString();
+        this.days.nativeElement.innerText = Math.floor(
+          this.difference,
+        ).toString();
       } else {
         this.days.nativeElement.innerHTML = `<mat-spinner></mat-spinner>`;
       }
@@ -52,7 +64,11 @@ export class AuctionDetailsCountdownComponent implements AfterViewInit {
     this.now = this.date.getTime();
     this.days.nativeElement.innerText = Math.floor(this.difference).toString();
     this.hours.nativeElement.innerText = (23 - this.date.getHours()).toString();
-    this.minutes.nativeElement.innerText = (60 - this.date.getMinutes()).toString();
-    this.seconds.nativeElement.innerText = (60 - this.date.getSeconds()).toString();
+    this.minutes.nativeElement.innerText = (
+      60 - this.date.getMinutes()
+    ).toString();
+    this.seconds.nativeElement.innerText = (
+      60 - this.date.getSeconds()
+    ).toString();
   }
 }

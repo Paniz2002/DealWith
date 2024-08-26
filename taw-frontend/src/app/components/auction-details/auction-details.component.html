@@ -63,9 +63,13 @@
               {{ this.auctionDetails.book.title }}
               @if (this.auctionDetails.canOperate) {
                 @if (!this.isClientEditingAuction ) {
-                  <mat-icon style="margin-right:5pt" (click)="openAuctionEdit()">edit</mat-icon>
+                <mat-icon style="margin-right: 5pt" (click)="openAuctionEdit()"
+                  >edit</mat-icon
+                >
                 } @else {
-                  <mat-icon style="margin-right:5pt" (click)="closeAuctionEdit()">close</mat-icon>
+                <mat-icon style="margin-right: 5pt" (click)="closeAuctionEdit()"
+                  >close</mat-icon
+                >
                 }
               }
             </mat-card-title>
@@ -118,6 +122,11 @@
             @if (this.isOwner()) {
               <span style="color: red"> You are the owner of this auction </span>
             }
+          @if (this.isOwner() || this.userType === "moderator") {
+            <button mat-flat-button color="warn" (click)="deleteAuction()">
+              Delete
+            </button>
+          }
           </mat-card-content>
 
           @if (this.isUserLoggedIn && this.userType === "student") {
@@ -175,7 +184,8 @@
               </p>
             } @else {
               <p style="text-align: center; color: red">
-                This Auction isn't started yet, it will start on {{ this.startDateTime }}
+              This Auction isn't started yet, it will start on
+              {{ this.startDateTime }}
               </p>
               <app-auction-details-countdown [targetDate]="this.startDate"
                                              [isEndDate]="this.endDate.getTime() < Date.now()">
@@ -187,7 +197,11 @@
     </div>
 
     @if (this.isUserLoggedIn) {
-      <div [style.height]="auctionDetailsColumnHeight" id="chat-details" class="col-12 col-md-6">
+      <div
+        [style.height]="auctionDetailsColumnHeight"
+        id="chat-details"
+        class="col-12 col-md-6"
+      >
         @if (this.isClientEditingAuction && this.auctionID) {
           <app-auction-edit [auctionId]="this.auctionID"></app-auction-edit>
         } @else if(this.whoAmI && this.auctionDetails && this.auctionDetails.seller) {
