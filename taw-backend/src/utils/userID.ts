@@ -3,6 +3,7 @@ import BadRequestException from "../exceptions/bad-request";
 import UnauthorizedException from "../exceptions/unauthorized";
 import { JWT_SECRET } from "../secret";
 import * as jwt from "jsonwebtoken";
+import User from "../../models/user";
 /**
  * Computes the user _id from the request jwt cookie
  * @return user _id
@@ -18,8 +19,11 @@ export const getUserId = (req: Request, res: Response) => {
   }
   try {
     const payload = jwt.verify(token, JWT_SECRET) as any;
-    return payload._id;
+    if(!User.findById(payload._id.toString())){
+        return UnauthorizedException(req, res, "Unauthorized: Invalid JWT 1");
+    }
+    return payload._id.toString();
   } catch (e) {
-    return UnauthorizedException(req, res, "Unauthorized: Invalid JWT");
+    return UnauthorizedException(req, res, "Unauthorized: Invalid JWT 2");
   }
 };

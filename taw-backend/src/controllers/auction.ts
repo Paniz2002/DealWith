@@ -148,7 +148,7 @@ export const uploadAuctionImagesController = async (
         /*
         Check if the auction already has images, if it does, delete them (necessary to edit auction images)
         */
-        if(auction.images){
+        if (auction.images) {
             auction.images = [];
         }
 
@@ -365,6 +365,7 @@ export const getAuctionDetailsController = async (
     req: Request,
     res: Response,
 ) => {
+
     await connectDB();
     const auction_id = req.params.id;
 
@@ -396,12 +397,16 @@ export const getAuctionDetailsController = async (
             })
             .select("-__v -reserve_price");
 
+
         if (!auction) {
             return NotFound(req, res, "Auction not found");
         }
-
-        const canClientOperate = await canOperate(auction.seller._id.toString(), getUserId(req, res));
-        const response = {isActive: auction.isActive(),canOperate:canClientOperate, ...auction.toObject()}
+        let userId = undefined;
+        if (req.cookies.jwt) {
+            userId = getUserId(req, res);
+        }
+        const canClientOperate = userId ? await canOperate(auction.seller._id.toString(), userId) : false;
+        const response = {isActive: auction.isActive(), canOperate: canClientOperate, ...auction.toObject()}
 
         return res.status(200).json(response);
     } catch (err) {
@@ -772,7 +777,7 @@ export const editCommentController = async (req: Request, res: Response) => {
         if (!text) {
             return BadRequestException(req, res, "Bad request: text is required");
         }
-       comment.text = text;
+        comment.text = text;
         let repliedComment;
         if (replyTo) {
             repliedComment = await Comment.findById(replyTo).exec();
@@ -787,7 +792,7 @@ export const editCommentController = async (req: Request, res: Response) => {
         }
         if (Boolean(isPrivate)) {
             comment.private = true;
-           // comment.receiver = receiver; //FIXME: probably we dont have to change if im a moderator, so leave it as it is, so leave the comment
+            // comment.receiver = receiver; //FIXME: probably we dont have to change if im a moderator, so leave it as it is, so leave the comment
         } else {
             comment.private = undefined;
             comment.receiver = undefined;
@@ -806,13 +811,13 @@ export const patchAuctionController = async (req: Request, res: Response) => {
         const user_id = getUserId(req, res);
 
         const auction_id = req.params.id;
-        const {description, condition, book_title, book_author, ISBN } = req.body;
+        const {description, condition, book_title, book_author, ISBN} = req.body;
 
         await connectDB();
         const auction = await Auction.findById(auction_id);
         const book = await Book.findById(auction.book);
 
-        if(!await canOperate(auction.seller.toString(), user_id)){
+        if (!await canOperate(auction.seller.toString(), user_id)) {
             return UnauthorizedException(req, res, "Unauthorized: You are not the seller of this auction");
         }
 
@@ -820,7 +825,7 @@ export const patchAuctionController = async (req: Request, res: Response) => {
             return NotFoundException(req, res, "Auction not found");
         }
 
-        if(!book){
+        if (!book) {
             return NotFoundException(req, res, "Book not found");
         }
 
@@ -832,11 +837,11 @@ export const patchAuctionController = async (req: Request, res: Response) => {
             auction.condition = condition;
         }
 
-        if(book_title) book.title = book_title;
+        if (book_title) book.title = book_title;
 
-        if(book_author) book.author = book_author;
+        if (book_author) book.author = book_author;
 
-        if(ISBN) book.ISBN = ISBN;
+        if (ISBN) book.ISBN = ISBN;
 
         await book.save();
 
@@ -850,6 +855,7 @@ export const patchAuctionController = async (req: Request, res: Response) => {
 
 
 async function canOperate(user_id_to_check: string, user_id: string) {
+    console.log('canOperate', user_id_to_check, user_id);
     if (user_id_to_check === user_id) {
         return true;
     }
