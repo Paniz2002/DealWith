@@ -13,7 +13,7 @@ import {
     postAuctionCommentsController,
     getMyParticipatedAuctionsController,
     getMyAuctionsController,
-    getAuctionStatisticsController, deleteCommentController,
+    getAuctionStatisticsController, deleteCommentController, editCommentController,
 } from "../controllers/auction";
 import upload from "../config/multer";
 import { adminMiddleware } from "../middlewares/admin";
@@ -60,4 +60,5 @@ auctionRoutes.delete("/:id", [adminMiddleware], deleteAuctionController);
 
 
 auctionRoutes.delete("/:id/comments/:idcomment", [authMiddleware], deleteCommentController);
+auctionRoutes.put("/:id/comments/:idcomment", [authMiddleware], editCommentController);
 export default auctionRoutes;
