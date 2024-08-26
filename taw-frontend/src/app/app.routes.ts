@@ -5,14 +5,13 @@ import { AuctionFormComponent } from './components/auction-form/auction-form.com
 import { AuctionListComponent } from './components/auction-list/auction-list.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
-import { RouteNotFoundComponent } from './components/route-not-found/route-not-found.component';
 import { UpdatePasswordComponent } from './components/update-password/updatepassword.component';
 import { AdminGuard } from './guards/admin/adminGuard';
 import { AuthenticationGuard } from './guards/auth/authentication.guard';
 import { StudentGuard } from './guards/student/student.guard';
 import { StatisticsStudentComponent } from './components/statistics-student/statistics-student.component';
 import { StatisticsModeratorComponent } from './components/statistics-moderator/statistics-moderator.component';
-import {NotFoundComponent} from "./components/not-found/not-found.component";
+import { NotFoundComponent } from './components/not-found/not-found.component';
 export const routes: Routes = [
   {
     path: 'notfound',
@@ -70,6 +69,5 @@ export const routes: Routes = [
     component: AuctionListComponent,
     pathMatch: 'full',
   },
-
   { path: '**', component: NotFoundComponent },
 ];

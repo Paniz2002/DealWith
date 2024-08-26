@@ -588,7 +588,7 @@ export const deleteAuctionController = async (req: Request, res: Response) => {
     if (!user) {
       return NotFoundException(req, res, "User not found");
     }
-    if (!user.isModerator() || auction.seller !== userID)
+    if (!canOperate(auction.seller, userID))
       return BadRequestException(
         req,
         res,

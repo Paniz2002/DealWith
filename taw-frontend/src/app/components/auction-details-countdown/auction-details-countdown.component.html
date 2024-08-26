@@ -1,9 +1,8 @@
-
 <div class="count-down-timer">
-  @if(isEndDate){
-    <p> This auction expires on: {{ currentTime }}</p>
+  @if (isEndDate) {
+    <p>This auction expires on: {{ currentTime }}</p>
   } @else {
-    <p> This auction will start on: {{ currentTime }}</p>
+    <p>This auction will start on: {{ currentTime }}</p>
   }
   <div class="wrapper">
     <div class="description">
@@ -20,4 +19,3 @@
     </div>
   </div>
 </div>
-

@@ -130,7 +130,7 @@
             <span style="color: red"> You are the owner of this auction </span>
           }
           @if (this.isOwner() || this.userType === "moderator") {
-            <button mat-flat-button color="primary" (click)="deleteAuction()">
+            <button mat-flat-button color="warn" (click)="deleteAuction()">
               Delete
             </button>
           }
