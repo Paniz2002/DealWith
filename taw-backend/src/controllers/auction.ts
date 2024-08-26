@@ -374,6 +374,14 @@ export const getAuctionDetailsController = async (
     }
 
     try {
+        if (!(await Auction.exists({_id: auction_id}))) {
+            return NotFound(req, res, "Auction not found");
+        }
+    } catch (e) {
+        return NotFound(req, res, "Auction not found");
+    }
+
+    try {
         const auction = await Auction.findById(auction_id)
             .populate({
                 path: "book",
@@ -396,7 +404,6 @@ export const getAuctionDetailsController = async (
                 select: "-__v -password -email -role",
             })
             .select("-__v -reserve_price");
-
 
         if (!auction) {
             return NotFound(req, res, "Auction not found");
