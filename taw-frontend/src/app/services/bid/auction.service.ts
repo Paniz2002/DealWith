@@ -30,6 +30,25 @@ export class AuctionService {
     }
   }
 
+  async patchAuction(auctionForm: FormGroup, auctionId: string) {
+    try {
+      console.log(auctionForm.value);
+      const res = await axios.patch(
+        `${this.apiUrl}/api/auctions/${auctionId}`,
+        auctionForm.value,
+      );
+      return res.status === 200;
+    } catch (err: any) {
+      console.error('Error patching auction:', err);
+      if (err.response.data.message) {
+        this.snackBar.notify(err.response.data.message);
+      } else {
+        this.snackBar.notify('Error patching auction');
+      }
+      return false;
+    }
+  }
+
   async uploadImages(auctionId: string, files: File[]) {
     const formData = new FormData();
     for (let file of files) {

@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
   },
   filename: (req: Request, file: any, cb: any) => {
     const ext = path.extname(file.originalname).toLowerCase();
-    if (ext !== ".jpg" && ext !== ".jpeg" && ext !== ".png") {
+    if (ext !== ".jpg" && ext !== ".jpeg" && ext !== ".png" && ext !== ".webp") {
       return cb(new Error("Only .jpg and .png images are allowed"), false);
     }
     cb(null, "uploadedImage-" + Date.now() + ".webp"); // Salva sempre come .webp

@@ -23,7 +23,7 @@ const auctionRoutes: Router = Router();
 auctionRoutes.post("/", [studentMiddleware], newAuctionController); // middleware per verificare che ci acceda solo uno studente
 auctionRoutes.post(
   "/images",
-  [studentMiddleware, upload.array("images", 5)],
+  [upload.array("images", 5)],
   uploadAuctionImagesController,
 );
 auctionRoutes.get("/", getAuctionController);
@@ -54,7 +54,7 @@ auctionRoutes.post(
 );
 auctionRoutes.get("/:id", getAuctionDetailsController);
 auctionRoutes.post("/:id", [studentMiddleware], postAuctionBidController);
-auctionRoutes.patch("/:id", [adminMiddleware], patchAuctionController);
+auctionRoutes.patch("/:id", patchAuctionController);
 auctionRoutes.delete("/:id", [adminMiddleware], deleteAuctionController);
 
 

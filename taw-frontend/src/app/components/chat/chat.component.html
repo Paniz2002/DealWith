@@ -97,7 +97,7 @@
       <div class="message-input">
         <input [(ngModel)]="newMessage" placeholder="Type a message..." />
         <button (click)="saveEdit(replyToMessageData?.id)">Edit</button>
-        <button (click)="cancelEdit()">Cancel</button>
+        <button class ="cancel-edit-button" (click)="cancelEdit()">Cancel</button>
       </div>
     } @else {
       <div class="message-input">
