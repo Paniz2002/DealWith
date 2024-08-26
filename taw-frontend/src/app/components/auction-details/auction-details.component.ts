@@ -284,13 +284,16 @@ export class AuctionDetailsComponent implements OnInit {
   }
 
   async deleteAuction() {
-    axios
-      .delete(environments.BACKEND_URL + '/api/auctions/' + this.auctionID)
-      .then(async (res) => {
-        if (res.status === 200) return await this.router.navigate(['/']);
-        else this.snackBar.notify('Error while deleting auction');
-        return false;
-      });
-    return false;
+    try {
+      const res = await axios.delete(
+        environments.BACKEND_URL + '/api/auctions/' + this.auctionID,
+      );
+      if (res.status === 200) return await this.router.navigate(['/']);
+      return false;
+    } catch (err) {
+      console.log(err);
+      this.snackBar.notify('Error while deleting auction');
+      return false;
+    }
   }
 }

@@ -579,6 +579,7 @@ export const deleteAuctionController = async (req: Request, res: Response) => {
   await connectDB();
   const session: ClientSession = await mongoose.startSession();
   try {
+    session.startTransaction();
     const userID = getUserId(req, res);
     const auction = await Auction.findById(auction_id);
     const user = await User.findById(userID);
@@ -595,15 +596,16 @@ export const deleteAuctionController = async (req: Request, res: Response) => {
         "Bad request: You cannot delete this auction.",
       );
 
-    await Auction.deleteOne({ _id: auction_id });
-    await Comment.deleteMany({ auction: auction_id });
+    await Auction.deleteOne({ _id: auction_id }, { session });
+    await Comment.deleteMany({ auction: auction_id }, { session });
     await session.commitTransaction();
     return res.sendStatus(200);
   } catch (e) {
-    session.abortTransaction();
+    console.log(e);
+    await session.abortTransaction();
     return InternalException(req, res, "Error while deleting auction");
   } finally {
-    session.endSession();
+    await session.endSession();
   }
 };
 
