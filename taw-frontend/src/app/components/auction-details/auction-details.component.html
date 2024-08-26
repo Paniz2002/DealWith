@@ -1,7 +1,11 @@
 <!-- TODO: fare due col-6, la col-6 di destra ha le chat -->
 <div class="container-fluid">
   <div [style.height]="auctionDetailsColumnHeight" class="row">
-    <div [style.height]="auctionDetailsColumnHeight" id="card-details" class="col-12 col-md-6 overflow-scroll">
+    <div
+      [style.height]="auctionDetailsColumnHeight"
+      id="card-details"
+      class="col-12 col-md-6 overflow-scroll"
+    >
       <mat-card class="auction-card" appearance="outlined">
         <div
           [id]="'auctionCarousel' + this.auctionID"
@@ -59,11 +63,15 @@
         <mat-card-header>
           <mat-card-title>
             {{ this.auctionDetails.book.title }}
-            @if(this.auctionDetails.canOperate){
-              @if(!this.isClientEditingAuction){
-                <mat-icon style="margin-right:5pt" (click)="openAuctionEdit()">edit</mat-icon>
+            @if (this.auctionDetails.canOperate) {
+              @if (!this.isClientEditingAuction) {
+                <mat-icon style="margin-right: 5pt" (click)="openAuctionEdit()"
+                  >edit</mat-icon
+                >
               } @else {
-              <mat-icon style="margin-right:5pt" (click)="closeAuctionEdit()">close</mat-icon>
+                <mat-icon style="margin-right: 5pt" (click)="closeAuctionEdit()"
+                  >close</mat-icon
+                >
               }
             }
           </mat-card-title>
@@ -74,14 +82,21 @@
             ISBN: {{ this.auctionDetails.book.ISBN }}
           </mat-card-subtitle>
           <mat-card-subtitle>
-            @if(this.coursesUniversities.length === 1){
+            @if (this.coursesUniversities.length === 1) {
               Course:
             } @else {
               Courses:
             }
-            @for ( courseUniversity of this.coursesUniversities; track courseUniversity) {
-              <span>{{ courseUniversity.name }} {{ courseUniversity.year1}}/{{ courseUniversity.year2}}, {{courseUniversity.university}}</span>
-              @if(this.coursesUniversities.length > 1){
+            @for (
+              courseUniversity of this.coursesUniversities;
+              track courseUniversity
+            ) {
+              <span
+                >{{ courseUniversity.name }} {{ courseUniversity.year1 }}/{{
+                  courseUniversity.year2
+                }}, {{ courseUniversity.university }}</span
+              >
+              @if (this.coursesUniversities.length > 1) {
                 <span> | </span>
               }
             }
@@ -95,12 +110,12 @@
             Condition: {{ this.auctionDetails.condition }}
           </mat-card-subtitle>
         </mat-card-header>
-        <hr/>
+        <hr />
         <mat-card-content>
           @if (this.isActive) {
             <label for="price">Current bid:</label>
             <span id="price" class="price"> {{ this.auctionPrice }} EUR </span>
-          } @else if(endDate.getTime() < Date.now()) {
+          } @else if (endDate.getTime() < Date.now()) {
             <label for="price2">Last bid:</label>
             <span id="price2" class="price"> {{ this.auctionPrice }} EUR </span>
           } @else {
@@ -114,39 +129,44 @@
           @if (this.isOwner()) {
             <span style="color: red"> You are the owner of this auction </span>
           }
+          @if (this.isOwner() || this.userType === "moderator") {
+            <button mat-flat-button color="primary" (click)="deleteAuction()">
+              Delete
+            </button>
+          }
         </mat-card-content>
 
         @if (this.isUserLoggedIn && this.userType === "student") {
           @if (this.isActive && !this.isOwner()) {
             <mat-card-actions [style.width.%]="100">
-            <form [formGroup]="form" style="width: 100%">
-              <div class="row justify-content-center" style="width: 100%">
-                <div class="col-8 mt-3">
-                  <mat-form-field style="width: 100%" appearance="fill">
-                    <mat-label>Bid new price</mat-label>
-                    <input
-                      type="number"
-                      (change)="onPriceChange($event)"
-                      required
-                      matInput
-                      formControlName="bidPrice"
-                    />
-                    @if (form.invalid) {
-                      <mat-error>Please insert a price.</mat-error>
-                    }
-                  </mat-form-field>
+              <form [formGroup]="form" style="width: 100%">
+                <div class="row justify-content-center" style="width: 100%">
+                  <div class="col-8 mt-3">
+                    <mat-form-field style="width: 100%" appearance="fill">
+                      <mat-label>Bid new price</mat-label>
+                      <input
+                        type="number"
+                        (change)="onPriceChange($event)"
+                        required
+                        matInput
+                        formControlName="bidPrice"
+                      />
+                      @if (form.invalid) {
+                        <mat-error>Please insert a price.</mat-error>
+                      }
+                    </mat-form-field>
+                  </div>
+                  <div class="col-4 mt-4">
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      (click)="submitBid()"
+                    >
+                      Bid
+                    </button>
+                  </div>
                 </div>
-                <div class="col-4 mt-4">
-                  <button
-                    mat-raised-button
-                    color="primary"
-                    (click)="submitBid()"
-                  >
-                    Bid
-                  </button>
-                </div>
-              </div>
-            </form>
+              </form>
             </mat-card-actions>
           }
         }
@@ -165,15 +185,19 @@
           @if (this.isActive) {
             <app-auction-details-countdown [targetDate]="this.endDate">
             </app-auction-details-countdown>
-          } @else if(this.endDate.getTime() < Date.now()) {
+          } @else if (this.endDate.getTime() < Date.now()) {
             <p style="text-align: center; color: red">
               This Auction has expired on {{ this.endDateTime }}
             </p>
           } @else {
             <p style="text-align: center; color: red">
-              This Auction isn't started yet, it will start on {{ this.startDateTime }}
+              This Auction isn't started yet, it will start on
+              {{ this.startDateTime }}
             </p>
-            <app-auction-details-countdown [targetDate]="this.startDate" [isEndDate]="this.endDate.getTime() < Date.now()">
+            <app-auction-details-countdown
+              [targetDate]="this.startDate"
+              [isEndDate]="this.endDate.getTime() < Date.now()"
+            >
             </app-auction-details-countdown>
           }
         </mat-card-content>
@@ -181,11 +205,14 @@
     </div>
 
     @if (this.isUserLoggedIn) {
-      <div [style.height]="auctionDetailsColumnHeight" id="chat-details" class="col-12 col-md-6">
-        @if(this.isClientEditingAuction){
-          <app-auction-edit [auctionId]="this.auctionID"  ></app-auction-edit>
-        }
-        @else {
+      <div
+        [style.height]="auctionDetailsColumnHeight"
+        id="chat-details"
+        class="col-12 col-md-6"
+      >
+        @if (this.isClientEditingAuction) {
+          <app-auction-edit [auctionId]="this.auctionID"></app-auction-edit>
+        } @else {
           <mat-tab-group #tabs>
             <mat-tab label="Private Chat">
               <app-chat
