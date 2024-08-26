@@ -1,0 +1,48 @@
+.not-found-container {
+  text-align: center;
+  padding: 50px;
+}
+
+.not-found-container h1 {
+  font-size: 100px;
+  margin: 0;
+  color: #ff6f61;
+}
+
+.not-found-container h2 {
+  font-size: 24px;
+  margin: 20px 0;
+  color: #333;
+}
+
+.not-found-container p {
+  font-size: 18px;
+  color: #777;
+}
+
+.not-found-actions {
+  margin: 30px 0;
+}
+
+.not-found-actions .btn {
+  margin: 0 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  text-decoration: none;
+  color: #fff;
+  border-radius: 5px;
+}
+
+.not-found-actions .btn-primary {
+  background-color: #ff6f61;
+}
+
+.not-found-actions .btn-secondary {
+  background-color: #333;
+}
+
+.not-found-image {
+  max-width: 100%;
+  height: auto;
+  margin-top: 40px;
+}
