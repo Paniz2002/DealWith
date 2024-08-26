@@ -23,7 +23,7 @@ import {MatTabGroup, MatTabsModule} from '@angular/material/tabs';
 import {NgClass, NgForOf} from '@angular/common';
 import {AuctionDetailsCountdownComponent} from '../auction-details-countdown/auction-details-countdown.component';
 import {MatIconModule} from '@angular/material/icon';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {NotificationService} from '../../services/popup/notification.service';
 import {LocalStorageService} from '../../services/localStorage/localStorage.service';
 import axios from 'axios';
@@ -107,7 +107,7 @@ export class AuctionDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private snackBar: NotificationService,
-    protected localStorage: LocalStorageService,
+    private router: Router,
     protected socketService: SocketService,
     private headerHeightService: HeaderHeightService,
   ) {
@@ -207,6 +207,12 @@ export class AuctionDetailsComponent implements OnInit {
         this.loadAuctionImages();
       })
       .catch((err) => {
+        //if is 404
+        if (err.response.status === 404) {
+         //navigate to 404 page
+          this.router.navigate(['/notfound']);
+          return;
+        }
         this.snackBar.notify(err.message);
       });
   }

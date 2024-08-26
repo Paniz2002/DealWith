@@ -12,7 +12,13 @@ import { AuthenticationGuard } from './guards/auth/authentication.guard';
 import { StudentGuard } from './guards/student/student.guard';
 import { StatisticsStudentComponent } from './components/statistics-student/statistics-student.component';
 import { StatisticsModeratorComponent } from './components/statistics-moderator/statistics-moderator.component';
+import {NotFoundComponent} from "./components/not-found/not-found.component";
 export const routes: Routes = [
+  {
+    path: 'notfound',
+    component: NotFoundComponent,
+    pathMatch: 'full',
+  },
   {
     path: 'register',
     component: RegisterComponent,
@@ -64,5 +70,6 @@ export const routes: Routes = [
     component: AuctionListComponent,
     pathMatch: 'full',
   },
-  { path: '*', pathMatch: 'full', component: RouteNotFoundComponent },
+
+  { path: '**', component: NotFoundComponent },
 ];
