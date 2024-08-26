@@ -1,4 +1,8 @@
 <div class="auction-form-container">
+  <div class="mt-5 mx-3 text-center">
+    <h3> Add new Auction </h3>
+    <p style="color:grey"> Add a new auction, if your book or the course it belongs to is not present in our system, add it </p>
+  </div>
   <form [formGroup]="auctionForm" (ngSubmit)="onSubmit()">
     <!-- Book Select with Text Search and Create Option -->
     <mat-form-field appearance="fill">

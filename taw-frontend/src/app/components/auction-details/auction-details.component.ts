@@ -153,7 +153,6 @@ export class AuctionDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.headerHeightService.headerHeight$.subscribe((height) => {
       this.auctionDetailsColumnHeight = `calc(100vh - ${height}px)`;
-      console.log('navbard height', height);
     });
     this.initSocket();
     this.socketService.receivePublicComment((comment) => {

@@ -1,6 +1,9 @@
-<div class="row">
+<div class="row" [style.height]="loginHeight">
   <div class="col-auto"></div>
-  <div class="col-10 mx-auto">
+  <div class="col-10 mx-auto my-auto">
+    <div class="mt-5 mx-3 text-center">
+      <h3> Login </h3>
+    </div>
     <form [formGroup]="form" (ngSubmit)="onSubmit()" method="post">
       <div class="form-group row justify-content-center align-items-center">
         <mat-form-field>

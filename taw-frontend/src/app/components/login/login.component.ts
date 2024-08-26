@@ -20,6 +20,7 @@ import { RegisterComponent } from '../register/register.component';
 import { LocalStorageService } from '../../services/localStorage/localStorage.service';
 
 import { SocketService } from '../../socket.service';
+import {HeaderHeightService} from "../../services/header/header-height.service";
 
 @Component({
   selector: 'app-register',
@@ -40,16 +41,21 @@ import { SocketService } from '../../socket.service';
 export class LoginComponent implements OnInit {
   form!: FormGroup;
   isFormValid!: Boolean;
-
+  loginHeight: string = '100vh';
   constructor(
     private loginFormBuilder: FormBuilder,
     private router: Router,
     private snackBar: NotificationService,
     private localStorage: LocalStorageService,
     private socketService: SocketService,
+    private headerHeightService: HeaderHeightService
   ) {}
 
   ngOnInit() {
+    this.headerHeightService.headerHeight$.subscribe((height) => {
+      this.loginHeight = `calc(100vh - ${height}px)`;
+    });
+
     this.isFormValid = false;
     this.form = this.loginFormBuilder.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
