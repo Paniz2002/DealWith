@@ -184,8 +184,8 @@ export class AuctionDetailsComponent implements OnInit {
             this.months[this.endDate.getMonth()]
           } ${this.endDate.getDate()}, ${this.endDate.getFullYear()}`;
           this.startDateTime = `${
-            this.months[this.endDate.getMonth()]
-          } ${this.endDate.getDate()}, ${this.endDate.getFullYear()}`;
+            this.months[this.startDate.getMonth()]
+          } ${this.startDate.getDate()}, ${this.startDate.getFullYear()}`;
           this.auctionPrice = this.getLastBidPrice(
             this.auctionDetails.bids,
             this.auctionDetails.starting_price,
