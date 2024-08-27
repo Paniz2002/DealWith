@@ -20,6 +20,7 @@ import { environments } from '../../../environments/environments';
 import { RegisterComponent } from '../register/register.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DialogComponent } from '../dialog/dialog.component';
+import {MatButton} from "@angular/material/button";
 interface Student {
   _id: string;
   username: string;
@@ -41,6 +42,7 @@ interface Student {
     MatCheckboxModule,
     RegisterComponent,
     MatDialogModule,
+    MatButton,
   ],
   templateUrl: './admin-homepage.component.html',
   styleUrls: ['./admin-homepage.component.css'],
