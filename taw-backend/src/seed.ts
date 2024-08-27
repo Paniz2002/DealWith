@@ -164,10 +164,6 @@ const seedBooks = async (): Promise<void> => {
 };
 
 const seedAuctions = async (): Promise<void> => {
-  /*const imagesPath = path.join(__dirname, "data", "images", "sample");
-    const images = ["sample1.webp", "sample2.webp", "sample3.webp"].map((image) =>
-        path.join(imagesPath, image),
-  );*/
 
     const booksFilePath = path.join(__dirname, "data", "books.json");
     const booksData = JSON.parse(fs.readFileSync(booksFilePath, "utf-8"));

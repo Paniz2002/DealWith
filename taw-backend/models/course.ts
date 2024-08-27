@@ -17,19 +17,6 @@ const CourseSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: University,
   },
-
- /* auctions: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: Auction,
-    },
-  ],
-  books: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: Book,
-    },
-  ],*/
 });
 
 CourseSchema.index({ "$**": "text" });

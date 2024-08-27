@@ -14,12 +14,6 @@ const UniversitySchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: City,
   },
-  /*courses: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: Course,
-    },
-  ], */
 });
 
 UniversitySchema.plugin(uniqueValidator, { message: "already exists" });

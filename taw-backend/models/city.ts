@@ -26,10 +26,6 @@ const CitySchema = new mongoose.Schema({
         type: String,
         required: [true, "can't be blank"]
     },
- /*   universities: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: University
-    }] */
 });
 
 CitySchema.plugin(uniqueValidator, { message: 'already exists' });

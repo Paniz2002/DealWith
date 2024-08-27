@@ -37,12 +37,6 @@ const BookSchema = new mongoose.Schema({
       ref: Course,
     },
   ],
-    /* auctions: [
-       {
-         type: mongoose.Schema.Types.ObjectId,
-         ref: Auction,
-       },
-     ], */
 });
 
 
