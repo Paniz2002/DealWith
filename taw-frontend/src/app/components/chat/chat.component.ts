@@ -3,7 +3,7 @@ import axios from 'axios';
 import {environments} from '../../../environments/environments';
 import {FormsModule} from '@angular/forms';
 import {NotificationService} from '../../services/popup/notification.service';
-import {NgClass} from '@angular/common';
+import {DatePipe, NgClass} from '@angular/common';
 import {
   MatExpansionPanel,
   MatExpansionPanelTitle,
@@ -19,6 +19,7 @@ interface Message {
   content: string;
   receiver?: string;
   replyTo?: Message;
+  created_at: string;
 }
 
 interface Conversation {
@@ -32,7 +33,7 @@ interface Conversation {
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   standalone: true,
-  imports: [FormsModule, NgClass, MatExpansionPanel, MatExpansionPanelTitle, MatExpansionPanelHeader, MatExpansionPanelDescription, MatIcon],
+  imports: [FormsModule, NgClass, MatExpansionPanel, MatExpansionPanelTitle, MatExpansionPanelHeader, MatExpansionPanelDescription, MatIcon, DatePipe],
   styleUrls: ['./chat.component.css'],
 })
 export class ChatComponent implements OnInit {
@@ -102,7 +103,8 @@ export class ChatComponent implements OnInit {
                     id: getRepliedMessage._id,
                     author: getRepliedMessage.sender.username,
                     content: getRepliedMessage.text,
-                    receiver: getRepliedMessage.receiver.username
+                    receiver: getRepliedMessage.receiver.username,
+                    created_at: getRepliedMessage.createdAt
                   };
                 }
 
@@ -112,7 +114,8 @@ export class ChatComponent implements OnInit {
                   author: sender.username,
                   content: text,
                   receiver: receiver.username,
-                  replyTo: repliedMessage
+                  replyTo: repliedMessage,
+                  created_at: data.createdAt
                 });
               }
             }
@@ -141,7 +144,8 @@ export class ChatComponent implements OnInit {
                   id: getRepliedMessage._id,
                   author: getRepliedMessage.sender.username,
                   content: getRepliedMessage.text,
-                  receiver: getRepliedMessage.receiver.username
+                  receiver: getRepliedMessage.receiver.username,
+                  created_at: getRepliedMessage.createdAt
                 };
               }
 
@@ -151,7 +155,8 @@ export class ChatComponent implements OnInit {
                 content: text,
                 receiver: receiver.username,
                 replyTo: repliedMessage,
-                canOperate: data.canOperate
+                canOperate: data.canOperate,
+                created_at: data.createdAt
               });
             }
           }
@@ -188,7 +193,8 @@ export class ChatComponent implements OnInit {
                 //  canOperate: getRepliedMessage.canOperate,
                 id: getRepliedMessage._id,
                 author: getRepliedMessage.sender.username,
-                content: getRepliedMessage.text
+                content: getRepliedMessage.text,
+                created_at: getRepliedMessage.createdAt
               };
             }
           }
@@ -198,7 +204,8 @@ export class ChatComponent implements OnInit {
             author: sender.username,
             content: text,
             replyTo: repliedMessage,
-            canOperate: canOperate
+            canOperate: canOperate,
+            created_at: data.createdAt
           });
 
         }

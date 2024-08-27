@@ -39,15 +39,25 @@
       @if (selectedConversation) {
         <!-- Itera sui messaggi della conversazione selezionata -->
         @for (message of selectedConversation.messages; track message) {
-          <div
-            class="message"
+          <div class="message"
             [ngClass]="{
               sent: message.author === whoAmI,
               received: message.author !== whoAmI,
             }"
-            [id]="message.id"
-          >
-            <div class="message-author">{{ message.author }}</div>
+            [id]="message.id">
+            <div class="message-metadata">
+              @if(message.author !== whoAmI){
+                <span class="message-date">
+                  {{ message.created_at | date: 'short' }}
+                </span>
+              }
+              <div class="message-author">{{ message.author }}</div>
+              @if(message.author === whoAmI){
+                <span class="message-date">
+                  {{ message.created_at | date: 'short' }}
+                </span>
+              }
+            </div>
             <div class="message-content">
               <!-- Visualizza il messaggio a cui si sta rispondendo -->
               @if (message.replyTo) {

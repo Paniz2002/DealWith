@@ -121,7 +121,12 @@
           <mat-card-content>
             @if (this.isActive) {
               <label for="price">Current bid:</label>
-              <span id="price" class="price"> {{ this.auctionPrice }} EUR </span>
+              <span id="price" class="price">
+                {{ this.auctionPrice }} EUR
+                @if(this.isNewBidReceived && !this.isClientLastBidOwner(this.auctionDetails.bids)){
+                  <mat-icon style="color:red">circle</mat-icon>
+                }
+              </span>
             } @else if (endDate.getTime() < Date.now()) {
               <label for="price2">Last bid:</label>
               <span id="price2" class="price"> {{ this.auctionPrice }} EUR </span>

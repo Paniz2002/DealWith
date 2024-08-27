@@ -470,7 +470,7 @@ export const getAuctionCommentsController = async (
     private: null,
     auction: auctionID,
   })
-    .select("-__v -createdAt -updatedAt")
+    .select("-__v -updatedAt")
     .populate({ path: "sender", select: "username _id" })
     .populate({ path: "inReplyTo" })
     .sort({ createdAt: 1 })

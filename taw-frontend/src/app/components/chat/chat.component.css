@@ -89,6 +89,28 @@ mat-expansion-panel {
   text-align: left;
 }
 
+.message-metadata {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.message-date {
+  font-size: 12px;
+  color: #555; /* Grigio scuro */
+}
+
+.message-date {
+  order: 2; /* Posiziona a destra */
+  margin-left: auto;
+}
+
+/*.message-author {
+  font-weight: bold;
+  margin: 0 10px;
+}*/
+
 .message-author {
   font-weight: bold;
   margin-bottom: 5px;
@@ -195,7 +217,7 @@ mat-expansion-panel {
 .sent .actions {
   position: absolute;
   bottom:5px;
-  right: 85%; /* Adjust this value to control the distance from the right edge */
+  left: 5px; /* Adjust this value to control the distance from the right edge */
   cursor: pointer;
   color: #3f51b5; /* Indigo-500 */
 }

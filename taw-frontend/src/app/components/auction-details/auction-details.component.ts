@@ -95,6 +95,7 @@ export class AuctionDetailsComponent implements OnInit {
   auctionPrice: Number = -1;
   isActive!: boolean;
   isLastBidOwner!: boolean;
+  isNewBidReceived: boolean = false;
   form: FormGroup = new FormGroup({
     bidPrice: new FormControl('', [Validators.required]),
   });
@@ -131,7 +132,7 @@ export class AuctionDetailsComponent implements OnInit {
     return this.auctionDetails.seller._id === this.myId;
   }
 
-  private isClientLastBidOwner(bids: any): any {
+  protected isClientLastBidOwner(bids: any): any {
     if (bids.length === 0) {
       return false;
     }
@@ -149,6 +150,27 @@ export class AuctionDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadAuctionDetails();
+
+    this.initSocket();
+    this.socketService.receivePublicComment((comment) => {
+      console.log('Received public comment');
+      this.reloadPublicChatContent(comment);
+    });
+
+    this.socketService.receivePrivateComment((comment) => {
+      console.log('Received private comment');
+      this.reloadPrivateChatContent(comment);
+    });
+
+    this.socketService.receiveNewBid((comment) => {
+      // partial update of auction details
+      this.reloadBidDetails();
+      this.isNewBidReceived = true;
+    });
+  }
+
+  loadAuctionDetails() {
     this.auctionID = this.route.snapshot.paramMap.get('id')!;
     axios.get(environments.BACKEND_URL + '/api/auth/me').then((res: any) => {
       this.whoAmI = res.data.username;
@@ -158,20 +180,6 @@ export class AuctionDetailsComponent implements OnInit {
 
       this.headerHeightService.headerHeight$.subscribe((height) => {
         this.auctionDetailsColumnHeight = `calc(100vh - ${height}px)`;
-      });
-      this.initSocket();
-      this.socketService.receivePublicComment((comment) => {
-        console.log('Received public comment');
-        this.reloadPublicChatContent(comment);
-      });
-
-      this.socketService.receivePrivateComment((comment) => {
-        console.log('Received private comment');
-        this.reloadPrivateChatContent(comment);
-      });
-
-      this.socketService.receiveNewBid((comment) => {
-        window.location.reload();
       });
 
       axios
@@ -192,26 +200,26 @@ export class AuctionDetailsComponent implements OnInit {
           );
           this.isActive = details.data.isActive;
 
-          this.isLastBidOwner = this.isClientLastBidOwner(
-            this.auctionDetails.bids,
-          );
+          this.isLastBidOwner = this.isClientLastBidOwner(this.auctionDetails.bids);
 
           this.form.controls['bidPrice'].setValue(
             this.auctionPrice.valueOf() + 0.01,
           );
 
-        if (
-          this.auctionDetails &&
-          this.auctionDetails.book &&
-          this.auctionDetails.book.courses
-        ) {
+          if (
+            this.auctionDetails &&
+            this.auctionDetails.book &&
+            this.auctionDetails.book.courses
+          )
+          {
+            this.coursesUniversities = [];
             this.auctionDetails.book.courses.forEach((course: any) => {
-            this.coursesUniversities.push({
-                  name: course.name,
-                  university: course.university.name,
-                  year1: course.year.year1,
-                  year2: course.year.year2,
-            });
+              this.coursesUniversities.push({
+                name: course.name,
+                university: course.university.name,
+                year1: course.year.year1,
+                year2: course.year.year2,
+              });
             });
           }
 
@@ -228,6 +236,23 @@ export class AuctionDetailsComponent implements OnInit {
     });
   }
 
+  reloadBidDetails() {
+    axios.get(environments.BACKEND_URL + '/api/auctions/' + this.auctionID).then((details: any) => {
+      this.auctionDetails.bids = details.data.bids;
+      this.auctionDetails.starting_price = details.data.starting_price;
+      this.auctionPrice = this.getLastBidPrice(
+        this.auctionDetails.bids,
+        this.auctionDetails.starting_price,
+      );
+
+      this.isLastBidOwner = this.isClientLastBidOwner(this.auctionDetails.bids);
+
+      this.form.controls['bidPrice'].setValue(
+        this.auctionPrice.valueOf() + 0.01,
+      );
+    });
+  }
+
   protected async submitBid(): Promise<void> {
     const params = {
       auctionID: this.auctionID,
@@ -238,7 +263,7 @@ export class AuctionDetailsComponent implements OnInit {
       params,
     );
 
-    window.location.reload();
+    this.reloadBidDetails();
   }
 
   private loadAuctionImages(): void {
