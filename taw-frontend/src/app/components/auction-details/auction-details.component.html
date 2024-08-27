@@ -57,21 +57,35 @@
               <span class="visually-hidden">Next</span>
             </a>
           </div>
+          <div class="auction-editing row mt-2">
+            <div class="col-6 d-flex justify-content-center">
+              @if (this.auctionDetails.canOperate && this.auctionDetails.isActive) {
+                <div class="d-flex align-items-center text-icon" style="color:red" (click)="deleteAuction()">
+                  <mat-icon>delete</mat-icon>
+                  <a> Delete Auction </a>
+                </div>
+              }
+            </div>
+            <div class="col-6 d-flex justify-content-center">
+              @if (this.auctionDetails.canOperate) {
+                @if (!this.isClientEditingAuction ) {
+                  <div class="d-flex align-items-center text-icon" (click)="openAuctionEdit()">
+                    <mat-icon>edit</mat-icon>
+                    <a> Edit auction </a>
+                  </div>
+                } @else {
+                  <div class="d-flex align-items-center text-icon" (click)="closeAuctionEdit()">
+                    <mat-icon>close</mat-icon>
+                    <a> Close Auction editor </a>
+                  </div>
+                }
+              }
+            </div>
 
+          </div>
           <mat-card-header>
             <mat-card-title>
               {{ this.auctionDetails.book.title }}
-              @if (this.auctionDetails.canOperate) {
-                @if (!this.isClientEditingAuction ) {
-                <mat-icon style="margin-right: 5pt" (click)="openAuctionEdit()"
-                  >edit</mat-icon
-                >
-                } @else {
-                <mat-icon style="margin-right: 5pt" (click)="closeAuctionEdit()"
-                  >close</mat-icon
-                >
-                }
-              }
             </mat-card-title>
             <mat-card-subtitle
             >Author: {{ this.auctionDetails.book.author }}
@@ -122,11 +136,6 @@
             @if (this.isOwner()) {
               <span style="color: red"> You are the owner of this auction </span>
             }
-          @if (this.isOwner() || this.userType === "moderator") {
-            <button mat-flat-button color="warn" (click)="deleteAuction()">
-              Delete
-            </button>
-          }
           </mat-card-content>
 
           @if (this.isUserLoggedIn && this.userType === "student") {
@@ -176,7 +185,7 @@
           <mat-card-content>
             <!-- Get countdown from end date-->
             @if (this.isActive) {
-              <app-auction-details-countdown [targetDate]="this.endDate">
+              <app-auction-details-countdown [targetDate]="this.endDate" [isEndDate]="true">
               </app-auction-details-countdown>
             } @else if (this.endDate.getTime() < Date.now()) {
               <p style="text-align: center; color: red">
@@ -188,7 +197,7 @@
               {{ this.startDateTime }}
               </p>
               <app-auction-details-countdown [targetDate]="this.startDate"
-                                             [isEndDate]="this.endDate.getTime() < Date.now()">
+                                             [isEndDate]="false">
               </app-auction-details-countdown>
             }
           </mat-card-content>

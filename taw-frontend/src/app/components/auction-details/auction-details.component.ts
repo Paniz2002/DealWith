@@ -31,6 +31,8 @@ import { ChatComponent } from '../chat/chat.component';
 import { SocketService } from '../../socket.service';
 import { HeaderHeightService } from '../../services/header/header-height.service';
 import { AuctionEditComponent } from '../auction-edit/auction-edit.component';
+import {MatDialog} from "@angular/material/dialog";
+import {DialogComponent} from "../dialog/dialog.component";
 
 interface Course {
   name: string;
@@ -109,6 +111,7 @@ export class AuctionDetailsComponent implements OnInit {
     private router: Router,
     protected socketService: SocketService,
     private headerHeightService: HeaderHeightService,
+    public dialog: MatDialog,
   ) {
     this.auctionID = this.route.snapshot.paramMap.get('id')!;
 
@@ -215,8 +218,7 @@ export class AuctionDetailsComponent implements OnInit {
           this.loadAuctionImages();
         })
         .catch((err) => {
-          //if is 404
-          if (err.response.status === 404) {
+          if (!err.ok) {
             //navigate to 404 page
             this.router.navigate(['/notfound']);
             return;
@@ -293,16 +295,34 @@ export class AuctionDetailsComponent implements OnInit {
   }
 
   async deleteAuction() {
-    try {
-      const res = await axios.delete(
-        environments.BACKEND_URL + '/api/auctions/' + this.auctionID,
-      );
-      if (res.status === 200) return await this.router.navigate(['/']);
-      return false;
-    } catch (err) {
-      console.log(err);
-      this.snackBar.notify('Error while deleting auction');
-      return false;
-    }
+
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: '250px',
+      data: {title: 'Delete Auction', content: 'Are you sure you want to delete this auction?'}
+    });
+
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result) {
+        try {
+
+          const res = await axios.delete(
+            environments.BACKEND_URL + '/api/auctions/' + this.auctionID,
+          );
+
+          if (res.status === 200) {
+            this.snackBar.notify('Auction deleted successfully');
+            return this.router.navigate(['/']);
+          }
+          return;
+        } catch (err) {
+          console.log(err);
+          this.snackBar.notify('Error while deleting auction');
+          return;
+        }
+      }else{
+        this.snackBar.notify('Auction deletion cancelled');
+        return;
+      }
+    });
   }
 }

@@ -69,5 +69,5 @@ export const routes: Routes = [
     component: AuctionListComponent,
     pathMatch: 'full',
   },
-  { path: '**', component: NotFoundComponent },
+  { path: '**', redirectTo: 'notfound' },
 ];

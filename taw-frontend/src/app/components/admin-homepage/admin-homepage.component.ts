@@ -127,7 +127,12 @@ export class AdminHomepageComponent implements AfterViewInit {
       this.snackBar.notify("You can't select 0 students.");
       return;
     }
-    let component = this.dialog.open(DialogComponent);
+    let component = this.dialog.open(DialogComponent,{
+      data: {
+        title: 'Delete students',
+        content: 'Are you sure you want to delete the selected students?',
+      },
+    });
     component.afterClosed().subscribe(async (dialogResult) => {
       if (!dialogResult) return;
       const res = await axios.delete(
