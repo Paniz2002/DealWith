@@ -18,8 +18,8 @@ export class StatisticsModeratorComponent implements OnInit {
   public lineChartData: ChartDataset[] = [
     {data: [], label: 'Closed and Sold Auctions', hidden: false},
     {data: [], label: 'Closed and Not Sold Auctions', hidden: false},
-    {data: [], label: 'Open and Sold Auctions', hidden: false},
-    {data: [], label: 'Open and Not Sold Auctions', hidden: false}
+    {data: [], label: 'Open Auctions Meeting Reserving Price', hidden: false},
+    {data: [], label: 'Open Auctions Not Meeting Reserving Price', hidden: false}
   ];
   public lineChartLabels: string[] = [];
 
