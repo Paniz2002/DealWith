@@ -73,17 +73,15 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
 
   async ngOnInit(): Promise<void> {
     this.notifications = []; // Reset notifications
-    if (this.isUserLoggedIn) {
-      this.initSocket();
-      this.socketService.receiveMessage((message) => {
-        this.setNotificationCnt(message);
-      });
-    }
     this.changes = this.router.events.subscribe(async (event) => {
       const res = await axios.get(environments.BACKEND_URL + '/api/auth/me');
       this.isUserLoggedIn = res.status === 200;
       if (this.isUserLoggedIn) {
         this.userType = res.data.is_moderator ? 'moderator' : 'student';
+        this.initSocket();
+        this.socketService.receiveMessage((message) => {
+          this.setNotificationCnt(message);
+        });
       }
     });
   }

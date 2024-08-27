@@ -72,11 +72,11 @@ UserSchema.pre("save", function (next) {
 });
 
 UserSchema.post("save", async function (doc) {
-  const newNotifications = [...filterVisibleNotifications(doc.notifications)];
+  const newNotifications = [...filterVisibleNotifications(this.notifications)];
   if (
     JSON.stringify(originalNotifications) !== JSON.stringify(newNotifications)
   ) {
-    sendNotification(doc._id.toString());
+    sendNotification(this._id.toString());
   }
 });
 

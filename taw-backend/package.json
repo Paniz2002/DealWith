@@ -5,10 +5,12 @@
   "main": "out/index.js",
   "scripts": {
     "build": "npx tsc",
+    "seed:prod": "NODE_ENV=production node ./out/seed.js",
+    "prestart": "NODE_ENV=production node ./out/seed.js",
     "start": "node out/index.js",
-    "dev": "nodemon src/index.ts",
     "seed:init": "ts-node ./src/seed.ts",
-    "seed:prod": "NODE_ENV=production node ./out/seed.js"
+    "predev": "ts-node ./src/seed.ts",
+    "dev": "nodemon src/index.ts"
   },
   "author": "",
   "license": "ISC",
