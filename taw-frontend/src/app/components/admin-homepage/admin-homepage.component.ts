@@ -21,6 +21,13 @@ import { RegisterComponent } from '../register/register.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DialogComponent } from '../dialog/dialog.component';
 import { MatButton } from '@angular/material/button';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
 interface Student {
   _id: string;
   username: string;
@@ -34,9 +41,11 @@ interface Student {
   imports: [
     MatTabsModule,
     MatIconModule,
+    ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatTableModule,
+    MatSelectModule,
     MatSortModule,
     MatPaginatorModule,
     MatCheckboxModule,
@@ -48,6 +57,8 @@ interface Student {
   styleUrls: ['./admin-homepage.component.css'],
 })
 export class AdminHomepageComponent implements AfterViewInit {
+  addUni: FormGroup;
+  addCourse: FormGroup;
   students: MatTableDataSource<Student> = new MatTableDataSource<Student>();
   displayedColumns: Array<String> = [
     'select',
@@ -58,14 +69,27 @@ export class AdminHomepageComponent implements AfterViewInit {
   ];
   selection = new SelectionModel<Student>(true, []);
   dialog: MatDialog;
+  cities: any;
+  universities: any;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private snackBar: NotificationService,
     private changes: ChangeDetectorRef,
+    private form: FormBuilder,
   ) {
     this.dialog = inject(MatDialog);
+    this.addUni = this.form.group({
+      name: ['', [Validators.required]],
+      city: ['', [Validators.required]],
+    });
+    this.addCourse = this.form.group({
+      name: ['', [Validators.required]],
+      uni: ['', [Validators.required]],
+      year1: ['', [Validators.required]],
+      year2: ['', [Validators.required]],
+    });
   }
 
   ngAfterViewInit(): void {
@@ -87,6 +111,16 @@ export class AdminHomepageComponent implements AfterViewInit {
         if (axios.isAxiosError(err)) {
           this.snackBar.notify(err.response?.data.message);
         }
+      });
+
+    axios.get(environments.BACKEND_URL + '/api/admin/cities').then((res) => {
+      this.cities = res.data;
+    });
+
+    axios
+      .get(environments.BACKEND_URL + '/api/admin/universities')
+      .then((res) => {
+        this.universities = res.data;
       });
   }
 
@@ -159,5 +193,44 @@ export class AdminHomepageComponent implements AfterViewInit {
         this.changes.detectChanges();
       }
     });
+  }
+
+  async addUniversity() {
+    if (this.addUni.valid) {
+      const res = await axios.post(
+        environments.BACKEND_URL + '/api/admin/universities',
+        {
+          name: this.addUni.controls['name'].value,
+          cityID: this.addUni.controls['city'].value,
+        },
+      );
+      if (res.status !== 200) {
+        this.snackBar.notify('Error with request.');
+      }
+      this.snackBar.notify('University added.');
+    } else {
+      this.snackBar.notify('Invalid form.');
+      return;
+    }
+  }
+  async addCourseToUni() {
+    if (this.addUni.valid) {
+      const res = await axios.post(
+        environments.BACKEND_URL + '/api/admin/universities',
+        {
+          name: this.addCourse.controls['name'].value,
+          university: this.addCourse.controls['uni'].value,
+          year1: this.addCourse.controls['year1'].value,
+          year2: this.addCourse.controls['year2'].value,
+        },
+      );
+      if (res.status !== 200) {
+        this.snackBar.notify('Error with request.');
+      }
+      this.snackBar.notify('Course added.');
+    } else {
+      this.snackBar.notify('Invalid form.');
+      return;
+    }
   }
 }

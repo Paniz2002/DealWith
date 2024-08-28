@@ -3,7 +3,7 @@ import connectDB from "../../config/db";
 import UserModel from "../../../models/user";
 import InternalException from "../../exceptions/internal-exception";
 export const getStudentsController = async (req: Request, res: Response) => {
-  await connectDB();
+  connectDB();
   const filters = {
     role: "student",
   };
@@ -14,7 +14,7 @@ export const getStudentsController = async (req: Request, res: Response) => {
 
 export const deleteStudentsController = async (req: Request, res: Response) => {
   try {
-    await connectDB();
+    connectDB();
     const { users } = req.body;
     for await (const user of users) {
       let u = await UserModel.findById({ _id: user._id });
