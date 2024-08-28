@@ -1,85 +1,141 @@
-<mat-card>
-  <div class="row" [formGroup]="form">
-    <div
-      class="col-lg-2 col-md-3 col-6 d-flex align-items-center justify-content-center"
-    >
-      <mat-form-field class="form-field" appearance="outline">
-        <mat-label>Search</mat-label>
-        <input
-          matInput
-          type="text"
-          formControlName="queryString"
-          placeholder=""
-        />
-        @if (this.form.controls["queryString"].errors) {
-          <mat-error>Please write atleast 1 character.</mat-error>
-        }
-      </mat-form-field>
-    </div>
+<div class="container-fluid">
+  <div class="row sticky-top mt-4" id="filterRow">
+    <div class="d-flex align-items-center transition-width" [ngClass]="toggleClassBasedOnSticky()">
+      <div class="w-100" [formGroup]="form">
+        <!-- Advanced Search Expansion Panel -->
+        <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)" class="mat-elevation-z0">
+          <mat-expansion-panel-header>
+            <!-- Search Bar in Header -->
+            <div class="row w-100">
+              <div class="col-12 d-flex align-items-center">
+                <input
+                  type="text"
+                  class="form-control custom-input"
+                  formControlName="queryString"
+                  placeholder="Search for products"
+                />
+                <button
+                  class="btn btn-primary custom-button"
+                  (click)="searchWithFilters()"
+                >
+                  <mat-icon>search</mat-icon>
+                </button>
+              </div>
+            </div>
+          </mat-expansion-panel-header>
 
-      <div class="col-lg-2 col-md-3 col-3 d-flex align-items-center justify-content-center">
-      <mat-form-field class="form-field">
-        <mat-label>Min. price</mat-label>
-        <input type="number" matInput formControlName="minStartingPrice" />
-      </mat-form-field>
-      </div>
-      <div class="col-lg-2 col-md-3 col-3 mx-auto my-auto d-flex align-items-center justify-content-center">
-        <mat-form-field class="form-field">
-          <mat-label>Max. price</mat-label>
-          <input type="number" matInput formControlName="maxStartingPrice" />
-        </mat-form-field>
+          <!-- Advanced Filters Inside Expansion Panel -->
+          <div class="row gx-2 gy-2 justify-content-center mt-3">
+            <!-- Min Price Field -->
+            <div
+              class="col-lg-3 col-md-4 col-6 d-flex align-items-center justify-content-center"
+            >
+              <div class="w-100">
+                @if(form.controls['minStartingPrice'].touched &&
+                form.controls['minStartingPrice'].invalid){
+                <div class="text-danger small mb-1">
+                  Please enter a valid minimum price.
+                </div>
+                }
+                <input
+                  type="number"
+                  class="form-control custom-input"
+                  formControlName="minStartingPrice"
+                  placeholder="Min. price"
+                />
+              </div>
+            </div>
+            <!-- Max Price Field -->
+            <div
+              class="col-lg-3 col-md-4 col-6 d-flex align-items-center justify-content-center"
+            >
+              <div class="w-100">
+                @if(form.controls['maxStartingPrice'].touched &&
+                form.controls['maxStartingPrice'].invalid){
+                <div class="text-danger small mb-1">
+                  Please enter a valid maximum price.
+                </div>
+                }
+                <input
+                  type="number"
+                  class="form-control custom-input"
+                  formControlName="maxStartingPrice"
+                  placeholder="Max. price"
+                />
+              </div>
+            </div>
+            <!-- Condition Field -->
+            <div
+              class="col-lg-3 col-md-4 col-6 d-flex align-items-center justify-content-center"
+            >
+              <div class="w-100">
+                @if(form.controls['condition'].touched &&
+                form.controls['condition'].invalid){
+                <div class="text-danger small mb-1">
+                  Please select a condition.
+                </div>
+                }
+                <select
+                  class="form-select custom-input"
+                  formControlName="condition"
+                >
+                  <option value="" disabled selected>Minimum condition</option>
+                  <option value="Mint">Mint</option>
+                  <option value="Near Mint">Near Mint</option>
+                  <option value="Excellent">Excellent</option>
+                  <option value="Good">Good</option>
+                  <option value="Fair">Fair</option>
+                  <option value="Poor">Poor</option>
+                </select>
+              </div>
+            </div>
+            <!-- Active Checkbox -->
+            <div
+              class="col-lg-3 col-md-12 col-6 d-flex align-items-center justify-content-center"
+            >
+              <div class="form-check">
+                <input
+                  class="form-check-input custom-checkbox"
+                  type="checkbox"
+                  formControlName="active"
+                  (click)="toggleActive()"
+                />
+                <label class="form-check-label custom-label">
+                  only active
+                </label>
+              </div>
+            </div>
+          </div>
+        </mat-expansion-panel>
       </div>
 
-    <div
-      class="col-lg-2 col-md-3 col-6 d-flex align-items-center justify-content-center"
-    >
-      <mat-form-field class="form-field">
-        <mat-label>Minimum condition</mat-label>
-        <mat-select formControlName="condition">
-          <mat-option value="Mint">Mint</mat-option>
-          <mat-option value="Near Mint">Near Mint</mat-option>
-          <mat-option value="Excellent">Excellent</mat-option>
-          <mat-option value="Good">Good</mat-option>
-          <mat-option value="Fair">Fair</mat-option>
-          <mat-option value="Poor">Poor</mat-option>
-        </mat-select>
-        @if (this.form.controls["condition"].errors) {
-          <mat-error>Please select a condition.</mat-error>
-        }
-      </mat-form-field>
-    </div>
-    <div
-      class="col-lg-2 col-md-12 col-6 mx-auto d-flex align-items-center justify-content-center"
-    >
-      <mat-checkbox formControlName="active" (click)="toggleActive()"
-        >Show only active auctions</mat-checkbox
-      >
-    </div>
-    <div
-      class="col-lg-2 col-12 d-flex align-items-center justify-content-center"
-    >
-      <button mat-raised-button color="primary" (click)="searchWithFilters()">
-        Filter
-      </button>
     </div>
   </div>
-</mat-card>
-<div class="row">
-  @for (auction of availableAuctions; track auction.ID) {
-    <div class="col-xl-4 col-md-6 col-md-6 col-sm-10 col-12 mx-auto">
-      <app-auction-card
-        auctionID="{{ auction.ID }}"
-        bookTitle="{{ auction.bookTitle }}"
-        bookAuthor="{{ auction.bookAuthor }}"
-        bidDescription="{{ auction.bidDescription }}"
-        [base64Images]="auction.base64Images"
-        currentPrice="{{ auction.currentPrice }}"
-      ></app-auction-card>
+
+    <div class="row h-100">
+      <div class="col-md-8 col-11 my-auto mx-auto">
+        <div class="row">
+          @for (auction of availableAuctions; track auction.ID) {
+
+              <app-auction-card
+                style="margin-top:30px;"
+                auctionID="{{ auction.ID }}"
+                bookTitle="{{ auction.bookTitle }}"
+                bookAuthor="{{ auction.bookAuthor }}"
+                bidDescription="{{ auction.bidDescription }}"
+                [base64Images]="auction.base64Images"
+                [currentPrice]="auction.currentPrice"
+                [bidsLength]="auction.bidsLength"
+                [start_date]="auction.start_date"
+                [end_date]="auction.end_date"
+              ></app-auction-card>
+          } @empty {
+            <p>
+              There are currently no available auctions matching your filters, please
+              try again later.
+            </p>
+          }
+        </div>
+      </div>
+      </div>
     </div>
-  } @empty {
-    <p>
-      There are currently no available auctions matching your filters, please
-      try again later.
-    </p>
-  }
-</div>

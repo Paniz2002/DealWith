@@ -30,28 +30,106 @@ button {
   width: 100%;
 }
 
-.carousel{
-  margin-top: 10px;
-  margin-bottom: 10px;
+.auction-title {
+  font-size: 1.2rem;
 }
 
-.carousel-inner {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
+.auction-title:hover {
+  text-decoration: underline;
+  cursor: pointer;
 }
 
-.carousel-inner .carousel-item img {
-  width: 100%;
-  height: 100%;
+.auction-author {
+  font-size: 0.8rem;
+  color: gray;
 }
 
-.carousel-item {
-  height: 300px; /* Imposta l'altezza fissa per l'elemento carousel */
+.auction-price {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #e91e63;
 }
 
-.carousel-image {
-  width: 100%;
-  height: 100%;
+.auction-card-box{
+  border-radius: 3px;
 }
+
+/* add border when size is sm */
+@media (min-width: 576px) {
+  .auction-card-box {
+    border: 1px solid #dddddd;
+  }
+  .carousel{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #F2F2F2;
+  }
+
+  .carousel-inner {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .carousel-inner .carousel-item img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .carousel-item {
+    height: 50vh;
+  }
+
+  .carousel-image {
+    object-fit: contain;
+  }
+}
+
+@media(min-width: 768px){
+  .auction-card-box{
+    border: none;
+  }
+  .carousel-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%; /* Square aspect ratio */
+    background-color: #F2F2F2;
+    border-radius: 3px; /* Rounded corners */
+    overflow: hidden;
+  }
+
+  .carousel-inner, .carousel-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  .carousel-image {
+    padding: 30px;
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    margin: auto;
+    object-fit: contain; /* Image contained within the square */
+  }
+
+  .carousel-image:hover {
+    cursor: pointer;
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
 

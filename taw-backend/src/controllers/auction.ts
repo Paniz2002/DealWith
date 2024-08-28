@@ -265,7 +265,7 @@ const searchAuctions = async function (req: Request, res: Response) {
             : { $in: allAuctions.map((auction) => auction._id) },
         },
       ],
-    })
+    }).sort({ start_date: "asc" })
       .populate({
         path: "book",
         populate: {
@@ -316,9 +316,9 @@ const searchAuctions = async function (req: Request, res: Response) {
 };
 
 export const getAuctionController = async (req: Request, res: Response) => {
-  await connectDB();
+  connectDB();
   if (Object.keys(req.query).length === 0) {
-    const auctions = await Auction.find()
+    const auctions = await Auction.find().sort({ start_date: "asc" })
       .populate({
         path: "book",
         populate: {

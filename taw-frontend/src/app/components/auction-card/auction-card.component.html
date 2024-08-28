@@ -1,70 +1,88 @@
-<mat-card class="auction-card" appearance="outlined">
-  <mat-card-header class="text-oneline">
-    <mat-card-title class="title" [routerLink]="['/', this.auctionID]">
-       {{ this.bookTitle }}
-    </mat-card-title>
-    <mat-card-subtitle>{{ this.bookAuthor }}</mat-card-subtitle>
-  </mat-card-header>
-  <div
-    [id]="'auctionCarousel' + this.auctionID"
-    class="carousel slide"
-    data-bs-ride="carousel"
-  >
-    <div class="carousel-indicators">
-      <button
-        *ngFor="let image of base64Images; let i = index"
-        type="button"
-        [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
-        [attr.data-bs-slide-to]="i"
-        [ngClass]="{ active: i === 0 }"
-        [attr.aria-label]="'Slide ' + (i + 1)"
-      ></button>
-    </div>
-    <div class="carousel-inner">
+<div class="auction-card-box">
+<div class="row">
+    <div class="col-lg-3 col-md-4 col-12">
       <div
-        *ngFor="let image of base64Images; let i = index"
-        class="carousel-item"
-        [ngClass]="{ active: i === 0 }"
+        [id]="'auctionCarousel' + this.auctionID"
+        class="carousel slide carousel-container carousel-dark"
+        data-bs-ride="carousel"
       >
-        <img
-          [src]="'data:image/webp;base64,' + image"
-          class="carousel-image object-fit-contain"
-          alt="Auction Image"
-        />
+        <div class="carousel-indicators">
+          <button
+            *ngFor="let image of base64Images; let i = index"
+            type="button"
+            [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
+            [attr.data-bs-slide-to]="i"
+            [ngClass]="{ active: i === 0 }"
+            [attr.aria-label]="'Slide ' + (i + 1)"
+          ></button>
+        </div>
+        <div class="carousel-inner">
+          <div
+            *ngFor="let image of base64Images; let i = index"
+            class="carousel-item"
+            [ngClass]="{ active: i === 0 }"
+          >
+            <img
+              [routerLink]="['/', this.auctionID]"
+              [src]="'data:image/webp;base64,' + image"
+              class="carousel-image"
+              alt="Auction Image"
+            />
+          </div>
+        </div>
+        <a
+          class="carousel-control-prev"
+          type="button"
+          [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
+          data-bs-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </a>
+        <a
+          class="carousel-control-next"
+          type="button"
+          [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
+          data-bs-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </a>
       </div>
     </div>
-    <a
-      class="carousel-control-prev"
-      type="button"
-      [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
-      data-bs-slide="prev"
-      style="filter: invert(100%)"
-    >
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
-    </a>
-    <a
-      class="carousel-control-next"
-      type="button"
-      [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
-      data-bs-slide="next"
-      style="filter: invert(100%)"
-    >
-      <span class="carousel-control-next-icon"  aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
-    </a>
-  </div>
-  <mat-card-content>
-    <label for="price">Current bid:</label>
-    <span id="price" class="price"> {{ this.currentPrice }} EUR </span>
-  </mat-card-content>
-  <mat-card-actions>
-    <button
-      mat-raised-button
-      color="primary"
-      (click)="viewDetails()"
-    >
-      View details
-    </button>
-  </mat-card-actions>
-</mat-card>
+    <div class="col-lg-9 col-md-8 col-12 mt-2">
+      <div class="row">
+        <div class="col-12">
+          <span class="auction-title" [routerLink]="['/', this.auctionID]"> {{ this.bookTitle }} </span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <span class="auction-author"> {{ this.bookAuthor }} </span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <span id="price" class="auction-price"> {{ this.currentPrice.toFixed(2)}} EUR </span>
+        </div>
+        <div class="col-6">
+            <span> {{ this.bidsLength }} bids </span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6"></div>
+        <div class="col-6">
+          @if( this.start_date.getTime() > Date.now() ){
+            <span style="color:red"> Starting date: {{ this.getDateString(this.start_date) }}</span>
+          } @else if (end_date.getTime() > Date.now()){
+            <span style="color: green"> Open until: {{ this.getDateString(this.end_date) }}</span>
+          } @else {
+            <span style="color:red"> Auction ended </span>
+          }
+
+          <span></span>
+        </div>
+      </div>
+    </div>
+</div>
+</div>

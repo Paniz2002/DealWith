@@ -1,4 +1,5 @@
 <app-header></app-header>
+@if(!isCustomLayout){
 <div class="container-fluid">
   <div class="d-flex">
     <div class="row h-100" style="width: 100vw">
@@ -10,3 +11,8 @@
     </div>
   </div>
 </div>
+}
+@else {
+
+<router-outlet></router-outlet>
+}

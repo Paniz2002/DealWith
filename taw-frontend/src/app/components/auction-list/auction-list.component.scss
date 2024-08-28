@@ -1,0 +1,149 @@
+mat-card{
+    width: 100%;
+    vertical-align: middle;
+    margin-top: 10px;
+    display:inline-block;
+    padding: 10px;
+}
+
+mat-form-field{
+    margin-top:12px;
+}
+
+mat-slider{
+  width: 250px
+}
+
+
+.filter-bar{
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.custom-link{
+  text-decoration: none;
+  color: #323131;
+  font-weight: normal;
+}
+
+.mat-expansion-panel-header {
+  background-color: white;
+}
+
+.mat-expansion-panel{
+  background-color: white;
+  border-radius: 3px;
+  border: 1px solid #dddddd;
+}
+
+mat-expansion-panel-header.mat-expanded,
+mat-expansion-panel-header.mat-expanded:focus {
+  background-color: white;
+}
+
+.mat-expansion-panel:not(.mat-expanded)
+.mat-expansion-panel-header:hover:not([aria-disabled="true"]) {
+  background-color: white;
+}
+
+.mat-expansion-panel.mat-expanded
+.mat-expansion-panel-header:hover:not([aria-disabled="true"]) {
+  background-color: white;
+}
+
+.custom-checkbox {
+  width: 1rem;
+  height: 1rem;
+}
+
+.custom-label {
+  font-size: 0.875rem;
+  margin-left: 0.5rem;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+}
+
+.custom-input {
+  margin-right: 10px; /* Space between input and button */
+}
+
+.custom-button {
+  /* Ensure the button height matches the input height */
+  height: 100%;
+  /* Optional: Adjust padding if needed */
+  padding: 0 15px;
+}
+
+.custom-button {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0d47a1;
+  border: none;
+}
+
+.custom-button:hover {
+  background-color: #1a237e;
+}
+
+.form-control:focus{
+  border-color: #0d47a1;
+  box-shadow: none;
+}
+
+.form-select:focus{
+  border-color: #0d47a1;
+  box-shadow: none;
+}
+
+
+/* Ensure button has equal height as input */
+.form-control,
+.custom-button {
+  height: 40px; /* Adjust based on your design */
+}
+
+/* Add styles if needed for better alignment */
+.form-control.custom-input {
+  flex-grow: 1; /* Allows input to grow and take available space */
+}
+
+.custom-error {
+  color: #dc3545; /* Bootstrap text-danger color */
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+#advancedSearchFilters {
+  display: none;
+}
+
+@media (max-width: 576px) {
+  .custom-input,
+  .custom-button {
+    width: 100%;
+  }
+}
+
+
+.expanded {
+  width: 100% !important; /* Full width when sticky */
+}
+
+.collapsed {
+  width: 66.6667%; /* Width for col-8 */
+}
+
+.transition-width {
+  transition: width 0.5s linear; /* Adjust duration and easing as needed */
+  transform: translate(0, 0); /*Add this*/
+}
+
+
+
+
+

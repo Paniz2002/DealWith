@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewInit, Component, HostListener, OnInit, signal} from '@angular/core';
 import { AuctionCardComponent } from '../auction-card/auction-card.component';
 import axios from 'axios';
 import { environments } from '../../../environments/environments';
@@ -20,8 +20,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
-import { MatButton } from '@angular/material/button';
-import {ActivatedRoute, Router} from "@angular/router";
+import {MatButton, MatFabButton, MatMiniFabButton} from '@angular/material/button';
+import {ActivatedRoute, Router, RouterOutlet} from "@angular/router";
+import {MatIcon} from "@angular/material/icon";
+import {MatExpansionPanel, MatExpansionPanelHeader} from "@angular/material/expansion";
+import {NgClass} from "@angular/common";
 
 interface Filter {
   q: string | null;
@@ -50,20 +53,32 @@ interface Filter {
     MatGridTile,
     MatButton,
     ReactiveFormsModule,
+    RouterOutlet,
+    MatIcon,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    NgClass,
+    MatFabButton,
+    MatMiniFabButton
   ],
   templateUrl: './auction-list.component.html',
-  styleUrl: './auction-list.component.css',
+  styleUrl: './auction-list.component.scss',
 })
 /*
  * NOTE:
  * When selecting filters, if you click search the app-auction-list
  * fetches again the data and reloads the component.
  */
-export class AuctionListComponent implements OnInit {
+export class AuctionListComponent implements OnInit, AfterViewInit{
   form!: FormGroup;
   availableAuctions: Array<AuctionCard> = Array<AuctionCard>();
   condition: string = '';
   showOnlyActive: boolean = false;
+  isSticky: boolean = false;
+
+  private showAdvancedSearch: boolean = false;
+  readonly panelOpenState = signal(false);
+  private filterRowOffset: number = 0;
   constructor(
     private snackBar: NotificationService,
     private filterFormBuilder: FormBuilder,
@@ -90,7 +105,18 @@ export class AuctionListComponent implements OnInit {
       });
     });
 
+    this.checkScroll();
+
     this.searchWithFilters();
+  }
+
+  ngAfterViewInit(): void {
+    const filterRow = document.getElementById('filterRow');
+    if(filterRow){
+      this.filterRowOffset = filterRow.offsetTop;
+    }
+
+    this.checkScroll();
   }
 
 
@@ -169,6 +195,9 @@ export class AuctionListComponent implements OnInit {
               auction.bids.length > 0
                 ? this.getLastBidPrice(auction.bids, auction.starting_price)
                 : auction.starting_price,
+            bidsLength: auction.bids.length,
+            start_date: new Date(auction.start_date),
+            end_date: new Date(auction.end_date),
           });
         }
         this.loadAuctionImages();
@@ -178,7 +207,40 @@ export class AuctionListComponent implements OnInit {
       });
   }
 
+  toggleAdvancedSearch() {
+    this.showAdvancedSearch = !this.showAdvancedSearch;
+    const filtersDiv = document.getElementById('advancedSearchFilters');
+    if(filtersDiv){
+      if (this.showAdvancedSearch) {
+        filtersDiv.style.display = 'flex';
+      } else {
+        filtersDiv.style.display = 'none';
+      }
+    }
+  }
+
   toggleActive(): void {
     this.showOnlyActive = !this.showOnlyActive;
+  }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll(): void {
+    this.checkScroll();
+  }
+
+  checkScroll(): void {
+    if (window.pageYOffset > this.filterRowOffset) {
+      this.isSticky = true;
+    } else {
+      this.isSticky = false;
+    }
+  }
+
+
+  toggleClassBasedOnSticky() {
+    return {
+      'collapsed mx-auto': !this.isSticky,
+      'expanded': this.isSticky
+    };
   }
 }
