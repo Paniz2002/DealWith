@@ -20,7 +20,7 @@ import { environments } from '../../../environments/environments';
 import { RegisterComponent } from '../register/register.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DialogComponent } from '../dialog/dialog.component';
-import {MatButton} from "@angular/material/button";
+import { MatButton } from '@angular/material/button';
 interface Student {
   _id: string;
   username: string;
@@ -129,7 +129,7 @@ export class AdminHomepageComponent implements AfterViewInit {
       this.snackBar.notify("You can't select 0 students.");
       return;
     }
-    let component = this.dialog.open(DialogComponent,{
+    let component = this.dialog.open(DialogComponent, {
       data: {
         title: 'Delete students',
         content: 'Are you sure you want to delete the selected students?',
