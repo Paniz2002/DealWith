@@ -27,7 +27,6 @@ export const postCoursesController = async (req: Request, res: Response) => {
         }),
     );
     if (!valid) {
-      console.log(req.body);
       return BadRequestException(req, res, "Bad request: invalid input");
     }
     await Course.create({
