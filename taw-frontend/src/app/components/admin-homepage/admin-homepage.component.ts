@@ -86,7 +86,7 @@ export class AdminHomepageComponent implements AfterViewInit {
     });
     this.addCourse = this.form.group({
       name: ['', [Validators.required]],
-      uni: ['', [Validators.required]],
+      university: ['', [Validators.required]],
       year1: ['', [Validators.required]],
       year2: ['', [Validators.required]],
     });
@@ -214,23 +214,24 @@ export class AdminHomepageComponent implements AfterViewInit {
     }
   }
   async addCourseToUni() {
-    if (this.addUni.valid) {
-      const res = await axios.post(
-        environments.BACKEND_URL + '/api/admin/universities',
-        {
-          name: this.addCourse.controls['name'].value,
-          university: this.addCourse.controls['uni'].value,
-          year1: this.addCourse.controls['year1'].value,
-          year2: this.addCourse.controls['year2'].value,
-        },
-      );
-      if (res.status !== 200) {
-        this.snackBar.notify('Error with request.');
-      }
-      this.snackBar.notify('Course added.');
-    } else {
+    if (!this.addCourse.valid) {
+      console.log(this.addCourse.errors);
       this.snackBar.notify('Invalid form.');
       return;
     }
+    const res = await axios.post(
+      environments.BACKEND_URL + '/api/admin/courses',
+      {
+        name: this.addCourse.controls['name'].value,
+        university: this.addCourse.controls['university'].value,
+        year1: this.addCourse.controls['year1'].value,
+        year2: this.addCourse.controls['year2'].value,
+      },
+    );
+    if (res.status !== 200) {
+      this.snackBar.notify('Error with request.');
+      return;
+    }
+    this.snackBar.notify('Course added.');
   }
 }

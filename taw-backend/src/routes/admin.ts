@@ -7,10 +7,7 @@ import {
   getUniversitiesController,
   postUniversitiesController,
 } from "../controllers/admin/university";
-import {
-  getCoursesController,
-  postCoursesController,
-} from "../controllers/admin/course";
+import { postCoursesController } from "../controllers/admin/course";
 
 import { getCitiesController } from "../controllers/admin/city";
 import { adminMiddleware } from "../middlewares/admin";
@@ -19,7 +16,6 @@ adminRoutes.get("/students", adminMiddleware, getStudentsController);
 adminRoutes.delete("/students", adminMiddleware, deleteStudentsController);
 adminRoutes.get("/universities", adminMiddleware, getUniversitiesController);
 adminRoutes.post("/universities", adminMiddleware, postUniversitiesController);
-adminRoutes.get("/courses", adminMiddleware, getCoursesController);
 adminRoutes.post("/courses", adminMiddleware, postCoursesController);
 adminRoutes.get("/cities", adminMiddleware, getCitiesController);
 export default adminRoutes;

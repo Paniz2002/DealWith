@@ -8,7 +8,7 @@ import * as jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../secret";
 import UserModel from "../../models/user";
 import UnauthorizedException from "../exceptions/unauthorized";
-
+import { validateForm } from "../utils/validate";
 // Form validation schema
 const formValidator = z.object({
   name: z.string().min(2),
@@ -21,19 +21,11 @@ const formValidator = z.object({
 });
 
 // Validate form input
-const validateForm = (input: unknown) => {
-  try {
-    formValidator.parse(input); //throws exception if invalid
-    return true;
-  } catch (e) {
-    return false;
-  }
-};
 
 // Registration controller
 export const registerController = async (req: Request, res: Response) => {
-  await connectDB();
-  const isValid = validateForm(req.body);
+  connectDB();
+  const isValid = validateForm(req, res, req.body, formValidator);
   if (!isValid) {
     return BadRequestException(
       req,
