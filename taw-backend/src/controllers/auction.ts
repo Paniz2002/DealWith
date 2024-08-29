@@ -18,7 +18,6 @@ import Course from "../../models/course";
 import NotFoundException from "../exceptions/not-found";
 import NotFound from "../exceptions/not-found";
 import User from "../../models/user";
-import mongoose, { ClientSession } from "mongoose";
 
 const conditions = ["Mint", "Near Mint", "Excellent", "Good", "Fair", "Poor"];
 
@@ -57,7 +56,7 @@ export const newAuctionController = async (req: Request, res: Response) => {
   if (test !== true) {
     return test;
   }
-  await connectDB();
+  connectDB();
 
   const {
     condition,
@@ -362,7 +361,7 @@ export const getAuctionDetailsController = async (
   req: Request,
   res: Response,
 ) => {
-  await connectDB();
+  connectDB();
   const auction_id = req.params.id;
 
   if (!auction_id) {
@@ -433,7 +432,7 @@ const getLastBidPrice = (bids: any, startingPrice: Number): Number => {
 };
 
 export const postAuctionBidController = async (req: Request, res: Response) => {
-  await connectDB();
+  connectDB();
   const { auctionID, price } = req.body;
   const userID = getUserId(req, res);
   const auction = await Auction.findById(auctionID).exec();
@@ -458,7 +457,7 @@ export const getAuctionCommentsController = async (
 ) => {
   const { isPrivate } = req.query;
   const auctionID = req.params.id;
-  await connectDB();
+  connectDB();
 
   const userID = getUserId(req, res);
   const filter = {
@@ -548,7 +547,7 @@ export const postAuctionCommentsController = async (
     auction: auctionID,
     text: text,
   };
-  await connectDB();
+  connectDB();
   let repliedComment;
   if (replyTo) {
     repliedComment = await Comment.findById(replyTo).exec();
@@ -576,10 +575,8 @@ export const postAuctionCommentsController = async (
 
 export const deleteAuctionController = async (req: Request, res: Response) => {
   const auction_id = req.params.id;
-  await connectDB();
-  const session: ClientSession = await mongoose.startSession();
+  connectDB();
   try {
-    session.startTransaction();
     const userID = getUserId(req, res);
     const auction = await Auction.findById(auction_id);
     const user = await User.findById(userID);
@@ -596,23 +593,19 @@ export const deleteAuctionController = async (req: Request, res: Response) => {
         "Bad request: You cannot delete this auction.",
       );
 
-    await Auction.deleteOne({ _id: auction_id }, { session });
-    await Comment.deleteMany({ auction: auction_id }, { session });
-    await session.commitTransaction();
+    await Auction.deleteOne({ _id: auction_id });
+    await Comment.deleteMany({ auction: auction_id });
     return res.sendStatus(200);
   } catch (e) {
     console.log(e);
-    await session.abortTransaction();
     return InternalException(req, res, "Error while deleting auction");
-  } finally {
-    await session.endSession();
   }
 };
 
 export const getMyAuctionsController = async (req: Request, res: Response) => {
   try {
     const user_id = getUserId(req, res);
-    await connectDB();
+    connectDB();
     const auctions = await Auction.find({ seller: user_id })
       .populate({
         path: "book",
@@ -660,7 +653,7 @@ export const getMyParticipatedAuctionsController = async (
 ) => {
   try {
     const user_id = getUserId(req, res);
-    await connectDB();
+    connectDB();
     const auctions = await Auction.find({
       bids: { $elemMatch: { user: user_id } },
     })
@@ -715,7 +708,7 @@ export const getAuctionStatisticsController = async (
   res: Response,
 ) => {
   try {
-    await connectDB();
+    connectDB();
     const auctions = await Auction.find()
       .populate({
         path: "book",
@@ -849,7 +842,7 @@ export const patchAuctionController = async (req: Request, res: Response) => {
     const auction_id = req.params.id;
     const { description, condition, book_title, book_author, ISBN } = req.body;
 
-    await connectDB();
+    connectDB();
     const auction = await Auction.findById(auction_id);
     const book = await Book.findById(auction.book);
 

@@ -13,7 +13,9 @@ export const validateForm = (
   } catch (e) {
     if (e instanceof z.ZodError) {
       let errors = e.errors.map((err) => err.message);
+      console.log(errors.join("; "));
       return BadRequestException(req, res, errors.join("; "));
-    } else return BadRequestException(req, res, "Invalid input");
+    }
+    return BadRequestException(req, res, "Invalid input");
   }
 };

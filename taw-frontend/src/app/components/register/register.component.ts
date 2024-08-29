@@ -14,9 +14,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import {Router, RouterLink} from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NotificationService } from '../../services/popup/notification.service';
-import {HeaderHeightService} from "../../services/header/header-height.service";
+import { HeaderHeightService } from '../../services/header/header-height.service';
 
 @Component({
   selector: 'app-register',
@@ -45,7 +45,7 @@ export class RegisterComponent implements OnInit {
     private registerFormBuilder: FormBuilder,
     private router: Router,
     private snackBar: NotificationService,
-    private headerHeightService: HeaderHeightService
+    private headerHeightService: HeaderHeightService,
   ) {
     //check if current route is /register
     if (this.router.url !== '/register') {

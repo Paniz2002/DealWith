@@ -96,4 +96,94 @@
       Delete student(s)
     </button>
   </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon">how_to_reg</mat-icon>
+      Add universities
+    </ng-template>
+    <form [formGroup]="addUni" (ngSubmit)="addUniversity()" method="post">
+      <mat-form-field appearance="fill">
+        <mat-label>University Name</mat-label>
+        <input
+          matInput
+          type="text"
+          formControlName="name"
+          placeholder="Enter university name"
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>City</mat-label>
+        <mat-select matNativeControl required formControlName="city">
+          @for (city of this.cities; track city) {
+            <mat-option [value]="city._id">{{ city.name }}</mat-option>
+          } @empty {
+            <p>There are no cities available.</p>
+          }
+        </mat-select>
+      </mat-form-field>
+      <button mat-raised-button color="primary" type="submit">
+        Add University
+      </button>
+    </form>
+  </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon">how_to_reg</mat-icon>
+      Add courses
+    </ng-template>
+    <form [formGroup]="addCourse" (ngSubmit)="addCourseToUni()" method="post">
+      <div class="form-group row justify-content-center align-items-center">
+        <mat-form-field appearance="fill">
+          <mat-label>Course name</mat-label>
+          <input
+            matInput
+            type="text"
+            formControlName="name"
+            placeholder="Enter course name"
+          />
+        </mat-form-field>
+      </div>
+      <div class="form-group row justify-content-center align-items-center">
+        <mat-form-field>
+          <mat-label>University</mat-label>
+          <mat-select matNativeControl required formControlName="university">
+            @for (uni of this.universities; track uni) {
+              <mat-option [value]="uni._id">{{ uni.name }}</mat-option>
+            } @empty {
+              <p>There are no universities available.</p>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="form-group row justify-content-center align-items-center">
+        <mat-form-field>
+          <input
+            matInput
+            type="number"
+            formControlName="year1"
+            placeholder="Enter first year"
+          />
+        </mat-form-field>
+        <mat-form-field>
+          <input
+            matInput
+            type="number"
+            formControlName="year2"
+            placeholder="Enter second year"
+          />
+        </mat-form-field>
+      </div>
+      <div class="form-group row">
+        <div class="row">
+          <div class="col-6 d-flex justify-content-center">
+            <button mat-raised-button color="primary" type="submit">
+              <mat-icon>done</mat-icon>
+              Add course
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </mat-tab>
 </mat-tab-group>
