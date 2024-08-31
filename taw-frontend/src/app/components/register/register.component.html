@@ -1,9 +1,11 @@
 <div class="row" [style.height]="registerHeight">
   <div class="col-auto"></div>
   <div class="col-10 mx-auto my-auto">
-    <div class="mt-5 mx-3 text-center">
-      <h3>Register</h3>
-    </div>
+    @if (!this.isUserModerator) {
+      <div class="mt-5 mx-3 text-center">
+        <h3>Register</h3>
+      </div>
+    }
     <form [formGroup]="form" (ngSubmit)="onSubmit()" method="post">
       <div class="form-group row justify-content-center align-items-center">
         <mat-form-field>
