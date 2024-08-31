@@ -22,7 +22,7 @@
         <th>Starting Price</th>
         <th>Reserve Price</th>
         <th>Seller</th>
-        <th>Is Sold</th>
+        <th>Sale Status</th>
         <th>Is Active</th>
         <th>Action</th>
       </tr>
@@ -35,7 +35,7 @@
             <td>{{ auction.starting_price }}€</td>
             <td>{{ auction.reserve_price }}€</td>
             <td>{{ auction.seller.profile.firstName }} {{ auction.seller.profile.lastName }}</td>
-            <td>{{ auction.isSold ? 'Yes' : 'No' }}</td>
+            <td>{{ !auction.isActive && auction.isSold ? 'Sold' : (auction.isActive && auction.isSold ? 'Ongoing' : (auction.isActive && !auction.isSold ? 'Not placed': !auction.isActive && !auction.isSold? 'Unavailable':'-') ) }}</td>
             <td>{{ auction.isActive ? 'Yes' : 'No' }}</td>
             <td>
               <button (click)="viewAuction(auction._id)">

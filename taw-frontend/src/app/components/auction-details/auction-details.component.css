@@ -16,13 +16,17 @@ mat-card {
   border-left: 1px solid #ddd;
 }
 
-#chat-details{
+.chat-details{
   border-right: 1px solid #ddd;
 }
 
 .messages-container{
   overflow-y: auto;
   /*border: 1px solid #ddd;*/
+}
+
+.back-icon:hover{
+  cursor: pointer;
 }
 
 hr{
@@ -34,6 +38,8 @@ hr{
   margin-top: 10px;
   margin-bottom: 10px;
   background-color: #F2F2F2;
+  border-radius: 3px;
+  border: 1px solid #ddd;
 }
 
 .carousel-inner {

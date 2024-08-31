@@ -1,0 +1,9 @@
+<div class="chat-container">
+  <div class="unavailable-chat-warning">
+    @if(isPrivate){
+      <p>Please <a style="text-decoration: none" [routerLink] = "'/register'">register</a> to chat with the seller.</p>
+    } @else {
+      <p> Please <a style="text-decoration: none" [routerLink] = "'/register'">register</a> to access public chat </p>
+    }
+  </div>
+</div>

@@ -114,7 +114,7 @@
         <mat-label>City</mat-label>
         <mat-select matNativeControl required formControlName="city">
           @for (city of this.cities; track city) {
-            <mat-option [value]="city._id">{{ city.name }}</mat-option>
+            <mat-option [value]="city._id">{{ capitalizeFirstLetter(city.name) }}</mat-option>
           } @empty {
             <p>There are no cities available.</p>
           }

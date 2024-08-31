@@ -68,7 +68,7 @@
         <th>Seller</th>
         <th>Condition</th>
         <th>Starting Price</th>
-        <th>Current Price</th>
+        <th>Current Bid</th>
         <th>Winning</th>
         <th>Is Active</th>
         <th>Auction</th>
@@ -81,7 +81,7 @@
             <td>{{ auction.seller.profile.firstName }} {{ auction.seller.profile.lastName }}</td>
             <td>{{ auction.condition }}</td>
             <td>{{ auction.starting_price }}€</td>
-            <td>{{ auction.starting_price }}€</td>
+            <td>{{ auction.currentPrice }}€</td>
             <td>{{ auction.isWinning ? 'Yes' : 'No' }}</td>
             <td>{{ auction.isActive ? 'Yes' : 'No' }}</td>
             <td>
