@@ -35,6 +35,7 @@ interface Student {
   lastName: string;
 }
 
+
 @Component({
   selector: 'app-admin-homepage',
   standalone: true,
@@ -233,5 +234,9 @@ export class AdminHomepageComponent implements AfterViewInit {
       return;
     }
     this.snackBar.notify('Course added.');
+  }
+
+  capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
   }
 }
