@@ -3,6 +3,11 @@
 
     <div [style.height]="auctionDetailsColumnHeight" id="card-details" class="col-12 col-md-6 overflow-scroll">
       @if (auctionDetails) {
+        <div class="row pt-3">
+          <div class="col-auto">
+            <mat-icon class="back-icon" (click)="backClicked()">arrow_back</mat-icon>
+          </div>
+        </div>
         <mat-card class="auction-card" appearance="outlined">
           <div
             [id]="'auctionCarousel' + this.auctionID"
@@ -10,33 +15,26 @@
             data-bs-ride="carousel"
           >
             <div class="carousel-indicators">
+              @for(image of auctionDetails.base64Images; track image){
               <button
-                *ngFor="
-                let image of this.auctionDetails.base64Images;
-                let i = index
-              "
                 type="button"
                 [attr.data-bs-target]="'#auctionCarousel' + this.auctionID"
-                [attr.data-bs-slide-to]="i"
-                [ngClass]="{ active: i === 0 }"
-                [attr.aria-label]="'Slide ' + (i + 1)"
+                [attr.data-bs-slide-to]="$index"
+                [ngClass]="{ active: $index === 0 }"
+                [attr.aria-label]="'Slide ' + ($index + 1)"
               ></button>
+              }
             </div>
             <div class="carousel-inner">
-              <div
-                *ngFor="
-                let image of this.auctionDetails.base64Images;
-                let i = index
-              "
-                class="carousel-item"
-                [ngClass]="{ active: i === 0 }"
-              >
+              @for(image of auctionDetails.base64Images; track image){
+              <div class="carousel-item" [ngClass]="{ active: $index === 0 }">
                 <img
                   [src]="'data:image/webp;base64,' + image"
                   class="carousel-image object-fit-contain"
                   alt="Auction Image"
                 />
               </div>
+              }
             </div>
             <a
               class="carousel-control-prev"
@@ -213,11 +211,10 @@
     @if (this.isUserLoggedIn) {
       <div
         [style.height]="auctionDetailsColumnHeight"
-        id="chat-details"
-        class="col-12 col-md-6"
+        class="col-12 col-md-6 chat-details"
       >
         @if (this.isClientEditingAuction && this.auctionID) {
-          <app-auction-edit [auctionId]="this.auctionID"></app-auction-edit>
+          <app-auction-edit (closeAuctionEditEvent)="closeAuctionEdit()" [auctionId]="this.auctionID"></app-auction-edit>
         } @else if(this.whoAmI && this.auctionDetails && this.auctionDetails.seller) {
           <mat-tab-group #tabs>
             <mat-tab label="Private Chat">
@@ -238,6 +235,20 @@
             </mat-tab>
           </mat-tab-group>
         }
+      </div>
+    }@else{
+      <div
+        [style.height]="auctionDetailsColumnHeight"
+        class="col-12 col-md-6 chat-details"
+      >
+        <mat-tab-group #tabs>
+          <mat-tab label="Private Chat">
+            <app-chat-unavailable [isPrivate]="true"></app-chat-unavailable>
+          </mat-tab>
+          <mat-tab label="Public Chat">
+            <app-chat-unavailable [isPrivate]="false"></app-chat-unavailable>
+          </mat-tab>
+        </mat-tab-group>
       </div>
     }
   </div>

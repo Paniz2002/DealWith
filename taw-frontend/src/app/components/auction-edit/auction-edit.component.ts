@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidatorFn} from "@angular/forms";
 import {Router} from "@angular/router";
 import {AuctionService} from "../../services/bid/auction.service";
@@ -54,6 +54,7 @@ function isbnLengthValidator(): ValidatorFn{
 })
 export class AuctionEditComponent {
   @Input() auctionId!: string;
+  @Output() closeAuctionEditEvent = new EventEmitter<void>();
   auctionFormEdit!: FormGroup;
   selectedFiles: File[] = [];
   imagePreviews: string[] = [];
@@ -130,5 +131,9 @@ export class AuctionEditComponent {
         reader.readAsDataURL(file);
       }
     }
+  }
+
+  closeEdit() {
+    this.closeAuctionEditEvent.emit();
   }
 }

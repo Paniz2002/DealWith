@@ -33,6 +33,8 @@ import { HeaderHeightService } from '../../services/header/header-height.service
 import { AuctionEditComponent } from '../auction-edit/auction-edit.component';
 import {MatDialog} from "@angular/material/dialog";
 import {DialogComponent} from "../dialog/dialog.component";
+import {ChatUnavailableComponent} from "../chat-unavailable/chat-unavailable.component";
+import {Location} from "@angular/common";
 
 interface Course {
   name: string;
@@ -60,6 +62,7 @@ interface Course {
     AuctionDetailsCountdownComponent,
     ChatComponent,
     AuctionEditComponent,
+    ChatUnavailableComponent,
   ],
   templateUrl: './auction-details.component.html',
   styleUrl: './auction-details.component.css',
@@ -113,6 +116,7 @@ export class AuctionDetailsComponent implements OnInit {
     protected socketService: SocketService,
     private headerHeightService: HeaderHeightService,
     public dialog: MatDialog,
+    private location: Location
   ) {
     this.auctionID = this.route.snapshot.paramMap.get('id')!;
 
@@ -145,8 +149,10 @@ export class AuctionDetailsComponent implements OnInit {
         lastBidOwner = bid.user.toString();
       }
     });
-
-    return this.myId === lastBidOwner;
+    if(this.isUserLoggedIn)
+      return this.myId === lastBidOwner;
+    else
+      return false;
   }
 
   ngOnInit(): void {
@@ -177,63 +183,70 @@ export class AuctionDetailsComponent implements OnInit {
       this.myId = res.data._id;
       this.isUserLoggedIn = true;
       this.userType = res.data.is_moderator ? 'moderator' : 'student';
-
-      this.headerHeightService.headerHeight$.subscribe((height) => {
-        this.auctionDetailsColumnHeight = `calc(100vh - ${height}px)`;
-      });
-
-      axios
-        .get(environments.BACKEND_URL + '/api/auctions/' + this.auctionID)
-        .then((details: any) => {
-          this.auctionDetails = details.data;
-          this.endDate = new Date(this.auctionDetails.end_date);
-          this.startDate = new Date(this.auctionDetails.start_date);
-          this.endDateTime = `${
-            this.months[this.endDate.getMonth()]
-          } ${this.endDate.getDate()}, ${this.endDate.getFullYear()}`;
-          this.startDateTime = `${
-            this.months[this.startDate.getMonth()]
-          } ${this.startDate.getDate()}, ${this.startDate.getFullYear()}`;
-          this.auctionPrice = this.getLastBidPrice(
-            this.auctionDetails.bids,
-            this.auctionDetails.starting_price,
-          );
-          this.isActive = details.data.isActive;
-
-          this.isLastBidOwner = this.isClientLastBidOwner(this.auctionDetails.bids);
-
-          this.form.controls['bidPrice'].setValue(
-            this.auctionPrice.valueOf() + 0.01,
-          );
-
-          if (
-            this.auctionDetails &&
-            this.auctionDetails.book &&
-            this.auctionDetails.book.courses
-          )
-          {
-            this.coursesUniversities = [];
-            this.auctionDetails.book.courses.forEach((course: any) => {
-              this.coursesUniversities.push({
-                name: course.name,
-                university: course.university.name,
-                year1: course.year.year1,
-                year2: course.year.year2,
-              });
-            });
-          }
-
-          this.loadAuctionImages();
-        })
-        .catch((err) => {
-          if (!err.ok) {
-            //navigate to 404 page
-            this.router.navigate(['/notfound']);
-            return;
-          }
-          this.snackBar.notify(err.message);
-        });
+    }).catch((err) => {
+      //if (err.status === 400) {
+        this.isUserLoggedIn = false;
+      /*}else{
+        this.router.navigate(['/login']);
+        this.snackBar.notify(err.message);
+      }*/
     });
+
+    this.headerHeightService.headerHeight$.subscribe((height) => {
+      this.auctionDetailsColumnHeight = `calc(100vh - ${height}px)`;
+    });
+
+    axios
+      .get(environments.BACKEND_URL + '/api/auctions/' + this.auctionID)
+      .then((details: any) => {
+        this.auctionDetails = details.data;
+        this.endDate = new Date(this.auctionDetails.end_date);
+        this.startDate = new Date(this.auctionDetails.start_date);
+        this.endDateTime = `${
+          this.months[this.endDate.getMonth()]
+        } ${this.endDate.getDate()}, ${this.endDate.getFullYear()}`;
+        this.startDateTime = `${
+          this.months[this.startDate.getMonth()]
+        } ${this.startDate.getDate()}, ${this.startDate.getFullYear()}`;
+        this.auctionPrice = this.getLastBidPrice(
+          this.auctionDetails.bids,
+          this.auctionDetails.starting_price,
+        );
+        this.isActive = details.data.isActive;
+
+        this.isLastBidOwner = this.isClientLastBidOwner(this.auctionDetails.bids);
+
+        this.form.controls['bidPrice'].setValue(
+          this.auctionPrice.valueOf() + 0.01,
+        );
+
+        if (
+          this.auctionDetails &&
+          this.auctionDetails.book &&
+          this.auctionDetails.book.courses
+        )
+        {
+          this.coursesUniversities = [];
+          this.auctionDetails.book.courses.forEach((course: any) => {
+            this.coursesUniversities.push({
+              name: course.name,
+              university: course.university.name,
+              year1: course.year.year1,
+              year2: course.year.year2,
+            });
+          });
+        }
+
+        this.loadAuctionImages();
+      })
+      .catch((err) => {
+        if (!err.ok) {
+          //navigate to 404 page
+          this.router.navigate(['/notfound']);
+          return;
+        }
+        this.snackBar.notify(err.message);
+      });
   }
 
   reloadBidDetails() {
@@ -317,6 +330,10 @@ export class AuctionDetailsComponent implements OnInit {
   reloadPublicChatContent(comment: any) {
     if (this.tabGroup.selectedIndex !== 1) this.tabGroup.selectedIndex = 1;
     this.chatComponents.toArray()[1].reloadPublicChat();
+  }
+
+  backClicked() {
+    this.location.back();
   }
 
   async deleteAuction() {
