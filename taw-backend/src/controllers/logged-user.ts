@@ -6,7 +6,7 @@ import * as jwt from "jsonwebtoken";
 import UnauthorizedException from "../exceptions/unauthorized";
 
 export const profileController = async (req: any, res: Response) => {
-    await connectDB();
+    connectDB();
     // Should be guaranteed by the checkAutenticationMiddleware.
     const token = req.cookies.jwt;
     try {
@@ -24,7 +24,10 @@ export const profileController = async (req: any, res: Response) => {
             needs_update:
                 user.isModerator() &&
                 user.createdAt.getTime() === user.updatedAt.getTime(),
-            email_address: user.email.address,
+            email: user.email,
+            name: user.profile.firstName,
+            surname: user.profile.lastName,
+            createdAt: user.createdAt,
         };
         return res.status(200).json(response_json);
     } catch (error) {

@@ -52,11 +52,10 @@ export class AuctionCardComponent {
   @Input({ required: true }) currentPrice!: number;
   @Input({ required: true }) bookTitle!: string;
   @Input({ required: true }) bookAuthor!: string;
-  @Input({ required: true }) bidDescription!: string;
   @Input() base64Images?: string[];
-  @Input() bidsLength!: number;
-  @Input() start_date!: Date;
-  @Input() end_date!: Date;
+  @Input({ required: true }) bidsLength!: number;
+  @Input({ required: true }) start_date!: Date;
+  @Input({ required: true }) end_date!: Date;
 
   constructor(
     private router: Router,

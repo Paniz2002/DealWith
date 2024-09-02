@@ -22,7 +22,9 @@
         </button>
       }
 
-
+      <button mat-button [routerLink]="'/profile'" class="header-button">
+        <mat-icon>account_circle</mat-icon>
+      </button>
 
       <!-- Notification icon with counter -->
       @if (notifications && notifications.length > 0) {

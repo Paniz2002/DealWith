@@ -12,6 +12,7 @@ import { StudentGuard } from './guards/student/student.guard';
 import { StatisticsStudentComponent } from './components/statistics-student/statistics-student.component';
 import { StatisticsModeratorComponent } from './components/statistics-moderator/statistics-moderator.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
+import {ProfilePageComponent} from "./components/profile-page/profile-page.component";
 export const routes: Routes = [
   {
     path: 'notfound',
@@ -58,6 +59,12 @@ export const routes: Routes = [
     component: StatisticsModeratorComponent,
     pathMatch: 'full',
     canActivate: [AdminGuard],
+  },
+  {
+    path: 'profile',
+    component: ProfilePageComponent,
+    pathMatch: 'full',
+    canActivate: [AuthenticationGuard]
   },
   {
     path: ':id',

@@ -86,17 +86,17 @@
               {{ this.auctionDetails.book.title }}
             </mat-card-title>
             <mat-card-subtitle
-            >Author: {{ this.auctionDetails.book.author }}
+            ><span class="subtitle-accent">Author</span>: {{ this.auctionDetails.book.author }}
             </mat-card-subtitle
             >
             <mat-card-subtitle>
-              ISBN: {{ this.auctionDetails.book.ISBN }}
+              <span class="subtitle-accent">ISBN</span>: {{ this.auctionDetails.book.ISBN }}
             </mat-card-subtitle>
             <mat-card-subtitle>
               @if (this.coursesUniversities.length === 1) {
-                Course:
+                <span class="subtitle-accent">Course</span>:
               } @else {
-                Courses:
+                <span class="subtitle-accent">Courses</span>:
               }
               @for (courseUniversity of this.coursesUniversities; track courseUniversity) {
                 <span>{{ courseUniversity.name }} {{ courseUniversity.year1 }}/{{ courseUniversity.year2 }}
@@ -108,11 +108,11 @@
             </mat-card-subtitle>
 
             <mat-card-subtitle>
-              Seller: {{ this.auctionDetails.seller.profile.firstName }}
+              <span class="subtitle-accent">Seller</span>: {{ this.auctionDetails.seller.profile.firstName }}
               {{ this.auctionDetails.seller.profile.lastName }}
             </mat-card-subtitle>
             <mat-card-subtitle>
-              Condition: {{ this.auctionDetails.condition }}
+              <span class="subtitle-accent">Condition</span>: {{ this.auctionDetails.condition }}
             </mat-card-subtitle>
           </mat-card-header>
           <hr/>

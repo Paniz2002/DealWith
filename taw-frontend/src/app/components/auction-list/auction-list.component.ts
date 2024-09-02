@@ -190,7 +190,6 @@ export class AuctionListComponent implements OnInit, AfterViewInit{
             ID: auction._id,
             bookTitle: auction.book.title,
             bookAuthor: auction.book.author,
-            bidDescription: auction.description,
             currentPrice:
               auction.bids.length > 0
                 ? this.getLastBidPrice(auction.bids, auction.starting_price)

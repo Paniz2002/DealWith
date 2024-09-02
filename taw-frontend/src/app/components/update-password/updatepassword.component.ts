@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -19,7 +19,7 @@ import { NotificationService } from '../../services/popup/notification.service';
 import { RegisterComponent } from '../register/register.component';
 
 @Component({
-  selector: 'app-register',
+  selector: 'app-update-password',
   standalone: true,
   imports: [
     CommonModule,
@@ -38,6 +38,8 @@ export class UpdatePasswordComponent implements OnInit {
   form!: FormGroup;
   isFormValid!: Boolean;
   id!: string | null;
+  @Input() isUserInProfilePage: Boolean = false;
+  @Output() closeEditEvent = new EventEmitter<void>();
 
   constructor(
     private updatePasswordFormBuilder: FormBuilder,
@@ -72,7 +74,10 @@ export class UpdatePasswordComponent implements OnInit {
       .patch(environments.BACKEND_URL + '/api/auth/me', this.form.value)
       .then((res) => {
         if (res.status === 200) {
-          return this.router.navigate(['/login']);
+          if(this.isUserInProfilePage)
+            window.location.reload();
+          else
+            return this.router.navigate(['/login']);
         }
         this.snackBar.notify(res.data.message);
         return;
@@ -90,5 +95,9 @@ export class UpdatePasswordComponent implements OnInit {
       password: '',
       confirmPassword: '',
     });
+  }
+
+  closeEdit() {
+    this.closeEditEvent.emit();
   }
 }

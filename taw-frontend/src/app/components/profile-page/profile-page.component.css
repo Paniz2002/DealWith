@@ -1,0 +1,18 @@
+
+
+.auction-container{
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+}
+
+.profile-container{
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+}
+
+.subtitle{
+  color: #515151;
+}
+

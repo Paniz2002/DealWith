@@ -16,6 +16,10 @@ mat-card {
   border-left: 1px solid #ddd;
 }
 
+.subtitle-accent{
+  color: #2e2c2c;
+}
+
 .chat-details{
   border-right: 1px solid #ddd;
 }
