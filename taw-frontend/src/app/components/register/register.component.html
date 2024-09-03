@@ -1,12 +1,14 @@
 <div class="row mb-5" [style.height]="registerHeight">
-  <div class="col-auto"></div>
+  <div class="col-auto">
+  </div>
   <div class="col-10 mx-auto my-auto">
-    @if (!this.isUserModerator) {
-      <div class="mt-5 mx-3 text-center">
-        <h3>Register</h3>
-      </div>
-    }
     <form [formGroup]="form" (ngSubmit)="onSubmit()" method="post">
+      @if (!this.isUserModerator) {
+        <div class="mx-3 text-center">
+          <h3>Register</h3>
+          <p> or <a class="redirect" [routerLink]="['/login']">log in</a> to your account </p>
+        </div>
+      }
       <div class="form-group row justify-content-center align-items-center">
         <mat-form-field>
           <mat-label>Username</mat-label>
@@ -143,13 +145,6 @@
           </div>
         </div>
       </div>
-      @if (!this.isUserModerator) {
-        <div class="row">
-          <div class="col-12 d-flex justify-content-center">
-            <a [routerLink]="['/login']">Already have an account? Login</a>
-          </div>
-        </div>
-      }
     </form>
   </div>
 </div>

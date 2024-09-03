@@ -27,28 +27,29 @@ mat-slider{
 }
 
 .mat-expansion-panel-header {
-  background-color: white;
+  background-color: #f9f9f9;
 }
 
 .mat-expansion-panel{
-  background-color: white;
+  background-color: #f9f9f9;
   border-radius: 3px;
   border: 1px solid #dddddd;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
 mat-expansion-panel-header.mat-expanded,
 mat-expansion-panel-header.mat-expanded:focus {
-  background-color: white;
+  background-color: #f9f9f9;
 }
 
 .mat-expansion-panel:not(.mat-expanded)
 .mat-expansion-panel-header:hover:not([aria-disabled="true"]) {
-  background-color: white;
+  background-color: #f9f9f9;
 }
 
 .mat-expansion-panel.mat-expanded
 .mat-expansion-panel-header:hover:not([aria-disabled="true"]) {
-  background-color: white;
+  background-color: #f9f9f9;
 }
 
 .custom-checkbox {
@@ -68,6 +69,7 @@ mat-expansion-panel-header.mat-expanded:focus {
 
 .custom-input {
   margin-right: 10px; /* Space between input and button */
+  background-color: #fefefe;
 }
 
 .custom-button {

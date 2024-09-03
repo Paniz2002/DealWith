@@ -1,47 +1,57 @@
-<div class="row mt-3">
-  <div class="col-md-4 col-12 profile-container ">
-    <h4> {{ this.profile.name }} {{ this.profile.surname }} </h4>
-    <div class="subtitle">
-      <p> <strong> Username: </strong> {{ this.profile.username }} </p>
-      <p> <strong> Email: </strong> {{ this.profile.email }} </p>
+<div class="row mt-3" [style.height]="profilePageColumnHeight">
+  <div class="col-md-5 col-12 ">
+    <div class="profile-container">
+      <h3> {{ this.profile.name }} {{ this.profile.surname }} </h3>
       <div class="row">
         <div class="col-6">
-          <p> <strong> Published Auctions: </strong> {{ this.auctions.length }} </p>
+          <p class="subtitle"> Account created in {{ this.profile.createdAt.getFullYear() }} </p>
         </div>
-        <div class="col-6">
-          <a class="text-end" [routerLink]="'/statistics'"> View statistics</a>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-6">
-          <p> <strong> Participated Auctions: </strong> {{ this.participatedAuctions.length }} </p>
-        </div>
-        <div class="col-6">
-          <a class="text-end" [routerLink]="'/statistics'"> View statistics</a>
-        </div>
-      </div>
-      <p> <strong> Account created in: </strong> {{ this.profile.createdAt.getFullYear() }} </p>
-      <div class="row">
-        <div class="col-6"></div>
+        @if(!this.profile.is_moderator){
         <div class="col-6">
           @if(!this.isClientEditing){
-            <div class="d-flex align-items-center" style="color: red" (click)="openProfileEdit()">
+            <div class="d-flex align-items-center edit" (click)="openProfileEdit()">
               <mat-icon>edit</mat-icon>
               <a> Update password </a>
             </div>
           } @else {
-            <div class="d-flex align-items-center" (click)="closeProfileEdit()">
+            <div class="d-flex align-items-center close-edit" (click)="closeProfileEdit()">
               <mat-icon>close</mat-icon>
               <a> Close form </a>
             </div>
           }
         </div>
+        }
+      </div>
+
+      <hr>
+      <div class="subtitle">
+        <p> <strong> Username: </strong> {{ this.profile.username }} </p>
+        <p> <strong> Email: </strong> {{ this.profile.email }} </p>
+        <p> <strong> Role: </strong> {{ this.profile.is_moderator ? 'Moderator' : 'Student' }} </p>
+        @if(!this.profile.is_moderator){
+        <hr>
+        <div class="row">
+          <div class="col-6">
+            <p> <strong>{{ this.auctions.length }}</strong> published auctions  </p>
+          </div>
+          <div class="col-6">
+            <a class="text-end stats" [routerLink]="'/statistics'"> View statistics</a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <p> <strong>{{ this.participatedAuctions.length }}</strong> participated auctions  </p>
+          </div>
+          <div class="col-6">
+            <a class="text-end stats" [routerLink]="'/statistics'"> View statistics</a>
+          </div>
+        </div>
+        }
       </div>
     </div>
-
   </div>
-
-  <div class="col-md-8 col-12 auction-container overflow-scroll" [style.height]="profilePageColumnHeight">
+  @if(!this.profile.is_moderator){
+  <div class="col-md-7 col-12 auction-container overflow-scroll" [style.height]="profilePageColumnHeight">
     @if(!this.isClientEditing){
     <div class="row">
       <div class="col-12">
@@ -65,9 +75,16 @@
       </div>
     </div>
     } @else {
-      <app-update-password (closeEditEvent)="closeProfileEdit()" [isUserInProfilePage]="true"></app-update-password>
+      <div class="my-auto">
+        <app-update-password (closeEditEvent)="closeProfileEdit()" [isUserInProfilePage]="true"></app-update-password>
+      </div>
     }
   </div>
+  }@else if(this.profile.is_moderator){
+    <div class="col-md-7 col-12 auction-container">
+      <app-update-password></app-update-password>
+    </div>
+  }
 
 
 </div>

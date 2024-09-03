@@ -36,13 +36,15 @@ export class ProfilePageComponent implements OnInit {
     axios.get(environments.BACKEND_URL + '/api/auth/me').then(async (res) => {
       this.profile = res.data;
       this.profile.createdAt = new Date(this.profile.createdAt);
-      // Fetch available auctions for the user
-      this.auctions = await this.fetchAvailableAuctions();
-      this.participatedAuctions = await this.fetchParticipatedAuctions();
-      for(const auction of this.auctions){
-        auction.start_date = new Date(auction.start_date);
-        auction.end_date = new Date(auction.end_date);
-        auction.base64Images = await this.loadAuctionImages(auction);
+      if(!this.profile.is_moderator) {
+        // Fetch available auctions for the user
+        this.auctions = await this.fetchAvailableAuctions();
+        this.participatedAuctions = await this.fetchParticipatedAuctions();
+        for (const auction of this.auctions) {
+          auction.start_date = new Date(auction.start_date);
+          auction.end_date = new Date(auction.end_date);
+          auction.base64Images = await this.loadAuctionImages(auction);
+        }
       }
 
       this.headerHeightService.headerHeight$.subscribe((height) => {

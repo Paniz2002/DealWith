@@ -30,6 +30,12 @@ button {
   width: 100%;
 }
 
+.auction-div-title{
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .auction-title {
   font-size: 1.2rem;
 }

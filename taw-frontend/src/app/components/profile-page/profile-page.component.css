@@ -4,15 +4,46 @@
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 3px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
 }
 
 .profile-container{
   padding: 20px;
   border: 1px solid #ddd;
-  border-radius: 3px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
 }
 
 .subtitle{
   color: #515151;
 }
 
+.stats{
+  text-decoration: none;
+  color: #0d47a1;
+}
+
+.stats:hover{
+  color: #1a237e;
+  transition: 0.3s;
+}
+
+.edit{
+  color: red;
+}
+
+.close-edit{
+  color: #2e2c2c;
+}
+.close-edit:hover{
+  cursor: pointer;
+  color: black;
+  transition: 0.3s;
+}
+
+.edit:hover{
+  cursor: pointer;
+  color: #e91e63;
+}

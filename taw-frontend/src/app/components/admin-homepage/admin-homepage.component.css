@@ -1,14 +1,18 @@
 form {
-  background-color: white;
+  background-color: #f9f9f9;
   border-radius: 5px;
   max-width: 600px;
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin: auto;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  margin: 20vh auto 10px;
+}
+
+table{
+  background-color: #f9f9f9;
+  border-radius: 5px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 

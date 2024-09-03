@@ -52,12 +52,12 @@
     </div>
     <div class="col-lg-9 col-md-8 col-12 mt-2">
       <div class="row">
-        <div class="col-12">
+        <div class="col-12 text-truncate">
           <span class="auction-title" [routerLink]="['/', this.auctionID]"> {{ this.bookTitle }} </span>
         </div>
       </div>
       <div class="row">
-        <div class="col-12">
+        <div class="col-12 text-truncate">
           <span class="auction-author"> {{ this.bookAuthor }} </span>
         </div>
       </div>
@@ -71,7 +71,7 @@
       </div>
       <div class="row">
         <div class="col-6"></div>
-        <div class="col-6">
+        <div class="col-6 text-truncate">
           @if( this.start_date.getTime() > Date.now() ){
             <span style="color:red"> Starting date: {{ this.getDateString(this.start_date) }}</span>
           } @else if (end_date.getTime() > Date.now()){
@@ -79,8 +79,6 @@
           } @else {
             <span style="color:red"> Auction ended </span>
           }
-
-          <span></span>
         </div>
       </div>
     </div>

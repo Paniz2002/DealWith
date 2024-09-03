@@ -14,7 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import { NotificationService } from '../../services/popup/notification.service';
 import { RegisterComponent } from '../register/register.component';
 import { LocalStorageService } from '../../services/localStorage/localStorage.service';
@@ -34,6 +34,7 @@ import {HeaderHeightService} from "../../services/header/header-height.service";
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
+    RouterLink,
   ],
   templateUrl: './login.component.html',
   styleUrl: '../register/register.component.css',
