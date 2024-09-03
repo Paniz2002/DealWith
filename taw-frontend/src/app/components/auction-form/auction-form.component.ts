@@ -88,8 +88,8 @@ export class AuctionFormComponent implements OnInit {
         book_id: ['', Validators.required],
         course_id: ['', Validators.required],
         description: ['', Validators.required],
-        reserve_price: ['', [Validators.required, Validators.min(1)]], //FIXME: when i write an interger from keyboard autmoatically subs 0.02€
-        starting_price: ['', [Validators.required, Validators.min(1)]], //FIXME: when i write an interger from keyboard autmoatically subs 0.02€
+        reserve_price: ['', [Validators.required, Validators.min(1)]],
+        starting_price: ['', [Validators.required, Validators.min(1)]],
         end_date: ['', Validators.required],
         start_date: ['', Validators.required],
         condition: ['', Validators.required],
@@ -110,7 +110,7 @@ export class AuctionFormComponent implements OnInit {
       width: '300pt',
       height: '350pt',
       panelClass: 'custom-dialog-container',
-      data: { title: this.auctionForm.controls['book_id'].value }, //FIXME: value is undefined, not priority for now, just UX to autocomplete the form
+      data: { title: this.auctionForm.controls['book_id'].value },
     });
 
     dialogRef.afterClosed().subscribe((result) => {

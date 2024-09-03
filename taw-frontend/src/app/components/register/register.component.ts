@@ -56,7 +56,6 @@ export class RegisterComponent implements OnInit {
         })
         .catch(() => {});
     }
-    //TODO logged student must logout before see register page again
   }
 
   ngOnInit() {

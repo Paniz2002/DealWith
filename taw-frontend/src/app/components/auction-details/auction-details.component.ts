@@ -123,7 +123,6 @@ export class AuctionDetailsComponent implements OnInit {
 
   }
 
-  // TODO: import from auctionlist
   private getLastBidPrice(bids: any, startingPrice: Number): Number {
     let currMax: Number = -1;
     bids.forEach((bid: any) => {
@@ -184,12 +183,7 @@ export class AuctionDetailsComponent implements OnInit {
       this.isUserLoggedIn = true;
       this.userType = res.data.is_moderator ? 'moderator' : 'student';
     }).catch((err) => {
-      //if (err.status === 400) {
         this.isUserLoggedIn = false;
-      /*}else{
-        this.router.navigate(['/login']);
-        this.snackBar.notify(err.message);
-      }*/
     });
 
     this.headerHeightService.headerHeight$.subscribe((height) => {

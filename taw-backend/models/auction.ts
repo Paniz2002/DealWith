@@ -62,7 +62,6 @@ AuctionSchema.methods.isOwner = function (user_id: string) {
 };
 
 AuctionSchema.methods.currentPrice = function () {
-    console.log(this.bids)
     if (this.bids.length === 0) {
         return this.starting_price;
     }

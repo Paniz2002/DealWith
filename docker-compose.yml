@@ -36,11 +36,14 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - ./initdb.d/:/docker-entrypoint-initdb.d/
+      - ./initdb.d/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
       - ./dbdata/mongo_data/data:/data/db/
       - ./dbdata/mongo_data/db_config:/data/configdb/
     env_file:
       - ./taw-backend/.env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     networks:
       taw-network:
         ipv4_address: 172.77.0.27

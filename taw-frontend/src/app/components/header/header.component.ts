@@ -118,7 +118,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async viewAuction(auctionId: string) {
-    return await this.router.navigate(['/' + auctionId]); //FIXME: does not change page when I'm in an auction detail page
+    return await this.router.navigate(['/' + auctionId]);
   }
 
   markNotificationAsSeen(notificationId: string) {

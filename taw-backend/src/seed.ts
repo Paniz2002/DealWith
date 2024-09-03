@@ -148,7 +148,6 @@ const seedBooks = async (): Promise<void> => {
                 });
                 await newBook.save();
                 console.log(`Book saved: ${newBook.title}`);
-                // course.books.push(newBook);
                 course.save();
                 console.log("Course added to book", course.name);
                 newBook.courses.push(course);
@@ -198,7 +197,6 @@ const seedAuctions = async (): Promise<void> => {
                 console.log(`Auction saved: ${newAuction.book}`);
 
                 //add auction to book
-                // book.auctions.push(newAuction);
                 await book.save();
             }
         } catch (err) {

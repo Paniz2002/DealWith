@@ -318,7 +318,6 @@ export class ChatComponent implements OnInit {
   }
 
   async saveEdit(replyToId?: string) {
-    console.log(this.editingMessage, this.newMessage.trim())
     if (this.editingMessage && this.newMessage.trim()) {
       try {
         const response = await axios.put(

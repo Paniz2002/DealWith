@@ -10,7 +10,6 @@ export interface MulterRequest extends Request {
 
 const storage = multer.diskStorage({
   destination: (req: Request, file: any, cb: any) => {
-    console.log("req.body", req.body);
     const dir = "/app/src/data/images/uploads";
     fs.mkdirSync(dir, { recursive: true });
     cb(null, dir);

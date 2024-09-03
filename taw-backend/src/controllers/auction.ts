@@ -149,13 +149,12 @@ export const uploadAuctionImagesController = async (
         }
 
         for (const file of files) {
-            // Genera un percorso temporaneo per l'output del file convertito ( workaround per un errore )
             const tempOutputPath = path.join(
                 file.destination,
                 `temp-${file.filename}`,
             );
 
-            // Converti l'immagine in .webp
+            // Converts image in in .webp
             await sharp(file.path).webp().toFile(tempOutputPath);
 
             fs.unlinkSync(file.path);
@@ -823,7 +822,6 @@ export const editCommentController = async (req: Request, res: Response) => {
         }
         if (Boolean(isPrivate)) {
             comment.private = true;
-            // comment.receiver = receiver; //FIXME: probably we dont have to change if im a moderator, so leave it as it is, so leave the comment
         } else {
             comment.private = undefined;
             comment.receiver = undefined;

@@ -71,7 +71,6 @@ export const registerController = async (req: Request, res: Response) => {
   }
   try {
     // Create a new email document
-    // Create a new user document
     const user = new User({
       profile: {
         firstName: req.body.name,

@@ -73,7 +73,7 @@ mat-expansion-panel {
   color: #1a237e;
 }
 
-/* Messaggi inviati dall'utente corrente (destra) */
+/* right chat */
 .sent {
   margin-left: auto;
   background-color: #c5cae9; /* Indigo-100 */
@@ -81,7 +81,7 @@ mat-expansion-panel {
   text-align: right;
 }
 
-/* Messaggi ricevuti da altri utenti (sinistra) */
+/* left chat */
 .received {
   margin-right: auto;
   background-color: #ffffff; /* White background for received messages */
@@ -98,18 +98,15 @@ mat-expansion-panel {
 
 .message-date {
   font-size: 12px;
-  color: #555; /* Grigio scuro */
+  color: #555; /* dark grey */
 }
 
 .message-date {
-  order: 2; /* Posiziona a destra */
+  order: 2; /* places at right */
   margin-left: auto;
 }
 
-/*.message-author {
-  font-weight: bold;
-  margin: 0 10px;
-}*/
+
 
 .message-author {
   font-weight: bold;
